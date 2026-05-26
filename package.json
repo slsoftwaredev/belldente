@@ -1,0 +1,17 @@
+{
+  "name": "belldente",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+  "dev": "tailwindcss -i ./resources/css/app.css -o ./public/assets/css/style.css --watch",
+  "build": "tailwindcss -i ./resources/css/app.css -o ./public/assets/css/style.css --minify"
+},
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.3.0",
+    "tailwindcss": "^4.3.0"
+  }
+}
