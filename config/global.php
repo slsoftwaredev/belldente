@@ -4,7 +4,7 @@ define ('DB_HOST', 'localhost');
 //usuario de la Base de Datos
 define ('DB_USER', 'root');
 //contraseña de la Base de Datos
-define ('DB_PASS', '');
+define ('DB_PASS', 'root');
 //nombre de la Base de Datos
 define ('DB_NAME', 'belldente');
 //codificación de caracteres

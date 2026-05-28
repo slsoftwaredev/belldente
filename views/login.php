@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BellDente | Login</title>
-    <link rel="stylesheet" href="/belldente/public/assets/css/style.css">
+    <link rel="stylesheet" href="/public/assets/css/style.css">
 </head>
 <body class="min-h-screen bg-[#f8f8f8] overflow-hidden">
 
@@ -14,7 +14,7 @@
         <!-- FONDO -->
         <div 
             class="absolute inset-0 bg-center bg-cover opacity-90"
-            style="background-image: url('/belldente/public/assets/img/Fondo-login.png');"
+            style="background-image: url('/public/assets/img/Fondo-login.png');"
         ></div>
 
         <!-- CAPA BLANCA -->
@@ -46,13 +46,14 @@
             </div>
 
             <!-- FORM -->
-            <form>
+            <form id="formLogin" method="post" >
 
                 <!-- USUARIO -->
                 <div class="mb-4">
 
                     <input
                         type="text"
+                        name="usuario"
                         placeholder="Ingrese su nombre de usuario"
                         class="w-full border border-[#b8d8ff] rounded-xl px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-[#8dc7ff] transition"
                     >
@@ -63,6 +64,7 @@
 
                     <input
                         type="password"
+                        name="password"
                         placeholder="Ingrese su contraseña"
                         class="w-full border border-[#b8d8ff] rounded-xl px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-[#8dc7ff] transition"
                     >
@@ -95,4 +97,5 @@
     </div>
 
 </body>
+<script src="/public/js/login.js"></script>
 </html>
