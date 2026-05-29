@@ -9,4 +9,13 @@ if(!isset($_SESSION["id_usuario"])){
     exit();
 }
 
-echo $_SESSION["nombre_usuario"]; ?>
+ $_SESSION["nombre_usuario"]; ?>
+<?php
+
+$contenido = "dashboard/index.php";
+
+require "layouts/header.php";
+require "layouts/main.php";
+require "layouts/footer.php";
+
+?>
