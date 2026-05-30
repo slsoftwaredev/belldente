@@ -28,12 +28,16 @@
         <div
             class="flex items-center gap-3">
 
-            <div
-                class="w-10 h-10 rounded-full bg-blue-500 text-white flex items-center justify-center">
+            <?php
+$inicial = mb_strtoupper(
+    mb_substr(trim($_SESSION["nombre_usuario"]), 0, 1, 'UTF-8'),
+    'UTF-8'
+);
+?>
 
-                K
-
-            </div>
+<div class="w-10 h-10 rounded-full bg-blue-500 text-white flex items-center justify-center">
+    <?= $inicial ?>
+</div>
 
             <div class="hidden md:block">
 
