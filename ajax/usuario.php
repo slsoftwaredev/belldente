@@ -15,7 +15,7 @@ switch ($_GET["op"]) {
         while ($reg = $rspta->fetch_object()) {
 
             $estado = $reg->estado_usuario == 1
-                ? '<span class="text-green-600 font-medium">Activo</span>'
+                ? '<span class="text-green-600 font-medium ">Activo</span>'
                 : '<span class="text-red-600 font-medium">Inactivo</span>';
             $btnEstado = $reg->estado_usuario == 1
                 ?

@@ -427,14 +427,17 @@
   .border-\[\#b8d8ff\] {
     border-color: #b8d8ff;
   }
-  .border-amber-200 {
-    border-color: var(--color-amber-200);
-  }
   .border-gray-100 {
     border-color: var(--color-gray-100);
   }
   .border-gray-200 {
     border-color: var(--color-gray-200);
+  }
+  .border-green-600 {
+    border-color: var(--color-green-600);
+  }
+  .border-red-600 {
+    border-color: var(--color-red-600);
   }
   .border-slate-100 {
     border-color: var(--color-slate-100);
