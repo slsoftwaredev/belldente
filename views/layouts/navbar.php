@@ -14,7 +14,7 @@
     <div>
 
         <h2 class="font-semibold text-slate-700">
-            Dashboard
+            <?php echo $titulo; ?>
         </h2>
 
         <p class="text-sm text-slate-500">

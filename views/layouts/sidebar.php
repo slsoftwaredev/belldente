@@ -31,9 +31,23 @@
         <ul class="space-y-2">
 
             <li>
-                <a href="#"
-                    class="flex items-center gap-3 px-4 py-3 rounded-lg bg-blue-50 text-blue-600 font-medium">
-                    🏠 Dashboard
+                <!-- Hace redireccionamiento a la página de escritorio y que se marque solo donde nos encontramos-->
+                <a href="escritorio.php"
+                    class="flex items-center gap-3 px-4 py-3 rounded-lg
+                    <?= ($pagina == 'dashboard')
+                    ? 'bg-blue-50 text-blue-600 font-medium'
+                    : 'hover:bg-slate-100'; ?>">
+                        🏠 Dashboard
+                </a>
+            </li>
+
+            <li>
+                <a href="usuario.php"
+                    class="flex items-center gap-3 px-4 py-3 rounded-lg
+                    <?= ($pagina == 'usuarios')
+                    ? 'bg-blue-50 text-blue-600 font-medium'
+                    : 'hover:bg-slate-100'; ?>">
+                        👥 Usuarios
                 </a>
             </li>
 

@@ -9,4 +9,17 @@ class Usuario{
         $sql = "CALL sp_login_usuario('$usuario')";
         return ejecutarConsultaSP($sql);
     }
+
+    // Metodo para listar los usuarios
+    public function listar(){
+        $sql = "CALL sp_usuario(
+            'listar',0,'','','','','','','','',0,0)";
+        return ejecutarConsultaSP($sql);
+}
+// Metodo para guardar un nuevo usuario
+    public function guardar($nombre,$apellido,$correo,$cedula,$usuario,$password,$domicilio,$telefono,$rol){
+        $sql = "CALL sp_usuario('guardar',0,'$nombre','$apellido','$correo','$cedula','$usuario','$password','$domicilio','$telefono','$rol',0)";
+        return ejecutarConsultaSP($sql);
+}
+
 }
