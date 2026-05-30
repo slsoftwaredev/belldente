@@ -21,7 +21,15 @@ $datos = $result->fetch_object();
 
 // Verificar si existe
 if($datos){
+if($datos->estado_usuario == 0){
 
+    echo json_encode([
+        "status" => false,
+        "message" => "Usuario inactivo. Contacte al administrador."
+    ]);
+
+    exit;
+}
     // Verificar password, $password debe apuntar al campo de la base de datos: pass_usuario que tenemos en la tabla usuario
     if(password_verify($password, $datos->pass_usuario)){
        
