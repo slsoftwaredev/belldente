@@ -47,7 +47,7 @@
 
             <table class="w-full">
 
-                <thead class="bg-slate-100">
+                <thead class="bg-blue-600 text-white">
 
                     <tr>
 
@@ -107,22 +107,22 @@
     <div
         class="bg-white rounded-3xl w-full max-w-3xl max-h-[90vh] overflow-y-auto">
 
-        <!-- Header -->
+        <!-- Header del formulario-->
 
         <div
-            class="border-b px-6 py-5 flex items-center justify-between">
+            class="px-6 py-5 flex items-center justify-between bg-blue-600">
 
             <div>
 
                 <h2
                     id="tituloModal"
-                    class="text-xl font-bold text-slate-800">
+                    class="text-xl font-bold text-white">
 
                     Nuevo Usuario
 
                 </h2>
 
-                <p class="text-sm text-slate-500">
+                <p class="text-sm text-white">
 
                     Complete la información del usuario
 
@@ -133,7 +133,7 @@
             <button
                 type="button"
                 id="btnCerrarModal"
-                class="text-3xl text-slate-400 hover:text-red-500">
+                class="text-3xl text-white hover:text-red-500">
 
                 ×
 
@@ -305,7 +305,7 @@
         <!-- Footer -->
 
         <div
-            class="border-t px-6 py-5 flex flex-col md:flex-row justify-end gap-3">
+            class=" px-6 py-5 flex flex-col md:flex-row justify-end gap-3">
 
             <button
                 type="button"
