@@ -101,6 +101,19 @@
             </li>
 
         </ul>
+        <!-- Cerrar sesión -->
+
+    <div class="pt-4 border-t border-slate-200">
+
+        <a href="../ajax/logout.php"
+            class="flex items-center gap-3 px-4 py-3 rounded-lg
+                   text-red-600 hover:bg-red-50 transition">
+
+            🚪 Cerrar Sesión
+
+        </a>
+
+    </div>
 
     </nav>
 

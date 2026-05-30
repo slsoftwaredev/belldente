@@ -5,7 +5,7 @@ require_once "../model/Usuario.php";
 $usuario = new Usuario();
 
 switch ($_GET["op"]) {
-
+// Listamos los usuarios
     case 'listar':
 
         $rspta = $usuario->listar();
@@ -31,6 +31,7 @@ switch ($_GET["op"]) {
         echo json_encode($data);
 
     break;
+    // Guardamos un nuevo usuario
     case 'guardar':
 
     $nombre = limpiarCadena($_POST["nombre"]);
@@ -64,4 +65,20 @@ switch ($_GET["op"]) {
     ]);
 
     break;
+    // Listamos los roles para asignar a los usuarios
+    case 'roles':
+
+    $rspta = $usuario->listarRoles();
+
+    $data = array();
+
+    while($reg = $rspta->fetch_object()){
+
+        $data[] = $reg;
+
+    }
+
+    echo json_encode($data);
+
+break;
 }

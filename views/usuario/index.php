@@ -279,23 +279,6 @@
                     id="rol"
                     name="rol"
                     class="w-full border border-slate-300 rounded-xl px-4 py-3">
-
-                    <option value="">
-                        Seleccione un rol
-                    </option>
-
-                    <option value="1">
-                        Administrador
-                    </option>
-
-                    <option value="2">
-                        Dentista
-                    </option>
-
-                    <option value="3">
-                        Recepcionista
-                    </option>
-
                 </select>
 
             </div>

@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
-
     listarUsuarios();
+    cargarRoles();
 
     // Modal
     const modal = document.getElementById("modalUsuario");
@@ -70,7 +70,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
 });
-
+// Función para listar los usuarios
 function listarUsuarios() {
 
     fetch("../ajax/usuario.php?op=listar")
@@ -149,5 +149,38 @@ function listarUsuarios() {
             console.error(error);
 
         });
+
+}
+// Función para cargar los roles en el select del formulario
+function cargarRoles(){
+
+    fetch("../ajax/usuario.php?op=roles")
+    .then(response => response.json())
+    .then(data => {
+
+        let html = `
+            <option value="">
+                Seleccione un rol
+            </option>
+        `;
+
+        data.forEach(rol => {
+
+            html += `
+                <option value="${rol.id_rol}">
+                    ${rol.nombre_rol}
+                </option>
+            `;
+
+        });
+
+        document.getElementById("rol").innerHTML = html;
+
+    })
+    .catch(error => {
+
+        console.error(error);
+
+    });
 
 }

@@ -21,5 +21,10 @@ class Usuario{
         $sql = "CALL sp_usuario('guardar',0,'$nombre','$apellido','$correo','$cedula','$usuario','$password','$domicilio','$telefono','$rol',0)";
         return ejecutarConsultaSP($sql);
 }
+// Listamos los roles que vamos a asignar a los usuarios
+public function listarRoles(){
+    $sql = "CALL sp_usuario('roles',0,'','','','','','','','',0,0)";
+    return ejecutarConsultaSP($sql);
+}
 
 }
