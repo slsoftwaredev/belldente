@@ -1,17 +1,16 @@
 document.addEventListener("DOMContentLoaded", () => {
-    listarUsuarios();
-    cargarRoles();
+    listarPacientes();
 
     // Modal
-    const modal = document.getElementById("modalUsuario");
-    const btnNuevoUsuario = document.getElementById("btnNuevoUsuario");
+    const modal = document.getElementById("modalPaciente");
+    const btnNuevoPaciente = document.getElementById("btnNuevoPaciente");
     const btnCerrarModal = document.getElementById("btnCerrarModal");
     const btnCancelar = document.getElementById("btnCancelar");
 
-    btnNuevoUsuario.addEventListener("click", () => {
-        formUsuario.reset();
-        document.getElementById("id_usuario").value = 0;
-        document.getElementById("tituloModal").innerText = "Nuevo Usuario";
+    btnNuevoPaciente.addEventListener("click", () => {
+        formPaciente.reset();
+        document.getElementById("id_paciente").value = 0;
+        document.getElementById("tituloModal").innerText = "Nuevo Paciente";
 
         modal.classList.remove("hidden");
         modal.classList.add("flex");
@@ -26,20 +25,21 @@ document.addEventListener("DOMContentLoaded", () => {
     });
     btnCancelar.addEventListener("click", () => {
 
-        formUsuario.reset();
+        formPaciente.reset();
         modal.classList.add("hidden");
+        modal.classList.remove("flex");
         });
 
     // Formulario
-    const formUsuario = document.getElementById("formUsuario");
+    const formPaciente = document.getElementById("formPaciente");
 
-    formUsuario.addEventListener("submit", function (e) {
+    formPaciente.addEventListener("submit", function (e) {
 
         e.preventDefault();
 
-        const formData = new FormData(formUsuario);
-        const accion = document.getElementById("id_usuario").value ==0 ? "guardar" : "editar";
-        fetch("../ajax/usuario.php?op=" + accion, {
+        const formData = new FormData(formPaciente);
+        const accion = document.getElementById("id_paciente").value ==0 ? "guardar" : "editar";
+        fetch("../ajax/paciente.php?op=" + accion, {
             method: "POST",
             body: formData
         })
@@ -48,18 +48,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
             if (data.status) {
 
-                alert(accion == "guardar" ? "Usuario registrado correctamente" : "Usuario actualizado correctamente");
+                alert(accion == "guardar" ? "Paciente registrado correctamente" : "Paciente actualizado correctamente");
 
-                formUsuario.reset();
+                formPaciente.reset();
 
                 modal.classList.add("hidden");
                 modal.classList.remove("flex");
 
-                listarUsuarios();
+                listarPacientes();
 
             } else {
 
-                alert(accion == "guardar" ? "Error al registrar usuario" : "Error al actualizar usuario");
+                alert(accion == "guardar" ? "Error al registrar paciente" : "Error al actualizar paciente");
 
             }
 
@@ -73,39 +73,39 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
 });
-// Función para listar los usuarios
-function listarUsuarios() {
+// Función para listar los pacientes
+function listarPacientes() {
 
-    fetch("../ajax/usuario.php?op=listar")
+    fetch("../ajax/paciente.php?op=listar")
         .then(response => response.json())
         .then(data => {
 
             let html = "";
             let cards = "";
 
-            data.forEach(usuario => {
+            data.forEach(paciente => {
                 //Llenado de cards en movil
                 cards += `
                 <div class="bg-white rounded-2xl shadow-sm p-4">
 
                     <h3 class="font-bold text-slate-800">
-                        ${usuario[1]}
+                        ${paciente[1]}
                     </h3>
 
                     <p class="text-sm text-slate-500 mt-1">
-                        Usuario: ${usuario[2]}
+                        Cédula: ${paciente[2]}
                     </p>
 
                     <p class="text-sm text-slate-500">
-                        Rol: ${usuario[3]}
+                        Teléfono: ${paciente[3]}
                     </p>
 
                     <div class="mt-2">
-                        ${usuario[4]}
+                        ${paciente[4]}
                     </div>
 
                     <div class="mt-4">
-                        ${usuario[5]}
+                        ${paciente[5]}
                     </div>
 
                 </div>
@@ -115,33 +115,34 @@ function listarUsuarios() {
                     <tr class="border-b">
 
                         <td class="px-4 py-3">
-                            ${usuario[0]}
+                            ${paciente[0]}
                         </td>
 
                         <td class="px-4 py-3">
-                            ${usuario[1]}
+                            ${paciente[1]}
                         </td>
 
                         <td class="px-4 py-3">
-                            ${usuario[2]}
+                            ${paciente[2]}
                         </td>
 
                         <td class="px-4 py-3">
-                            ${usuario[3]}
+                            ${paciente[3]}
                         </td>
 
                         <td class="px-4 py-3">
-                            ${usuario[4]}
+                            ${paciente[4]}
                         </td>
 
                         <td class="px-4 py-3 text-center">
-                            ${usuario[5]}
+                            ${paciente[5]}
                         </td>
 
                     </tr>
                 `;
 
             });
+            //Validar que no haya registros para mostrar en tabla
             if(data.length === 0){
 
         html = `
@@ -157,8 +158,20 @@ function listarUsuarios() {
         `;
 
     }
-            document.getElementById("tblUsuarios").innerHTML = html;
-            document.getElementById("cardUsuarios").innerHTML = cards;
+    // Validar que no haya registros para mostrar en cards
+    if(data.length === 0){
+
+    cards = `
+        <div class="bg-white rounded-2xl shadow-sm p-4 text-center text-slate-500">
+
+            Sin registros
+
+        </div>
+    `;
+
+}
+            document.getElementById("tblPacientes").innerHTML = html;
+            document.getElementById("cardPacientes").innerHTML = cards;
 
         })
         .catch(error => {
@@ -168,95 +181,61 @@ function listarUsuarios() {
         });
 
 }
-// Función para cargar los roles en el select del formulario
-function cargarRoles(){
-
-    fetch("../ajax/usuario.php?op=roles")
-    .then(response => response.json())
-    .then(data => {
-
-        let html = `
-            <option value="">
-                Seleccione un rol
-            </option>
-        `;
-
-        data.forEach(rol => {
-
-            html += `
-                <option value="${rol.id_rol}">
-                    ${rol.nombre_rol}
-                </option>
-            `;
-
-        });
-
-        document.getElementById("rol").innerHTML = html;
-
-    })
-    .catch(error => {
-
-        console.error(error);
-
-    });
-
-}
 //Funcion para cargar los datos del usuario para editar
-function editarUsuario(id_usuario){
-    const modal = document.getElementById("modalUsuario");
+function editarPaciente(id_paciente){
+    const modal = document.getElementById("modalPaciente");
     modal.classList.remove("hidden");
-    fetch("../ajax/usuario.php?op=obtener",{
+    modal.classList.add("flex");
+    fetch("../ajax/paciente.php?op=obtener",{
         method:"POST",
         headers:{
             "Content-Type":"application/x-www-form-urlencoded"
         },
-        body:"id_usuario="+id_usuario
+        body:"id_paciente="+id_paciente
     })
     .then(response => response.json())
     .then(data => {
 
-        document.getElementById("id_usuario").value =
-        data[0];
+        document.getElementById("id_paciente").value =
+            data[0];
 
-        document.querySelector("[name='nombre']").value =
-        data[1];
+            document.querySelector("[name='nombre']").value =
+            data[1];
 
-        document.querySelector("[name='apellido']").value =
-        data[2];
+            document.querySelector("[name='apellido']").value =
+            data[2];
 
-        document.querySelector("[name='correo']").value =
-        data[3];
+            document.querySelector("[name='cedula']").value =
+            data[3];
 
-        document.querySelector("[name='cedula']").value =
-        data[4];
+            document.querySelector("[name='fecha_nacimiento']").value =
+            data[4];
 
-        document.querySelector("[name='usuario']").value =
-        data[5];
+            document.querySelector("[name='sexo']").value =
+            data[5];
 
-        document.querySelector("[name='domicilio']").value =
-        data[6];
+            document.querySelector("[name='telefono']").value =
+            data[6];
 
-        document.querySelector("[name='telefono']").value =
-        data[7];
+            document.querySelector("[name='correo']").value =
+            data[7];
 
-        document.getElementById("rol").value =
-        data[8];
+            document.querySelector("[name='domicilio']").value =
+            data[8];
 
         document.getElementById("tituloModal").innerText =
-        "Editar Usuario";
-
-        modal.classList.remove("hidden");
+        "Editar Paciente";
 
     });
 
 }
-//Función para cambiar el estado del usuario
-function cambiarEstado(id_usuario, estado){
+//Función para cambiar el estado del paciente
+function cambiarEstado(id_paciente, estado){
 
     const mensaje =
         estado == 1
-        ? "¿Desea activar este usuario?"
-        : "¿Desea inactivar este usuario?";
+        ? "¿Desea activar este paciente?"
+        : "¿Desea inactivar este paciente?";
 
     if(!confirm(mensaje)){
         return;
@@ -265,8 +244,8 @@ function cambiarEstado(id_usuario, estado){
     const formData = new FormData();
 
     formData.append(
-        "id_usuario",
-        id_usuario
+        "id_paciente",
+        id_paciente
     );
 
     formData.append(
@@ -274,7 +253,7 @@ function cambiarEstado(id_usuario, estado){
         estado
     );
 
-    fetch("../ajax/usuario.php?op=estado",{
+    fetch("../ajax/paciente.php?op=estado",{
         method:"POST",
         body:formData
     })
@@ -283,7 +262,7 @@ function cambiarEstado(id_usuario, estado){
 
         if(data.status){
 
-            listarUsuarios();
+            listarPacientes();
 
         }else{
 
@@ -302,9 +281,9 @@ function cambiarEstado(id_usuario, estado){
 // Función para buscar usuarios en la tabla y cards
 document
 .getElementById("txtBuscar")
-.addEventListener("keyup", buscarUsuarios);
-
-function buscarUsuarios(){
+.addEventListener("keyup", buscarPacientes);
+// Función para buscar pacientes en la tabla y cards
+function buscarPacientes(){
 
     let filtro =
     this.value.toLowerCase();
@@ -312,7 +291,7 @@ function buscarUsuarios(){
     // Tabla Desktop
 
     document
-    .querySelectorAll("#tblUsuarios tr")
+    .querySelectorAll("#tblPacientes tr")
     .forEach(fila => {
 
         let texto =
@@ -328,7 +307,7 @@ function buscarUsuarios(){
     // Cards Mobile
 
     document
-    .querySelectorAll("#cardUsuarios > div")
+    .querySelectorAll("#cardPacientes > div")
     .forEach(card => {
 
         let texto =
