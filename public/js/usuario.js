@@ -285,3 +285,46 @@ function cambiarEstado(id_usuario, estado){
     });
 
 }
+// Función para buscar usuarios en la tabla y cards
+document
+.getElementById("txtBuscar")
+.addEventListener("keyup", buscarUsuarios);
+
+function buscarUsuarios(){
+
+    let filtro =
+    this.value.toLowerCase();
+
+    // Tabla Desktop
+
+    document
+    .querySelectorAll("#tblUsuarios tr")
+    .forEach(fila => {
+
+        let texto =
+        fila.textContent.toLowerCase();
+
+        fila.style.display =
+        texto.includes(filtro)
+        ? ""
+        : "none";
+
+    });
+
+    // Cards Mobile
+
+    document
+    .querySelectorAll("#cardUsuarios > div")
+    .forEach(card => {
+
+        let texto =
+        card.textContent.toLowerCase();
+
+        card.style.display =
+        texto.includes(filtro)
+        ? ""
+        : "none";
+
+    });
+
+}
