@@ -117,7 +117,7 @@ switch ($_GET["op"]) {
         $sexo = limpiarCadena($_POST["sexo"]);
         $telefono = limpiarCadena($_POST["telefono"]);
         $correo = limpiarCadena($_POST["correo"]);
-        $direccion = limpiarCadena($_POST["direccion"]);
+        $direccion = limpiarCadena($_POST["domicilio"]);
 
         $rspta = $paciente->editar(
             $id,
