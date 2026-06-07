@@ -13,12 +13,14 @@ switch ($_GET["op"]) {
         $data = [];
 
         while ($reg = $rspta->fetch_object()) {
-
+            $estado = $reg->estado_cita == 1
+                ? '<span class="text-green-600 font-medium">Agendada</span>'
+                : '<span class="text-red-600 font-medium">Reagendada</span>';
             $data[] = [
                 $reg->id_cita,
                 $reg->paciente,
                 $reg->fecha_cita,
-                $reg->estado_cita
+                $estado
             ];
         }
 
