@@ -153,4 +153,14 @@ switch ($_GET["op"]) {
         ]);
 
     break;
+    // Combo de pacientes activos
+    case "combo":
+    $rspta = $paciente->combo();
+    $data = [];
+    while($reg = $rspta->fetch_object()){
+
+        $data[] = $reg;
+    }
+    echo json_encode($data);
+    break;
 }

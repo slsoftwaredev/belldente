@@ -29,4 +29,9 @@ public function editar($id,$nombre,$apellido,$cedula,$fechaNacimiento,$sexo,$tel
     $sql = "CALL sp_paciente('editar','$id','$nombre','$apellido','$cedula','$fechaNacimiento','$sexo','$telefono','$correo','$direccion',0)";
     return ejecutarConsultaSP($sql);
 }
+// Metodo para listar los pacientes activos en un combo
+public function combo(){
+    $sql = "CALL sp_paciente('combo',0,'','','',NULL,'','','','',0)";
+    return ejecutarConsultaSP($sql);
+}
 }
