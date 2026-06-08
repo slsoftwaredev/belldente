@@ -17,10 +17,25 @@ switch ($_GET["op"]) {
                 ? '<span class="text-green-600 font-medium">Agendada</span>'
                 : '<span class="text-red-600 font-medium">Reagendada</span>';
             $data[] = [
-                $reg->id_cita,
-                $reg->paciente,
-                $reg->fecha_cita,
-                $estado
+                "0" => $reg->id_cita,
+                "1" => $reg->paciente,
+                "2" => $reg->fecha_cita,
+                "3" => $estado,
+                "4" => '
+
+                <div class="flex gap-2 justify-center">
+
+                    <button
+                        onclick="editarCita('.$reg->id_cita.')"
+                        class="bg-amber-500 hover:bg-amber-600 text-white px-3 py-1 rounded-lg">
+
+                        Reagendar
+
+                    </button>
+
+                </div>
+
+            '
             ];
         }
 

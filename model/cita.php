@@ -17,14 +17,14 @@ class Cita{
 
     // Obtenemos los datos de una cita
     public function obtener($id_cita){
-        return ejecutarConsultaSP(
+        return ejecutarConsultaSimpleFila(
             "CALL sp_cita('obtener','$id_cita',0,NULL,0)");
     }
 
     // Editamos una cita
-    public function editar($id_cita,$paciente_id,$fecha_cita,$estado){
+    public function editar($id_cita,$paciente_id,$fecha_cita){
         return ejecutarConsultaSP(
-            "CALL sp_cita('editar','$id_cita','$paciente_id','$fecha_cita','$estado')");
+            "CALL sp_cita('editar','$id_cita','$paciente_id','$fecha_cita',0)");
     }
 
     // Actualizamos el estado de una cita
@@ -38,10 +38,11 @@ class Cita{
         return ejecutarConsultaSP(
             "CALL sp_cita('citas_hoy',0,0,NULL,0)");
     }
-    
+
     // Listamos las citas atrasadas
     public function citasAtrasadas(){
         return ejecutarConsultaSP(
             "CALL sp_cita('citas_atrasadas',0,0,NULL,0)");
     }
+    //Combo de pacientes
 }

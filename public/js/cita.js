@@ -93,10 +93,10 @@ document.addEventListener("DOMContentLoaded", () => {
                             <td class="px-6 py-4">
                                 ${cita[3]}
                             </td>
-
-                            <td class="px-6 py-4 text-center">
-                                Acciones
+                            <td class="px-6 py-4">
+                                ${cita[4]}
                             </td>
+
 
                         </tr>
                     `;
@@ -123,6 +123,13 @@ document.addEventListener("DOMContentLoaded", () => {
                                 ${cita[3]}
 
                             </p>
+
+                            <div class="mt-4">
+
+                                Acciones:
+                                ${cita[4]}
+
+                            </div>
 
                         </div>
                     `;
@@ -188,6 +195,48 @@ function cargarPacientes() {
         });
 
         document.getElementById("paciente_id").innerHTML = html;
+    })
+    .catch(error => {
+
+        console.error(error);
+
+    });
+
+}
+// Editar cita
+function editarCita(id_cita){
+
+    const modal = document.getElementById("modalCita");
+
+    modal.classList.remove("hidden");
+    modal.classList.add("flex");
+
+    fetch("../ajax/cita.php?op=obtener",{
+
+        method:"POST",
+
+        headers:{
+            "Content-Type":"application/x-www-form-urlencoded"
+        },
+
+        body:"id_cita="+id_cita
+
+    })
+    .then(response => response.json())
+    .then(data => {
+
+        document.getElementById("id_cita").value =
+            data[0];
+
+        document.getElementById("paciente_id").value =
+            data[1];
+
+        document.querySelector("[name='fecha_cita']").value =
+            data[2];
+
+        document.getElementById("tituloModal").innerText =
+            "Reagendar Cita";
+
     })
     .catch(error => {
 
