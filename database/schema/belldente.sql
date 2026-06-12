@@ -17,3 +17,10 @@ CREATE TABLE usuarios (
     rol_id INT NOT NULL,
     FOREIGN KEY (rol_id) REFERENCES roles(id_rol)
 );
+-- 
+--
+-- Tabla estado citas
+CREATE TABLE estados_cita(
+    id_estado_cita INT AUTO_INCREMENT PRIMARY KEY,
+    nombre_estado VARCHAR(50) NOT NULL,
+);

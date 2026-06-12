@@ -1,5 +1,4 @@
 <?php
-
 require_once "../model/cita.php";
 
 $cita = new Cita();
@@ -13,9 +12,28 @@ switch ($_GET["op"]) {
         $data = [];
 
         while ($reg = $rspta->fetch_object()) {
-            $estado = $reg->estado_cita == 1
-                ? '<span class="text-green-600 font-medium">Agendada</span>'
-                : '<span class="text-red-600 font-medium">Reagendada</span>';
+            switch($reg->id_estado_cita){
+                case 1:
+                    $estado = '<span class="text-green-600 font-medium">'.$reg->nombre_estado.'</span>';
+                    break;
+                case 2:
+                    $estado = '<span class="text-amber-600 font-medium">'.$reg->nombre_estado.'</span>';
+                    break;
+                case 3:
+                    $estado = '<span class="text-blue-600 font-medium">'.$reg->nombre_estado.'</span>';
+                    break;
+                case 4:
+                    $estado = '<span class="text-purple-600 font-medium">'.$reg->nombre_estado.'</span>';
+                    break;
+                case 5:
+                    $estado = '<span class="text-red-600 font-medium">'.$reg->nombre_estado.'</span>';
+                    break;
+                case 6:
+                    $estado = '<span class="text-slate-600 font-medium">'.$reg->nombre_estado.'</span>';
+                    break;
+                default:
+                    $estado = '<span class="text-slate-500 font-medium">'.$reg->nombre_estado.'</span>';
+            }
             $data[] = [
                 "0" => $reg->id_cita,
                 "1" => $reg->paciente,
