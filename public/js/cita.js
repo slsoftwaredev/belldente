@@ -2,6 +2,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     listarCitas();
     cargarPacientes();
+    cargarCitasHoy();
+    cargarCitasAtrasadas();
 
     // Modal
     const modalCita = document.getElementById("modalCita");
@@ -243,5 +245,98 @@ function editarCita(id_cita){
         console.error(error);
 
     });
+
+}
+// Función para cargar el número de citas de hoy
+function cargarCitasHoy(){
+
+    fetch("../ajax/cita.php?op=citas_hoy")
+
+    .then(response => response.json())
+
+    .then(data => {
+
+        document.getElementById("lblCitasHoy").textContent =
+            data.total;
+
+    })
+
+    .catch(error => {
+
+        console.error(error);
+
+    });
+
+}
+// Función para cargar el número de citas atrasadas
+function cargarCitasAtrasadas(){
+
+    fetch("../ajax/cita.php?op=citas_atrasadas")
+
+    .then(response => response.json())
+
+    .then(data => {
+
+        document.getElementById("lblCitasAtrasadas").textContent =
+            data.total;
+
+    })
+
+    .catch(error => {
+
+        console.error(error);
+
+    });
+
+}
+
+// BUSCAR CITAS CON EL BUSCADOR DEL VIEW
+document.getElementById("txtBuscar").addEventListener("keyup", buscarCitas);
+function buscarCitas(){
+
+    let filtro =
+    this.value.toLowerCase();
+
+    // Tabla Desktop
+
+    document
+    .querySelectorAll("#tblCitas tr")
+    .forEach(fila => {
+
+        let texto =
+        fila.textContent.toLowerCase();
+
+        fila.style.display =
+        texto.includes(filtro)
+        ? ""
+        : "none";
+
+    });
+
+    // Cards Mobile
+
+    document
+    .querySelectorAll("#cardCitas > div")
+    .forEach(card => {
+
+        let texto =
+        card.textContent.toLowerCase();
+
+        card.style.display =
+        texto.includes(filtro)
+        ? ""
+        : "none";
+
+    });
+
+}
+
+//Prueba boton atender cita
+function atenderCita(id_cita){
+
+    alert(
+        "Módulo de Atención Clínica en desarrollo.\n\nCita ID: "
+        + id_cita
+    );
 
 }

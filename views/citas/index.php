@@ -41,7 +41,7 @@
             id="lblCitasHoy"
             class="text-3xl font-bold text-blue-600 mt-2">
 
-            0
+            
 
         </h2>
 
@@ -57,7 +57,7 @@
             id="lblCitasAtrasadas"
             class="text-3xl font-bold text-red-500 mt-2">
 
-            0
+            
 
         </h2>
 

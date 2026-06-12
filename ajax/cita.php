@@ -51,6 +51,14 @@ switch ($_GET["op"]) {
 
                     </button>
 
+                    <button
+                        onclick="atenderCita('.$reg->id_cita.')"
+                        class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-lg">
+
+                        Atender
+
+                    </button>
+
                 </div>
 
             '
@@ -118,4 +126,24 @@ switch ($_GET["op"]) {
         ]);
 
         break;
+
+    case "citas_hoy":
+
+    $rspta = $cita->citasHoy();
+
+    echo json_encode([
+        "total" => $rspta->num_rows
+    ]);
+
+    break;
+
+    case "citas_atrasadas":
+
+    $rspta = $cita->citasAtrasadas();
+
+    echo json_encode([
+        "total" => $rspta->num_rows
+    ]);
+
+    break;
 }
