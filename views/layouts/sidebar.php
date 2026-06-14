@@ -72,8 +72,11 @@
             </li>
 
             <li>
-                <a href="#"
-                    class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-100">
+                <a href="atencion.php"
+                    class="flex items-center gap-3 px-4 py-3 rounded-lg
+                    <?= ($pagina == 'atencion')
+                    ? 'bg-blue-50 text-blue-600 font-medium'
+                    : 'hover:bg-slate-100'; ?>">
                     🦷 Atención Clínica
                 </a>
             </li>
