@@ -1,11 +1,11 @@
 <div
     x-data="{ tab:'datos' }"
-    class="space-y-6">
+    class="w-full max-w-7xl mx-auto space-y-6">
 
     <!-- CABECERA -->
 <div class="bg-white rounded-2xl shadow-sm p-6">
 
-    <div class="flex flex-col lg:flex-row lg:justify-between gap-4">
+    <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between ">
 
         <div>
 
@@ -19,7 +19,7 @@
 
         </div>
 
-        <div class="flex gap-3">
+        <div class="flex flex-col sm:flex-row gap-3">
 
             <button
                 class="px-5 py-3 rounded-xl bg-blue-600 text-white">
@@ -44,7 +44,7 @@
     <!-- PESTAÑAS -->
 <div class="bg-white rounded-2xl shadow-sm p-2 overflow-x-auto">
 
-    <div class="flex gap-2 min-w-max">
+    <div class="flex flex-col sm:flex-row gap-2 min-w-max">
 
         <button
             @click="tab='datos'"
@@ -109,27 +109,35 @@
      <!-- DATOS -->
 <div x-show="tab==='datos'" x-transition>
 
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
 
         <div class="bg-white rounded-2xl shadow-sm p-6">
 
             <h2 class="font-semibold text-slate-700 mb-4">
-                Datos Personales
+                Información del Paciente
             </h2>
 
-            <div class="grid gap-4">
+            <div class="space-y-3 text-sm">
 
-                <input type="text" placeholder="Nombres"
-                    class="border rounded-xl px-4 py-3">
+                <p>
+                    <span class="font-medium">Paciente:</span>
+                    Juan Pérez
+                </p>
 
-                <input type="text" placeholder="Apellidos"
-                    class="border rounded-xl px-4 py-3">
+                <p>
+                    <span class="font-medium">Cédula:</span>
+                    1000000001
+                </p>
 
-                <input type="text" placeholder="Cédula"
-                    class="border rounded-xl px-4 py-3">
+                <p>
+                    <span class="font-medium">Fecha Nacimiento:</span>
+                    15/05/1995
+                </p>
 
-                <input type="date"
-                    class="border rounded-xl px-4 py-3">
+                <p>
+                    <span class="font-medium">Edad:</span>
+                    31 años
+                </p>
 
             </div>
 
@@ -138,20 +146,52 @@
         <div class="bg-white rounded-2xl shadow-sm p-6">
 
             <h2 class="font-semibold text-slate-700 mb-4">
-                Información de Contacto
+                Contacto
             </h2>
 
-            <div class="grid gap-4">
+            <div class="space-y-3 text-sm">
 
-                <input type="text" placeholder="Teléfono"
-                    class="border rounded-xl px-4 py-3">
+                <p>
+                    <span class="font-medium">Teléfono:</span>
+                    0999999999
+                </p>
 
-                <input type="email" placeholder="Correo"
-                    class="border rounded-xl px-4 py-3">
+                <p>
+                    <span class="font-medium">Correo:</span>
+                    correo@email.com
+                </p>
 
-                <textarea rows="4"
-                    placeholder="Dirección"
-                    class="border rounded-xl px-4 py-3"></textarea>
+                <p>
+                    <span class="font-medium">Dirección:</span>
+                    Otavalo
+                </p>
+
+            </div>
+
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-sm p-6">
+
+            <h2 class="font-semibold text-slate-700 mb-4">
+                Atención
+            </h2>
+
+            <div class="space-y-3 text-sm">
+
+                <p>
+                    <span class="font-medium">Establecimiento:</span>
+                    BellDente
+                </p>
+
+                <p>
+                    <span class="font-medium">Fecha:</span>
+                    21/06/2026
+                </p>
+
+                <p>
+                    <span class="font-medium">Estado:</span>
+                    En Atención
+                </p>
 
             </div>
 
@@ -172,18 +212,26 @@
             </h2>
 
             <div class="space-y-3">
-
-                <label><input type="checkbox"> Diabetes</label>
-                <label><input type="checkbox"> Hipertensión</label>
-                <label><input type="checkbox"> Cardiopatías</label>
-                <label><input type="checkbox"> Alergias</label>
+                    <select name="" id="" class="w-full border border-slate-300 rounded-xl px-4 py-3">
+                        <option value="">Alergia Antibiótico</option>
+                        <option value="">Alergia Anestésico</option>
+                        <option value="">Hemorragias</option>
+                        <option value="">VIH/SIDA</option>
+                        <option value="">Tuberculosis</option>
+                        <option value="">Asma</option>
+                        <option value="">Diabetes</option>
+                        <option value="">Hipertensión Arterial</option>
+                        <option value="">Enfermedades Cardíacas</option>
+                        <option value="">Otro</option>
+                        <option value="">Ninguno</option>
+                    </select>
 
             </div>
 
-            <textarea
-                rows="5"
+            <input
+                type="text"
                 placeholder="Observaciones"
-                class="w-full mt-5 border rounded-xl p-3"></textarea>
+                class="w-full mt-5 border rounded-xl p-3">
 
         </div>
 
@@ -195,16 +243,26 @@
 
             <div class="space-y-3">
 
-                <label><input type="checkbox"> Diabetes</label>
-                <label><input type="checkbox"> Hipertensión</label>
-                <label><input type="checkbox"> Cáncer</label>
+                <select class="w-full border border-slate-300 rounded-xl px-4 py-3">
+                    <option>Cardiopatía</option>
+                    <option>Hipertensión Arterial</option>
+                    <option>Enfermedad Cardiovascular</option>
+                    <option>Cancer</option>
+                    <option>Tuberculosis</option>
+                    <option>Enfermedad Mental</option>
+                    <option>Enfermedad Infecciosa</option>
+                    <option>Mal Formación</option>
+                    <option>Otro</option>
+                    <option>Ninguno</option>
+                </select>
+                
 
             </div>
 
-            <textarea
-                rows="5"
+            <input
+                type="text"
                 placeholder="Observaciones"
-                class="w-full mt-5 border rounded-xl p-3"></textarea>
+                class="w-full mt-5 border rounded-xl p-3">
 
         </div>
 
@@ -215,29 +273,75 @@
             <!-- EXAMEN CLÍNICO -->
 <div x-show="tab==='examen'" x-transition>
 
-    <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
+    <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
 
         <div class="bg-white rounded-2xl shadow-sm p-6">
 
-            <h2 class="font-semibold mb-4">
+            <h2 class="font-semibold mb-5">
                 Signos Vitales
             </h2>
 
+            <div class="grid gap-4">
+                <p>Presión Arterial</p>
+                <input
+                    type="text"
+                    placeholder="Presión Arterial"
+                    class="w-full border border-slate-300 rounded-xl px-4 py-3">
+                <p>Frecuencia Cardíaca</p>
+                <input
+                    type="text"
+                    placeholder="Frecuencia Cardíaca"
+                    class="w-full border border-slate-300 rounded-xl px-4 py-3">
+                <p>Frecuencia Respiratoria</p>
+                <input
+                    type="text"
+                    placeholder="Frecuencia Respiratoria"
+                    class="w-full border border-slate-300 rounded-xl px-4 py-3">
+                <p>Temperatura</p>
+                <input
+                    type="text" 
+                    placeholder="Temperatura"
+                    class="w-full border border-slate-300 rounded-xl px-4 py-3">
+                <p>Saturación O₂</p>
+                <input
+                    type="text"
+                    placeholder="Saturación O₂"
+                    class="w-full border border-slate-300 rounded-xl px-4 py-3">
+
+            </div>
+
         </div>
 
         <div class="bg-white rounded-2xl shadow-sm p-6">
 
-            <h2 class="font-semibold mb-4">
-                Sistema Estomatognático
+            <h2 class="font-semibold mb-5">
+                Examen Estomatognático
             </h2>
 
-        </div>
+            <div class="grid gap-4">
+                <select name="examen" id="" class="w-full border border-slate-300 rounded-xl px-4 py-3">
+                    <option value="">Seleccione una opción</option>
+                    <option value="labios">Labios</option>
+                    <option value="mejillas">Mejillas</option>
+                    <option value="maxilar_superior">Maxilar Superior</option>
+                    <option value="maxilar_inferior">Maxilar Inferior</option>
+                    <option value="lengua">Lengua</option>
+                    <option value="paladar">Paladar</option>
+                    <option value="piso_boca">Piso de la Boca</option>
+                    <option value="carrillos">Carrillos</option>
+                    <option value="glandulas_salivales">Glándulas Salivales</option>
+                    <option value="oro_faringe">Oro Faringe</option>
+                    <option value="atm">ATM</option>
+                    <option value="ganglios">Ganglios</option>
+                    <option value="otros">Otros</option>
+                    <option value="ninguno">Ninguno</option>
+                </select>
+                <input
+                    type="text"
+                    placeholder="Descripción"
+                    class="w-full border border-slate-300 rounded-xl px-4 py-3">
 
-        <div class="bg-white rounded-2xl shadow-sm p-6">
-
-            <h2 class="font-semibold mb-4">
-                Observaciones
-            </h2>
+            </div>
 
         </div>
 
@@ -246,34 +350,24 @@
 </div>
 
             <!-- DIAGNÓSTICO -->
-             <div x-show="tab==='diagnostico'" x-transition>
-
-    <div class="space-y-6">
-
-        <div class="bg-white rounded-2xl shadow-sm p-6">
+<div x-show="tab==='diagnostico'" x-transition>
+    <div class="bg-white rounded-2xl shadow-sm p-6">
 
             <h2 class="font-semibold mb-4">
-                Motivo de Consulta
+                Diagnóstico
             </h2>
+            <button class="px-4 py-2 rounded-xl bg-green-600 text-white mb-4">
+                Agregar Diagnóstico
+            </button>
+            <select class="w-full border border-slate-300 rounded-xl px-4 py-3 mb-4">
+                <option>Diagnóstico 1</option>
+                <option>Diagnóstico 2</option>
+                <option>Diagnóstico 3</option>
+            </select>
 
-            <textarea rows="4"
-                class="w-full border rounded-xl p-3"></textarea>
-
-        </div>
-
-        <div class="bg-white rounded-2xl shadow-sm p-6">
-
-            <h2 class="font-semibold mb-4">
-                Enfermedad Actual
-            </h2>
-
-            <textarea rows="4"
-                class="w-full border rounded-xl p-3"></textarea>
-
-        </div>
-
-    </div>
-
+            <label><input type="radio" name="diagnostico"> PREDICTIVO</label>
+            <label><input type="radio" name="diagnostico"> DEFINITIVO</label>
+</div>
 </div>
 
             <!-- ODONTOGRAMA -->
@@ -284,5 +378,50 @@
         <h2 class="font-semibold mb-4">
             Odontograma
         </h2>
+        <!-- Traemos el archivo diente.php de la carpeta components-->
+    <!-- RECESIÓN -->
+<div class="flex justify-between items-center mb-2">
+
+    <span class="w-24 text-sm font-medium">
+        Recesión
+    </span>
+
+    <?php include "components/filarecesion.php"; ?>
+
+</div>
+
+<!-- MOVILIDAD -->
+<div class="flex justify-between items-center mb-6">
+
+    <span class="w-24 text-sm font-medium">
+        Movilidad
+    </span>
+
+    <?php include "components/filamovilidad.php"; ?>
+
+</div>
+
+<!-- PERMANENTES SUPERIORES -->
+<div class="flex justify-between mb-10">
+
+    <div class="flex gap-2">
+
+        <?php
+            $grupo = [18,17,16,15,14,13,12,11];
+            include "components/filadiente.php";
+        ?>
 
     </div>
+
+    <div class="flex gap-2">
+
+        <?php
+            $grupo = [21,22,23,24,25,26,27,28];
+            include "components/filadiente.php";
+        ?>
+
+    </div>
+
+</div>
+    </div>
+             </div>
