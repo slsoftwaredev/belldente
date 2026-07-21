@@ -80,17 +80,6 @@
         </button>
 
         <button
-            @click="tab='diagnostico'"
-            :class="tab==='diagnostico'
-            ? 'bg-blue-600 text-white'
-            : 'hover:bg-slate-100'"
-            class="px-4 py-2 rounded-xl">
-
-            Diagnóstico
-
-        </button>
-
-        <button
             @click="tab='odontograma'"
             :class="tab==='odontograma'
             ? 'bg-blue-600 text-white'
@@ -101,6 +90,16 @@
 
         </button>
 
+        <button
+            @click="tab='diagnostico'"
+            :class="tab==='diagnostico'
+            ? 'bg-blue-600 text-white'
+            : 'hover:bg-slate-100'"
+            class="px-4 py-2 rounded-xl">
+
+            Diagnóstico
+
+        </button>
     </div>
 
 </div>
@@ -349,7 +348,29 @@
 
 </div>
 
-            <!-- DIAGNÓSTICO -->
+            <!-- ODONTOGRAMA -->
+             <div x-show="tab==='odontograma'" x-transition>
+
+    <div class="bg-cyan-100 border-2border-slate-600">
+        <!-- Título -->
+
+        <div class="bg-violet-200 border-b-2 border-slate-600 px-4 py-2">
+            <h2 class="font-semibold mb-5">
+                ODONTOGRAMA
+            </h2>
+
+        </div>
+        <!-- Contenido -->
+        <div class="p-4">
+            <?php include "components/odontograma.php"; ?>  
+        </div>
+        
+
+    </div>
+
+</div>
+
+<!-- DIAGNÓSTICO -->
 <div x-show="tab==='diagnostico'" x-transition>
     <div class="bg-white rounded-2xl shadow-sm p-6">
 
@@ -370,58 +391,5 @@
 </div>
 </div>
 
-            <!-- ODONTOGRAMA -->
-             <div x-show="tab==='odontograma'" x-transition>
 
-    <div class="bg-white rounded-2xl shadow-sm p-6">
-
-        <h2 class="font-semibold mb-4">
-            Odontograma
-        </h2>
-        <!-- Traemos el archivo diente.php de la carpeta components-->
-    <!-- RECESIÓN -->
-<div class="flex justify-between items-center mb-2">
-
-    <span class="w-24 text-sm font-medium">
-        Recesión
-    </span>
-
-    <?php include "components/filarecesion.php"; ?>
-
-</div>
-
-<!-- MOVILIDAD -->
-<div class="flex justify-between items-center mb-6">
-
-    <span class="w-24 text-sm font-medium">
-        Movilidad
-    </span>
-
-    <?php include "components/filamovilidad.php"; ?>
-
-</div>
-
-<!-- PERMANENTES SUPERIORES -->
-<div class="flex justify-between mb-10">
-
-    <div class="flex gap-2">
-
-        <?php
-            $grupo = [18,17,16,15,14,13,12,11];
-            include "components/filadiente.php";
-        ?>
-
-    </div>
-
-    <div class="flex gap-2">
-
-        <?php
-            $grupo = [21,22,23,24,25,26,27,28];
-            include "components/filadiente.php";
-        ?>
-
-    </div>
-
-</div>
-    </div>
-             </div>
+<script src="/public/js/odontograma.js"></script>
