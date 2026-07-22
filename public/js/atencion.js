@@ -1,5 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
     cargarCita();
+    listarAntecedentes();
 });
 
 async function cargarCita() {
@@ -38,3 +39,56 @@ document.getElementById("btnCancelar").addEventListener("click", () => {
         location.href = "citas.php";
     }
 });
+
+// ANTECEDENTES
+// Función para listar los antecedentes
+async function listarAntecedentes(){
+
+    try{
+
+        const respuesta = await fetch(
+            "../ajax/atencion.php?op=listar_antecedentes"
+        );
+
+        const data = await respuesta.json();
+
+        const personales = document.getElementById("antecedentes_personales");
+        const familiares = document.getElementById("antecedentes_familiares");
+
+        personales.innerHTML = "";
+        familiares.innerHTML = "";
+
+        data.forEach(antecedente => {
+
+            const html = `
+                <label class="flex items-center gap-3 cursor-pointer">
+
+                    <input
+                        type="checkbox"
+                        class="rounded border-slate-300"
+                        value="${antecedente.id_antecedente}">
+
+                    <span>${antecedente.nombre_antecedente}</span>
+
+                </label>
+            `;
+
+            if (antecedente.id_tipo_antecedente == 1){
+
+                personales.innerHTML += html;
+
+            }else{
+
+                familiares.innerHTML += html;
+
+            }
+
+        });
+
+    }catch(error){
+
+        console.error(error);
+
+    }
+
+}

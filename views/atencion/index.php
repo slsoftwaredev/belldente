@@ -220,28 +220,14 @@ $id_cita = isset($_GET["id_cita"]) ? intval($_GET["id_cita"]) : 0;
                 Antecedentes Personales
             </h2>
 
-            <div class="space-y-3">
-                    <select name="" id="" class="w-full border border-slate-300 rounded-xl px-4 py-3">
-                        <option value="">Alergia Antibiótico</option>
-                        <option value="">Alergia Anestésico</option>
-                        <option value="">Hemorragias</option>
-                        <option value="">VIH/SIDA</option>
-                        <option value="">Tuberculosis</option>
-                        <option value="">Asma</option>
-                        <option value="">Diabetes</option>
-                        <option value="">Hipertensión Arterial</option>
-                        <option value="">Enfermedades Cardíacas</option>
-                        <option value="">Otro</option>
-                        <option value="">Ninguno</option>
-                    </select>
-
+            <div class="space-y-3" id="antecedentes_personales">
             </div>
 
-            <input
-                type="text"
+            <textarea
+                id="observacion_personal"
                 placeholder="Observaciones"
                 class="w-full mt-5 border rounded-xl p-3">
-
+            </textarea>
         </div>
 
         <div class="bg-white rounded-2xl shadow-sm p-6">
@@ -250,33 +236,17 @@ $id_cita = isset($_GET["id_cita"]) ? intval($_GET["id_cita"]) : 0;
                 Antecedentes Familiares
             </h2>
 
-            <div class="space-y-3">
-
-                <select class="w-full border border-slate-300 rounded-xl px-4 py-3">
-                    <option>Cardiopatía</option>
-                    <option>Hipertensión Arterial</option>
-                    <option>Enfermedad Cardiovascular</option>
-                    <option>Cancer</option>
-                    <option>Tuberculosis</option>
-                    <option>Enfermedad Mental</option>
-                    <option>Enfermedad Infecciosa</option>
-                    <option>Mal Formación</option>
-                    <option>Otro</option>
-                    <option>Ninguno</option>
-                </select>
-                
-
+            <div class="space-y-3" id="antecedentes_familiares">
             </div>
 
-            <input
-                type="text"
+            <textarea
+                id="observacion_familiar"
                 placeholder="Observaciones"
                 class="w-full mt-5 border rounded-xl p-3">
+            </textarea>
 
         </div>
-
     </div>
-
 </div>
 
             <!-- EXAMEN CLÍNICO -->
