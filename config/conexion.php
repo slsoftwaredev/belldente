@@ -36,6 +36,13 @@ if (!function_exists('ejecutarConsulta')) {
 		$row=$query->fetch_row();
 		return $row;
 		}
+	function ejecutarConsultaSimpleFilaAssoc($sql){
+		global $conexion;
+
+		$query = $conexion->query($sql);
+
+		return $query->fetch_assoc();
+	}
 	function ejecutarConsulta_retornarID($sql){
 		global $conexion;
 		$query=$conexion->query($sql);

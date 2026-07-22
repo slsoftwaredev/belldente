@@ -8,6 +8,8 @@ if(!isset($_SESSION["id_usuario"])){
     exit();
 }
 
+// recibimos el mensaje de la URL, si no existe lo dejamos vacío
+$mensaje = $_GET["mensaje"] ?? "";
 //Controlamos a donde vamos a direccionar la vista y que se marque el menú lateral dependiendo de la página en la que nos encontremos
 $contenido = "citas/index.php";
 $pagina = "citas";

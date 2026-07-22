@@ -250,4 +250,63 @@
 </div>
 </div>
 
+<?php if (isset($mensaje) && $mensaje === "seleccione_cita"): ?>
+
+<div
+    id="modalMensaje"
+    class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+
+    <div class="bg-white rounded-2xl shadow-xl w-full max-w-md p-6">
+
+        <div class="flex items-center gap-3 mb-4">
+
+            <div class="w-12 h-12 rounded-full bg-amber-100 flex items-center justify-center">
+
+                <svg xmlns="http://www.w3.org/2000/svg"
+                    class="w-7 h-7 text-amber-600"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor">
+
+                    <path stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M12 9v2m0 4h.01M10.29 3.86l-8 14A1 1 0 003.17 19h17.66a1 1 0 00.88-1.5l-8-14a1 1 0 00-1.76 0z"/>
+
+                </svg>
+
+            </div>
+
+            <div>
+
+                <h2 class="text-lg font-semibold">
+                    Atención Clínica
+                </h2>
+
+                <p class="text-sm text-slate-500">
+                    Debe seleccionar una cita antes de iniciar una atención clínica.
+                </p>
+
+            </div>
+
+        </div>
+
+        <div class="flex justify-end">
+
+            <button
+                onclick="cerrarModalMensaje()"
+                class="px-5 py-2 rounded-xl bg-blue-600 text-white hover:bg-blue-700">
+
+                Aceptar
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+<?php endif; ?>
+
 <script src="/public/js/cita.js"></script>

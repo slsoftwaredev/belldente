@@ -1,3 +1,12 @@
+<?php 
+$id_cita = isset($_GET["id_cita"]) ? intval($_GET["id_cita"]) : 0;
+?>
+
+<input
+    type="hidden"
+    id="id_cita"
+    value="<?= $id_cita ?>">
+
 <div
     x-data="{ tab:'datos' }"
     class="w-full max-w-7xl mx-auto space-y-6">
@@ -22,9 +31,10 @@
         <div class="flex flex-col sm:flex-row gap-3">
 
             <button
+                id="btnCancelar"
                 class="px-5 py-3 rounded-xl bg-blue-600 text-white">
 
-                Guardar
+                Cancelar
 
             </button>
 
@@ -120,22 +130,22 @@
 
                 <p>
                     <span class="font-medium">Paciente:</span>
-                    Juan Pérez
+                    <span id="paciente"></span>
                 </p>
 
                 <p>
                     <span class="font-medium">Cédula:</span>
-                    1000000001
+                    <span id="cedula"></span>
                 </p>
 
                 <p>
                     <span class="font-medium">Fecha Nacimiento:</span>
-                    15/05/1995
+                    <span id="fecha_nacimiento"></span>
                 </p>
 
                 <p>
                     <span class="font-medium">Edad:</span>
-                    31 años
+                    <span id="edad"></span> años
                 </p>
 
             </div>
@@ -152,17 +162,17 @@
 
                 <p>
                     <span class="font-medium">Teléfono:</span>
-                    0999999999
+                    <span id="telefono"></span>
                 </p>
 
                 <p>
                     <span class="font-medium">Correo:</span>
-                    correo@email.com
+                    <span id="correo"></span>
                 </p>
 
                 <p>
                     <span class="font-medium">Dirección:</span>
-                    Otavalo
+                    <span id="direccion"></span>
                 </p>
 
             </div>
@@ -184,12 +194,12 @@
 
                 <p>
                     <span class="font-medium">Fecha:</span>
-                    21/06/2026
+                    <span id="fecha_cita"></span>
                 </p>
 
                 <p>
                     <span class="font-medium">Estado:</span>
-                    En Atención
+                    <span id="estado_cita"></span>
                 </p>
 
             </div>
@@ -393,3 +403,4 @@
 
 
 <script src="/public/js/odontograma.js"></script>
+<script src="/public/js/atencion.js"></script>

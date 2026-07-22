@@ -331,12 +331,20 @@ function buscarCitas(){
 
 }
 
-//Prueba boton atender cita
+// Abrir módulo de Atención Clínica
 function atenderCita(id_cita){
+    window.location.href = "atencion.php?id_cita=" + id_cita;
+}
 
-    alert(
-        "Módulo de Atención Clínica en desarrollo.\n\nCita ID: "
-        + id_cita
-    );
+// Cerrar modal de mensaje
+function cerrarModalMensaje() {
+
+    document.getElementById("modalMensaje").remove();
+
+    const url = new URL(window.location);
+
+    url.searchParams.delete("mensaje");
+
+    window.history.replaceState({}, "", url);
 
 }
