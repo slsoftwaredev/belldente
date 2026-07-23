@@ -82,11 +82,74 @@
             </li>
 
             <li>
+
+                <a href="historias.php"
+                    class="flex items-center gap-3 px-4 py-3 rounded-lg
+                    <?= ($pagina == 'historias')
+                    ? 'bg-blue-50 text-blue-600 font-medium'
+                    : 'hover:bg-slate-100'; ?>">
+
+                    📋 Historias Clínicas
+
+                </a>
+
+            </li>
+            <li>
                 <a href="#"
                     class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-100">
                     📷 Fotografías Clínicas
                 </a>
             </li>
+
+            <li>
+
+            <button
+                id="btnCatalogos"
+                class="w-full flex items-center justify-between px-4 py-3 rounded-lg hover:bg-slate-100">
+
+                <span class="flex items-center gap-3">
+                    📚 Catálogos
+                </span>
+
+                <span id="iconCatalogos">▾</span>
+
+            </button>
+
+            <ul
+                id="menuCatalogos"
+                class="hidden mt-2 ml-8 space-y-2">
+
+                <li>
+
+                    <a href="cie10.php"
+                        class="flex items-center gap-3 px-4 py-2 rounded-lg
+                        <?= ($pagina == 'cie10')
+                        ? 'bg-blue-50 text-blue-600 font-medium'
+                        : 'hover:bg-slate-100'; ?>">
+
+                        🩺 CIE-10
+
+                    </a>
+
+                </li>
+
+                <li>
+
+                    <a href="tratamientos.php"
+                        class="flex items-center gap-3 px-4 py-2 rounded-lg
+                        <?= ($pagina == 'tratamientos')
+                        ? 'bg-blue-50 text-blue-600 font-medium'
+                        : 'hover:bg-slate-100'; ?>">
+
+                        🦷 Tratamientos
+
+                    </a>
+
+                </li>
+
+            </ul>
+
+        </li>
 
             <li>
                 <a href="#"

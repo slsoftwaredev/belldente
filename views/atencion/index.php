@@ -88,6 +88,16 @@ $id_cita = isset($_GET["id_cita"]) ? intval($_GET["id_cita"]) : 0;
             Examen
 
         </button>
+        <button
+            @click="tab='indicadores'"
+            :class="tab==='indicadores'
+            ? 'bg-blue-600 text-white'
+            : 'hover:bg-slate-100'"
+            class="px-4 py-2 rounded-xl">
+
+            Indicadores
+
+        </button>
 
         <button
             @click="tab='odontograma'"
@@ -256,72 +266,86 @@ $id_cita = isset($_GET["id_cita"]) ? intval($_GET["id_cita"]) : 0;
 
         <div class="bg-white rounded-2xl shadow-sm p-6">
 
-            <h2 class="font-semibold mb-5">
-                Signos Vitales
-            </h2>
+    <h2 class="font-semibold mb-6">
+        Constantes Vitales
+    </h2>
 
-            <div class="grid gap-4">
-                <p>Presión Arterial</p>
-                <input
-                    type="text"
-                    placeholder="Presión Arterial"
-                    class="w-full border border-slate-300 rounded-xl px-4 py-3">
-                <p>Frecuencia Cardíaca</p>
-                <input
-                    type="text"
-                    placeholder="Frecuencia Cardíaca"
-                    class="w-full border border-slate-300 rounded-xl px-4 py-3">
-                <p>Frecuencia Respiratoria</p>
-                <input
-                    type="text"
-                    placeholder="Frecuencia Respiratoria"
-                    class="w-full border border-slate-300 rounded-xl px-4 py-3">
-                <p>Temperatura</p>
-                <input
-                    type="text" 
-                    placeholder="Temperatura"
-                    class="w-full border border-slate-300 rounded-xl px-4 py-3">
-                <p>Saturación O₂</p>
-                <input
-                    type="text"
-                    placeholder="Saturación O₂"
-                    class="w-full border border-slate-300 rounded-xl px-4 py-3">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
 
-            </div>
+        <div>
+            <label class="text-sm font-medium">
+                Temperatura (°C)
+            </label>
 
+            <input
+                type="number"
+                step="0.1"
+                id="temperatura"
+                class="w-full mt-2 border border-slate-300 rounded-xl p-3">
         </div>
 
-        <div class="bg-white rounded-2xl shadow-sm p-6">
+        <div>
+            <label class="text-sm font-medium">
+                Pulso (lpm)
+            </label>
 
-            <h2 class="font-semibold mb-5">
+            <input
+                type="number"
+                id="pulso"
+                class="w-full mt-2 border border-slate-300 rounded-xl p-3">
+        </div>
+
+        <div>
+            <label class="text-sm font-medium">
+                Frecuencia Respiratoria (rpm)
+            </label>
+
+            <input
+                type="number"
+                id="frecuencia_respiratoria"
+                class="w-full mt-2 border border-slate-300 rounded-xl p-3">
+        </div>
+
+        <div>
+            <label class="text-sm font-medium">
+                Presión Arterial
+            </label>
+
+            <input
+                type="text"
+                placeholder="120/80"
+                id="presion_arterial"
+                class="w-full mt-2 border border-slate-300 rounded-xl p-3">
+        </div>
+
+    </div>
+
+    </div>
+        <!-- EXAMEN ESTOMATOGNÁTICO -->
+        <div class="bg-white rounded-2xl shadow-sm p-6">
+            <h2 class="font-semibold mb-6">
                 Examen Estomatognático
             </h2>
+            <div id="examen_estomatognatico" class="space-y-4">
+        </div>
+      </div>
+   </div>
+</div>
 
-            <div class="grid gap-4">
-                <select name="examen" id="" class="w-full border border-slate-300 rounded-xl px-4 py-3">
-                    <option value="">Seleccione una opción</option>
-                    <option value="labios">Labios</option>
-                    <option value="mejillas">Mejillas</option>
-                    <option value="maxilar_superior">Maxilar Superior</option>
-                    <option value="maxilar_inferior">Maxilar Inferior</option>
-                    <option value="lengua">Lengua</option>
-                    <option value="paladar">Paladar</option>
-                    <option value="piso_boca">Piso de la Boca</option>
-                    <option value="carrillos">Carrillos</option>
-                    <option value="glandulas_salivales">Glándulas Salivales</option>
-                    <option value="oro_faringe">Oro Faringe</option>
-                    <option value="atm">ATM</option>
-                    <option value="ganglios">Ganglios</option>
-                    <option value="otros">Otros</option>
-                    <option value="ninguno">Ninguno</option>
-                </select>
-                <input
-                    type="text"
-                    placeholder="Descripción"
-                    class="w-full border border-slate-300 rounded-xl px-4 py-3">
+<!-- INDICADORES DE SALUD BUCAL -->
+<div x-show="tab==='indicadores'" x-transition>
 
-            </div>
+    <div class="bg-white rounded-2xl shadow-sm p-6">
 
+        <h2 class="font-semibold mb-6">
+            Indicadores de Salud Bucal
+        </h2>
+        <p class="text-sm text-slate-500 mb-6">
+        Seleccione el estado correspondiente para cada indicador.
+        </p>
+        <div
+            id="indicadores_salud"
+            class="space-y-8">
         </div>
 
     </div>
@@ -331,7 +355,7 @@ $id_cita = isset($_GET["id_cita"]) ? intval($_GET["id_cita"]) : 0;
             <!-- ODONTOGRAMA -->
              <div x-show="tab==='odontograma'" x-transition>
 
-    <div class="bg-cyan-100 border-2border-slate-600">
+    <div class="bg-cyan-100 border-2 border-slate-600">
         <!-- Título -->
 
         <div class="bg-violet-200 border-b-2 border-slate-600 px-4 py-2">

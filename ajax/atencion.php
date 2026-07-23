@@ -20,6 +20,23 @@ case "listar_antecedentes":
         $data[] = $reg;
     }
     echo json_encode($data);
-
-break;
+    break;
+//Listamos el examen estomatognático
+    case "listar_estomatognatico":
+    $rspta = $atencion->listarEstomatognatico();
+    $data = [];
+    while($reg = $rspta->fetch_object()){
+        $data[] = $reg;
+    }
+    echo json_encode($data);    
+    break;
+//Listamos los indicadores de salud bucal
+    case "listar_indicadores":
+        $rspta = $atencion->listarIndicadores();
+        $data = [];
+        while($reg = $rspta->fetch_object()){
+            $data[] = $reg;
+        }
+        echo json_encode($data);
+    break;
 }
