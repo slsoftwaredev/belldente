@@ -1,18 +1,18 @@
-<div class="bg-white rounded-xl shadow">
+<div class="space-y-6">
 
     <!-- Encabezado -->
-
-    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 p-6 border-b">
+<div class="bg-white rounded-2xl shadow-sm p-6">
+    <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
 
         <div>
 
-            <h2 class="text-2xl font-bold text-slate-800">
+            <h1 class="text-3xl font-bold text-slate-800">
 
                 Catálogo CIE-10
 
-            </h2>
+            </h1>
 
-            <p class="text-slate-500">
+            <p class="text-slate-500 mt-1">
 
                 Administración de diagnósticos clínicos.
 
@@ -29,42 +29,43 @@
         </button>
 
     </div>
+</div>
 
     <!-- Buscador -->
 
-    <div class="p-6">
+    <div class="bg-white rounded-2xl shadow-sm p-5">
 
         <input
             type="text"
             id="buscar"
             placeholder="Buscar diagnóstico..."
-            class="w-full md:w-80 border rounded-lg px-4 py-2">
+            class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500">
 
     </div>
 
-    <!-- Tabla -->
-
+    <!-- Tabla desktop-->
+<div class="hidden lg:block bg-white rounded-2xl shadow-sm overflow-hidden">
     <div class="overflow-x-auto">
 
-        <table class="min-w-full">
+        <table class="w-full">
 
             <thead class="bg-blue-600 text-white">
 
                 <tr>
 
-                    <th class="px-4 py-3 text-left">
+                    <th class="px-6 py-4 text-left font-semibold">
                         Código
                     </th>
 
-                    <th class="px-4 py-3 text-left">
+                    <th class="px-6 py-4 text-left font-semibold">
                         Descripción
                     </th>
 
-                    <th class="px-4 py-3 text-center">
+                    <th class="px-6 py-4 text-center font-semibold">
                         Estado
                     </th>
 
-                    <th class="px-4 py-3 text-center">
+                    <th class="px-6 py-4 text-center font-semibold">
                         Acciones
                     </th>
 
@@ -80,6 +81,5 @@
 
     </div>
 
+  </div>
 </div>
-
-<?php require "modal.php"; ?>

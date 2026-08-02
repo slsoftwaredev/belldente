@@ -9,18 +9,7 @@ btnMenu.addEventListener("click", () => {
     sidebar.classList.toggle("-translate-x-full");
 
 });
-const btnCatalogos = document.getElementById("btnCatalogos");
-const menuCatalogos = document.getElementById("menuCatalogos");
 
-if(btnCatalogos){
-
-    btnCatalogos.addEventListener("click", () => {
-
-        menuCatalogos.classList.toggle("hidden");
-
-    });
-
-}
 
 </script>
 
