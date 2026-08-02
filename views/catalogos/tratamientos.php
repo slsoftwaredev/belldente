@@ -24,22 +24,18 @@
             + Nuevo
 
         </button>
-
-    
+</div>
 
     <!-- ===========================
             FORMULARIO
     ============================ -->
 
     <!-- FORMULARIO TRATAMIENTO -->
-</div>
     <div
-    id="formTratamiento"
-    class="hidden lg:block">
+    id="formTratamiento" class="hidden lg:block">
 
     <form
-        id="formProcedimiento"
-        class="p-6">
+        id="formProcedimiento" class="p-6">
 
         <input
             type="hidden"
@@ -63,6 +59,7 @@
 
                 <input
                     type="text"
+                    placeholder="Ejemplo: Blanqueamiento dental"
                     id="nombre"
                     name="nombre"
                     autocomplete="off"
@@ -85,6 +82,7 @@
 
                 <input
                     type="number"
+                    placeholder="Ejemplo: 20.00"
                     id="valor"
                     name="valor"
                     min="0"

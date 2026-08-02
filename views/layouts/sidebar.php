@@ -95,8 +95,11 @@
 
             </li>
             <li>
-                <a href="#"
-                    class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-100">
+                <a href="fotografias.php"
+                    class="flex items-center gap-3 px-4 py-3 rounded-lg
+                    <?= ($pagina == 'fotografias')
+                    ? 'bg-blue-50 text-blue-600 font-medium'
+                    : 'hover:bg-slate-100'; ?>">
                     📷 Fotografías Clínicas
                 </a>
             </li>
@@ -121,23 +124,22 @@
                 </a>
     
             <li>
-                <a href="#"
-                    class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-100">
+                <a href="pagos.php"
+                    class="flex items-center gap-3 px-4 py-3 rounded-lg
+                    <?= ($pagina == 'pagos')
+                    ? 'bg-blue-50 text-blue-600 font-medium'
+                    : 'hover:bg-slate-100'; ?>">
                     💰 Pagos
                 </a>
             </li>
 
             <li>
-                <a href="#"
-                    class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-100">
+                <a href="reportes.php"
+                    class="flex items-center gap-3 px-4 py-3 rounded-lg
+                    <?= ($pagina == 'reportes')
+                    ? 'bg-blue-50 text-blue-600 font-medium'
+                    : 'hover:bg-slate-100'; ?>">
                     📊 Reportes
-                </a>
-            </li>
-
-            <li>
-                <a href="#"
-                    class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-100">
-                    ⚙ Configuración
                 </a>
             </li>
 
