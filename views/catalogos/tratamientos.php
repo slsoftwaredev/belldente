@@ -59,7 +59,7 @@
 
                 <input
                     type="text"
-                    placeholder="Ejemplo: Blanqueamiento dental"
+                    placeholder="Ejemplo: Blanqueamiento dental" 
                     id="nombre"
                     name="nombre"
                     autocomplete="off"

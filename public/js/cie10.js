@@ -1,69 +1,384 @@
-const btnNuevo = document.getElementById("btnNuevo");
-const formulario = document.getElementById("formCIE");
-const formCIE10 = document.getElementById("formCIE10");
-const btnCancelar = document.getElementById("btnCancelar");
-const txtBuscar = document.getElementById("buscarCIE10");
-const tablaCIE10 = document.querySelectorAll("#tbllistadoCie10 tr");
-const cardsCIE10 = document.querySelectorAll("#cardCIE10 > div");
+document.addEventListener("DOMContentLoaded", () => {
 
-btnNuevo.addEventListener("click", () => {
+    listarCIE10();
+
+    const formulario = document.getElementById("formCIE");
+    const formCIE10 = document.getElementById("formCIE10");
+    const btnNuevo = document.getElementById("btnNuevo");
+    const btnCancelar = document.getElementById("btnCancelar");
+
+    // Mostrar formulario
+    btnNuevo.addEventListener("click", () => {
+
+        formCIE10.reset();
+
+        document.getElementById("id_cie10").value = 0;
+
+        formulario.classList.remove("hidden");
+
+        formulario.scrollIntoView({
+
+            behavior: "smooth",
+            block: "start"
+
+        });
+
+    });
+
+    // Cancelar
+    btnCancelar.addEventListener("click", () => {
+
+        formCIE10.reset();
+
+        formulario.classList.add("hidden");
+
+    });
+
+    // Guardar / Editar
+
+    formCIE10.addEventListener("submit", function (e) {
+
+        e.preventDefault();
+
+        const formData = new FormData(formCIE10);
+
+        const accion = document.getElementById("id_cie10").value == 0
+            ? "guardar"
+            : "editar";
+
+        fetch("../ajax/cie10.php?op=" + accion, {
+
+            method: "POST",
+
+            body: formData
+
+        })
+
+        .then(response => response.json())
+
+        .then(data => {
+
+            if (data.status) {
+
+                alert(
+
+                    accion == "guardar"
+
+                    ? "Diagnóstico registrado correctamente."
+
+                    : "Diagnóstico actualizado correctamente."
+
+                );
+
+                formCIE10.reset();
+
+                formulario.classList.add("hidden");
+
+                listarCIE10();
+
+            } else {
+
+                alert(
+
+                    accion == "guardar"
+
+                    ? "Error al registrar."
+
+                    : "Error al actualizar."
+
+                );
+
+            }
+
+        })
+
+        .catch(error => {
+
+            console.error(error);
+
+        });
+
+    });
+
+});
+
+/*=========================================
+LISTAR
+=========================================*/
+
+function listarCIE10() {
+
+    fetch("../ajax/cie10.php?op=listar")
+
+    .then(response => response.json())
+
+    .then(data => {
+
+        let html = "";
+
+        let cards = "";
+
+        data.forEach(cie10 => {
+
+            cards += `
+
+                <div class="bg-white rounded-2xl shadow-sm p-4">
+
+                    <h3 class="font-bold text-slate-800">
+
+                        ${cie10[0]}
+
+                    </h3>
+
+                    <p class="text-sm text-slate-500 mt-2">
+
+                        ${cie10[1]}
+
+                    </p>
+
+                    <div class="mt-2">
+
+                        ${cie10[2]}
+
+                    </div>
+
+                    <div class="mt-4">
+
+                        ${cie10[3]}
+
+                    </div>
+
+                </div>
+
+            `;
+
+            html += `
+
+                <tr class="border-b">
+
+                    <td class="px-6 py-4">
+
+                        ${cie10[0]}
+
+                    </td>
+
+                    <td class="px-6 py-4">
+
+                        ${cie10[1]}
+
+                    </td>
+
+                    <td class="px-6 py-4 text-center">
+
+                        ${cie10[2]}
+
+                    </td>
+
+                    <td class="px-6 py-4 text-center">
+
+                        ${cie10[3]}
+
+                    </td>
+
+                </tr>
+
+            `;
+
+        });
+
+        if (data.length === 0) {
+
+            html = `
+
+                <tr>
+
+                    <td
+                        colspan="4"
+                        class="px-6 py-8 text-center text-slate-500">
+
+                        Sin registros
+
+                    </td>
+
+                </tr>
+
+            `;
+
+            cards = `
+
+                <div class="bg-white rounded-2xl shadow-sm p-4 text-center text-slate-500">
+
+                    Sin registros
+
+                </div>
+
+            `;
+
+        }
+
+        document.getElementById("tbllistadoCie10").innerHTML = html;
+
+        document.getElementById("cardsCie10").innerHTML = cards;
+
+    })
+
+    .catch(error => {
+
+        console.error(error);
+
+    });
+
+}
+
+/*=========================================
+EDITAR
+=========================================*/
+
+function editarCIE10(id_cie10){
+
+    const formulario = document.getElementById("formCIE");
 
     formulario.classList.remove("hidden");
 
-    formulario.scrollIntoView({
+    fetch("../ajax/cie10.php?op=obtener",{
 
-        behavior: "smooth",
-        block: "start"
+        method:"POST",
+
+        headers:{
+
+            "Content-Type":"application/x-www-form-urlencoded"
+
+        },
+
+        body:"id_cie10="+id_cie10
+
+    })
+
+    .then(response => response.json())
+
+    .then(data => {
+
+        document.getElementById("id_cie10").value =
+            data[0];
+
+        document.querySelector("[name='codigo']").value =
+            data[1];
+
+        document.querySelector("[name='descripcion']").value =
+            data[2];
+
+        formulario.scrollIntoView({
+
+            behavior:"smooth"
+
+        });
 
     });
 
+}
 
-});
-btnCancelar.addEventListener("click", () => {
+/*=========================================
+CAMBIAR ESTADO
+=========================================*/
 
-        formCIE10.reset();
-        formulario.classList.add("hidden");
-});
-txtBuscar.addEventListener("keyup", buscarCIE10);
+function cambiarEstado(id_cie10, estado){
+
+    const mensaje =
+
+        estado == 1
+
+        ? "¿Desea activar este diagnóstico?"
+
+        : "¿Desea inactivar este diagnóstico?";
+
+    if(!confirm(mensaje)){
+
+        return;
+
+    }
+
+    const formData = new FormData();
+
+    formData.append("id_cie10",id_cie10);
+
+    formData.append("estado",estado);
+
+    fetch("../ajax/cie10.php?op=estado",{
+
+        method:"POST",
+
+        body:formData
+
+    })
+
+    .then(response => response.json())
+
+    .then(data => {
+
+        if(data.status){
+
+            listarCIE10();
+
+        }else{
+
+            alert("No se pudo actualizar el estado.");
+
+        }
+
+    })
+
+    .catch(error => {
+
+        console.error(error);
+
+    });
+
+}
+
+/*=========================================
+BUSCAR
+=========================================*/
+
+document
+.getElementById("buscarCIE10")
+.addEventListener("keyup", buscarCIE10);
 
 function buscarCIE10(){
 
-    const filtro = txtBuscar.value.toLowerCase();
+    let filtro =
+    this.value.toLowerCase();
 
-    let visiblesTabla = 0;
-    let visiblesCards = 0;
+    document
+    .querySelectorAll("#tbllistadoCie10 tr")
+    .forEach(fila => {
 
-    tablaCIE10.forEach(fila => {
+        let texto =
+        fila.textContent.toLowerCase();
 
-        const texto = fila.textContent.toLowerCase();
+        fila.style.display =
 
-        if(texto.includes(filtro)){
+        texto.includes(filtro)
 
-            fila.style.display = "";
-            visiblesTabla++;
+        ? ""
 
-        }else{
-
-            fila.style.display = "none";
-
-        }
+        : "none";
 
     });
 
-    cardsCIE10.forEach(card => {
+    document
+    .querySelectorAll("#cardsCie10 > div")
+    .forEach(card => {
 
-        const texto = card.textContent.toLowerCase();
+        let texto =
+        card.textContent.toLowerCase();
 
-        if(texto.includes(filtro)){
+        card.style.display =
 
-            card.style.display = "";
-            visiblesCards++;
+        texto.includes(filtro)
 
-        }else{
+        ? ""
 
-            card.style.display = "none";
-
-        }
+        : "none";
 
     });
 
