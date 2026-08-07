@@ -35,7 +35,7 @@
     id="formTratamiento" class="hidden lg:block">
 
     <form
-        id="formProcedimiento" class="p-6">
+        id="formTratamientoFormulario" class="p-6">
 
         <input
             type="hidden"
@@ -147,10 +147,6 @@
 
                         <th class="px-6 py-4 text-left font-semibold">
                             Tratamiento
-                        </th>
-
-                        <th class="px-6 py-4 text-left font-semibold">
-                            Descripción
                         </th>
 
                         <th class="px-6 py-4 text-center font-semibold">
