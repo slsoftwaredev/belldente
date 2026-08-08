@@ -39,4 +39,24 @@ case "listar_antecedentes":
         }
         echo json_encode($data);
     break;
-}
+//Combo CIE-10 - Procedimientos o protocolos de atención
+    case 'combo_cie10':
+        $rspta = $atencion->comboCIE10();
+        $data = array();
+        while($reg = $rspta->fetch_object()){
+            $data[] = $reg;
+        }
+        echo json_encode($data);
+
+    break;
+
+    case 'combo_tratamientos':
+        $rspta = $atencion->comboTratamientos();
+        $data = array();
+        while($reg = $rspta->fetch_object()){
+            $data[] = $reg;
+        }
+        echo json_encode($data);
+
+    break;
+} 

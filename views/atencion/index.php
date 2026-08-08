@@ -39,6 +39,7 @@ $id_cita = isset($_GET["id_cita"]) ? intval($_GET["id_cita"]) : 0;
             </button>
 
             <button
+                id="btnFinalizar"
                 class="px-5 py-3 rounded-xl bg-green-600 text-white">
 
                 Finalizar
@@ -117,7 +118,29 @@ $id_cita = isset($_GET["id_cita"]) ? intval($_GET["id_cita"]) : 0;
             : 'hover:bg-slate-100'"
             class="px-4 py-2 rounded-xl">
 
-            Diagnóstico
+            Diagnóstico y Tratamiento
+
+        </button>
+
+        <button
+            @click="tab='fotografias'"
+            :class="tab==='fotografias'
+            ? 'bg-blue-600 text-white'
+            : 'hover:bg-slate-100'"
+            class="px-4 py-2 rounded-xl">
+
+            Fotografías Clínicas
+
+        </button>
+
+        <button
+            @click="tab='prescripcion'"
+            :class="tab==='prescripcion'
+            ? 'bg-blue-600 text-white'
+            : 'hover:bg-slate-100'"
+            class="px-4 py-2 rounded-xl">
+
+            Prescripciones Médicas
 
         </button>
     </div>
@@ -374,27 +397,534 @@ $id_cita = isset($_GET["id_cita"]) ? intval($_GET["id_cita"]) : 0;
 
 </div>
 
-<!-- DIAGNÓSTICO -->
-<div x-show="tab==='diagnostico'" x-transition>
+<!-- ===========================
+        DIAGNÓSTICO
+=========================== -->
+
+<div
+    x-show="tab==='diagnostico'"
+    x-transition
+    class="space-y-6">
+
+    <!-- ===========================
+            DIAGNÓSTICOS
+    ============================ -->
+
     <div class="bg-white rounded-2xl shadow-sm p-6">
 
-            <h2 class="font-semibold mb-4">
-                Diagnóstico
-            </h2>
-            <button class="px-4 py-2 rounded-xl bg-green-600 text-white mb-4">
-                Agregar Diagnóstico
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+
+            <div>
+
+                <h2 class="text-xl font-semibold">
+
+                    Diagnósticos CIE-10
+
+                </h2>
+
+                <p class="text-sm text-slate-500">
+
+                    Registre uno o varios diagnósticos para esta atención.
+
+                </p>
+
+            </div>
+
+            <button
+                type="button"
+                id="btnAgregarDiagnostico"
+                class="bg-green-600 hover:bg-green-700 text-white px-5 py-3 rounded-xl">
+
+                + Agregar Diagnóstico
+
             </button>
-            <select class="w-full border border-slate-300 rounded-xl px-4 py-3 mb-4">
-                <option>Diagnóstico 1</option>
-                <option>Diagnóstico 2</option>
-                <option>Diagnóstico 3</option>
-            </select>
 
-            <label><input type="radio" name="diagnostico"> PREDICTIVO</label>
-            <label><input type="radio" name="diagnostico"> DEFINITIVO</label>
-</div>
+        </div>
+
+        <!-- AQUÍ EL JS AGREGARÁ LOS DIAGNÓSTICOS -->
+
+        <div
+            id="listaDiagnosticos"
+            class="space-y-4">
+
+        </div>
+
+    </div>
+
+    <!-- ===========================
+            TRATAMIENTOS
+    ============================ -->
+
+    <div class="bg-white rounded-2xl shadow-sm p-6">
+
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+
+            <div>
+
+                <h2 class="text-xl font-semibold">
+
+                    Tratamientos
+
+                </h2>
+
+                <p class="text-sm text-slate-500">
+
+                    Seleccione los tratamientos que se realizarán.
+
+                </p>
+
+            </div>
+
+            <button
+                type="button"
+                id="btnAgregarTratamiento"
+                class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-3 rounded-xl">
+
+                + Agregar Tratamiento
+
+            </button>
+
+        </div>
+
+        <!-- AQUÍ EL JS AGREGARÁ LOS TRATAMIENTOS -->
+
+        <div
+            id="listaTratamientos"
+            class="space-y-4">
+
+        </div>
+
+    </div>
+
 </div>
 
+<!-- ===========================
+        FOTOGRAFÍAS CLÍNICAS
+=========================== -->
+
+<div
+    x-show="tab==='fotografias'"
+    x-transition
+    class="space-y-6">
+
+    <div class="bg-white rounded-2xl shadow-sm p-6">
+
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+
+            <div>
+
+                <h2 class="text-xl font-semibold">
+                    Fotografías Clínicas
+                </h2>
+
+                <p class="text-sm text-slate-500">
+                    Adjunte las fotografías correspondientes a la atención.
+                </p>
+
+            </div>
+
+            <button
+                type="button"
+                id="btnAgregarFotografia"
+                class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-3 rounded-xl">
+
+                + Agregar Fotografía
+
+            </button>
+
+        </div>
+
+        <div
+            id="listaFotografias"
+            class="space-y-5">
+
+            <div
+                class="fotografia border rounded-2xl p-5 bg-slate-50">
+
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
+
+                    <div class="lg:col-span-3">
+
+                        <label class="block text-sm font-medium mb-2">
+                            Tipo
+                        </label>
+
+                        <select
+                            name="tipo_fotografia[]"
+                            class="w-full border border-slate-300 rounded-xl px-4 py-3">
+
+                            <option value="">Seleccione...</option>
+                            <option value="Antes">Antes</option>
+                            <option value="Durante">Durante</option>
+                            <option value="Después">Después</option>
+                            <option value="Radiografía">Radiografía</option>
+                            <option value="Intraoral">Intraoral</option>
+                            <option value="Extraoral">Extraoral</option>
+                            <option value="Control">Control</option>
+                            <option value="Otro">Otro</option>
+
+                        </select>
+
+                    </div>
+
+                    <div class="lg:col-span-5">
+
+                        <label class="block text-sm font-medium mb-2">
+                            Observación
+                        </label>
+
+                        <input
+                            type="text"
+                            name="observacion_fotografia[]"
+                            class="w-full border border-slate-300 rounded-xl px-4 py-3">
+
+                    </div>
+
+                    <div class="lg:col-span-4">
+
+                        <label class="block text-sm font-medium mb-2">
+                            Fotografía
+                        </label>
+
+                        <input
+                            type="file"
+                            name="fotografia[]"
+                            accept="image/*"
+                            class="w-full border border-slate-300 rounded-xl px-4 py-3">
+
+                    </div>
+
+                </div>
+
+                <div class="mt-5">
+
+                    <button
+                        type="button"
+                        class="btnEliminarFotografia bg-red-500 hover:bg-red-600 text-white px-5 py-2 rounded-xl">
+
+                        Eliminar
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- ===========================
+        PRESCRIPCIÓN
+=========================== -->
+
+<div
+    x-show="tab==='prescripcion'"
+    x-transition
+    class="space-y-6">
+
+    <div class="bg-white rounded-2xl shadow-sm p-6">
+
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+
+            <div>
+
+                <h2 class="text-xl font-semibold">
+                    Prescripción Médica
+                </h2>
+
+                <p class="text-sm text-slate-500">
+                    Registre los medicamentos prescritos.
+                </p>
+
+            </div>
+
+            <button
+                type="button"
+                id="btnAgregarMedicamento"
+                class="bg-green-600 hover:bg-green-700 text-white px-5 py-3 rounded-xl">
+
+                + Agregar Medicamento
+
+            </button>
+
+        </div>
+
+        <div
+            id="listaMedicamentos"
+            class="space-y-5">
+
+            <div
+                class="medicamento border rounded-2xl p-5 bg-slate-50">
+
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
+
+                    <div class="lg:col-span-3">
+
+                        <label class="block text-sm font-medium mb-2">
+                            Medicamento
+                        </label>
+
+                        <input
+                            type="text"
+                            name="medicamento[]"
+                            class="w-full border border-slate-300 rounded-xl px-4 py-3">
+
+                    </div>
+
+                    <div class="lg:col-span-2">
+
+                        <label class="block text-sm font-medium mb-2">
+                            Dosis
+                        </label>
+
+                        <input
+                            type="text"
+                            name="dosis[]"
+                            class="w-full border border-slate-300 rounded-xl px-4 py-3">
+
+                    </div>
+
+                    <div class="lg:col-span-2">
+
+                        <label class="block text-sm font-medium mb-2">
+                            Frecuencia
+                        </label>
+
+                        <input
+                            type="text"
+                            name="frecuencia[]"
+                            class="w-full border border-slate-300 rounded-xl px-4 py-3">
+
+                    </div>
+
+                    <div class="lg:col-span-2">
+
+                        <label class="block text-sm font-medium mb-2">
+                            Duración
+                        </label>
+
+                        <input
+                            type="text"
+                            name="duracion[]"
+                            class="w-full border border-slate-300 rounded-xl px-4 py-3">
+
+                    </div>
+
+                    <div class="lg:col-span-3">
+
+                        <label class="block text-sm font-medium mb-2">
+                            Indicaciones
+                        </label>
+
+                        <input
+                            type="text"
+                            name="indicaciones[]"
+                            class="w-full border border-slate-300 rounded-xl px-4 py-3">
+
+                    </div>
+
+                </div>
+
+                <div class="mt-5">
+
+                    <button
+                        type="button"
+                        class="btnEliminarMedicamento bg-red-500 hover:bg-red-600 text-white px-5 py-2 rounded-xl">
+
+                        Eliminar
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+    </div>
+
+</div>
+<!-- ==========================================
+        MODAL RESUMEN DE ATENCIÓN
+========================================== -->
+
+<div
+    id="modalResumen"
+    class="fixed inset-0 bg-black/60 hidden items-center justify-center p-4 z-50">
+
+    <div
+        class="bg-white rounded-3xl w-full max-w-5xl max-h-[90vh] overflow-y-auto">
+
+        <!-- Header -->
+
+        <div class="bg-blue-600 px-6 py-5 flex justify-between items-center rounded-t-3xl">
+
+            <div>
+
+                <h2 class="text-2xl font-bold text-white">
+
+                    Resumen de la Atención
+
+                </h2>
+
+                <p class="text-blue-100">
+
+                    Revise la información antes de finalizar.
+
+                </p>
+
+            </div>
+
+            <button
+                type="button"
+                id="btnCerrarResumen"
+                class="text-3xl text-white hover:text-red-300">
+
+                ×
+
+            </button>
+
+        </div>
+
+        <!-- Body -->
+
+        <div class="p-6 space-y-6">
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+                <!-- Diagnósticos -->
+
+                <div class="border rounded-2xl p-5">
+
+                    <h3 class="font-semibold text-blue-700 mb-4">
+
+                        Diagnósticos
+
+                    </h3>
+
+                    <div
+                        id="resumenDiagnosticos"
+                        class="space-y-2">
+
+                    </div>
+
+                </div>
+
+                <!-- Tratamientos -->
+
+                <div class="border rounded-2xl p-5">
+
+                    <h3 class="font-semibold text-green-700 mb-4">
+
+                        Tratamientos
+
+                    </h3>
+
+                    <div
+                        id="resumenTratamientos"
+                        class="space-y-2">
+
+                    </div>
+
+                </div>
+
+                <!-- Fotografías -->
+
+                <div class="border rounded-2xl p-5">
+
+                    <h3 class="font-semibold text-purple-700 mb-4">
+
+                        Fotografías Clínicas
+
+                    </h3>
+
+                    <div
+                        id="resumenFotografias">
+
+                    </div>
+
+                </div>
+
+                <!-- Medicamentos -->
+
+                <div class="border rounded-2xl p-5">
+
+                    <h3 class="font-semibold text-red-700 mb-4">
+
+                        Prescripción Médica
+
+                    </h3>
+
+                    <div
+                        id="resumenMedicamentos">
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- Total -->
+
+            <div
+                class="border-2 border-green-500 rounded-2xl p-6 bg-green-50">
+
+                <div class="flex justify-between items-center">
+
+                    <span class="text-xl font-semibold">
+
+                        Total Tratamientos
+
+                    </span>
+
+                    <span
+                        id="lblTotalTratamientos"
+                        class="text-4xl font-bold text-green-700">
+
+                        $0.00
+
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- Footer -->
+
+        <div class="px-6 py-5 flex justify-end gap-4 border-t">
+
+            <button
+                type="button"
+                id="btnCancelarResumen"
+                class="px-5 py-3 border rounded-xl hover:bg-slate-100">
+
+                Regresar
+
+            </button>
+
+            <button
+                type="button"
+                id="btnConfirmarAtencion"
+                class="px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-xl">
+
+                Confirmar Atención
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
 
 <script src="/public/js/odontograma.js"></script>
 <script src="/public/js/atencion.js"></script>
