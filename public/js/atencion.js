@@ -620,7 +620,7 @@ document.getElementById("btnFinalizar").addEventListener("click", mostrarResumen
 
 function mostrarResumen(){
 
-   // actualizarResumen();
+   actualizarResumen();
 
     document
     .getElementById("modalResumen")
@@ -653,5 +653,286 @@ function cerrarResumen(){
     document
     .getElementById("modalResumen")
     .classList.remove("flex");
+
+}
+
+/*=========================================
+ACTUALIZAR RESUMEN
+=========================================*/
+
+function actualizarResumen(){
+
+    /*==============================
+    DIAGNÓSTICOS
+    ==============================*/
+console.log(
+    document.querySelectorAll("#listaDiagnosticos .diagnostico")
+);
+    let htmlDiagnosticos = "";
+
+    document
+    .querySelectorAll("#listaDiagnosticos .diagnostico")
+    .forEach(item=>{
+
+        const cie10 =
+            item.querySelector("select[name='cie10[]']");
+
+        const tipo =
+            item.querySelector("select[name='tipo_diagnostico[]']");
+
+        if(cie10 && cie10.value!=""){
+
+            htmlDiagnosticos += `
+
+                <div class="border-b pb-2 mb-2">
+
+                    <strong>
+
+                        ${cie10.options[cie10.selectedIndex].text}
+
+                    </strong>
+
+                    <br>
+
+                    <span class="text-sm text-slate-500">
+
+                        ${
+                            tipo.value=="P"
+                            ? "Presuntivo"
+                            : "Definitivo"
+                        }
+
+                    </span>
+
+                </div>
+
+            `;
+
+        }
+
+    });
+
+    if(htmlDiagnosticos==""){
+
+        htmlDiagnosticos=`
+            <p class="text-slate-500">
+                Sin diagnósticos registrados.
+            </p>
+        `;
+
+    }
+
+    document.getElementById("resumenDiagnosticos").innerHTML =
+        htmlDiagnosticos;
+
+
+    /*==============================
+    TRATAMIENTOS
+    ==============================*/
+    let htmlTratamientos="";
+
+    let total=0;
+
+    document
+    .querySelectorAll("#listaTratamientos .tratamiento")
+    .forEach(item=>{
+
+        const tratamiento =
+            item.querySelector("select[name='tratamiento[]']");
+
+        const cantidad =
+            Number(
+                item.querySelector("input[name='cantidad[]']").value || 0
+            );
+
+        const subtotal =
+            Number(
+                item.querySelector("input[name='valor[]']").value || 0
+            );
+
+        if(tratamiento && tratamiento.value!=""){
+
+            total += subtotal;
+
+            htmlTratamientos += `
+
+                <div class="border-b pb-2 mb-2">
+
+                    <strong>
+
+                        ${tratamiento.options[tratamiento.selectedIndex].text}
+
+                    </strong>
+
+                    <br>
+
+                    Cantidad:
+                    ${cantidad}
+
+                    <br>
+
+                    Subtotal:
+
+                    <strong>
+
+                        $ ${subtotal.toFixed(2)}
+
+                    </strong>
+
+                </div>
+
+            `;
+
+        }
+
+    });
+
+    if(htmlTratamientos==""){
+
+        htmlTratamientos=`
+            <p class="text-slate-500">
+                Sin tratamientos registrados.
+            </p>
+        `;
+
+    }
+
+    document.getElementById("resumenTratamientos").innerHTML =
+        htmlTratamientos;
+
+    document.getElementById("lblTotalTratamientos").textContent =
+        "$ "+total.toFixed(2);
+
+
+    /*==============================
+    FOTOGRAFÍAS
+    ==============================*/
+
+    let htmlFotos="";
+
+    let cantidadFotos=0;
+
+    document
+    .querySelectorAll("#listaFotografias .fotografia")
+    .forEach(item=>{
+
+        const tipo =
+            item.querySelector("select[name='tipo_fotografia[]']");
+
+        const observacion =
+            item.querySelector("input[name='observacion_fotografia[]']");
+
+        const archivo =
+            item.querySelector("input[name='fotografia[]']");
+
+        if(archivo.files.length>0){
+
+            cantidadFotos++;
+
+            htmlFotos += `
+
+                <div class="border-b pb-2 mb-2">
+
+                    <strong>
+
+                        ${tipo.value}
+
+                    </strong>
+
+                    <br>
+
+                    ${observacion.value}
+
+                    <br>
+
+                    ${archivo.files[0].name}
+
+                </div>
+
+            `;
+
+        }
+
+    });
+
+    if(cantidadFotos==0){
+
+        htmlFotos=`
+            <p class="text-slate-500">
+                Sin fotografías registradas.
+            </p>
+        `;
+
+    }
+
+    document.getElementById("resumenFotografias").innerHTML =
+        htmlFotos;
+
+
+    /*==============================
+    MEDICAMENTOS
+    ==============================*/
+
+    let htmlMedicamentos="";
+
+    document
+    .querySelectorAll("#listaMedicamentos .medicamento")
+    .forEach(item=>{
+
+        const medicamento =
+            item.querySelector("input[name='medicamento[]']").value;
+
+        if(medicamento!=""){
+
+            htmlMedicamentos += `
+
+                <div class="border-b pb-2 mb-2">
+
+                    <strong>
+
+                        ${medicamento}
+
+                    </strong>
+
+                    <br>
+
+                    Dosis:
+                    ${item.querySelector("input[name='dosis[]']").value}
+
+                    <br>
+
+                    Frecuencia:
+                    ${item.querySelector("input[name='frecuencia[]']").value}
+
+                    <br>
+
+                    Duración:
+                    ${item.querySelector("input[name='duracion[]']").value}
+
+                    <br>
+
+                    Indicaciones:
+                    ${item.querySelector("input[name='indicaciones[]']").value}
+
+                </div>
+
+            `;
+
+        }
+
+    });
+
+    if(htmlMedicamentos==""){
+
+        htmlMedicamentos=`
+            <p class="text-slate-500">
+                Sin medicamentos registrados.
+            </p>
+        `;
+
+    }
+
+    document.getElementById("resumenMedicamentos").innerHTML =
+        htmlMedicamentos;
 
 }
