@@ -16,5 +16,13 @@
             <?php include 'simbolos/corona.php'; ?>
            
             <?php include 'simbolos/endodoncia.php'; ?>
+
+            <?php include 'simbolos/sellante.php'; ?>
+
+            <?php include 'simbolos/protesis_fija.php'; ?>
+
+            <?php include 'simbolos/protesis_removible.php'; ?>
+
+            <?php include 'simbolos/protesis_total.php'; ?>
             
         </div>

@@ -7,6 +7,7 @@ document.addEventListener("DOMContentLoaded", () => {
     listarIndicadores();
     comboCIE10();
     comboTratamientos();
+
 });
 
 async function cargarCita() {

@@ -59,4 +59,54 @@ case "listar_antecedentes":
         echo json_encode($data);
 
     break;
+
+    /* ========================================
+       SIMBOLOGÍAS
+    ======================================== */
+    case "simbologias":
+
+        $rspta = $atencion->listarSimbologias();
+
+        $data = [];
+
+        while ($reg = $rspta->fetch_object()) {
+
+            $data[] = [
+                "id_simbologia"     => $reg->id_simbologia,
+                "nombre_simbologia" => $reg->nombre_simbologia,
+                "color"             => $reg->color,
+                "simbolo"           => $reg->simbolo
+            ];
+
+        }
+
+        echo json_encode($data);
+
+    break;
+
+
+    /* ========================================
+       PIEZAS
+    ======================================== */
+    case "piezas":
+
+        $tipo_denticion = $_GET["tipo_denticion"] ?? 1;
+
+        $rspta = $atencion->listarPiezas($tipo_denticion);
+
+        $data = [];
+
+        while ($reg = $rspta->fetch_object()) {
+
+            $data[] = [
+                "id_pieza"          => $reg->id_pieza,
+                "numero_pieza"      => $reg->numero_pieza,
+                "tipo_denticion_id" => $reg->tipo_denticion_id
+            ];
+
+        }
+
+        echo json_encode($data);
+
+    break;
 } 

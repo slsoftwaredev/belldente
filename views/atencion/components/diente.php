@@ -14,7 +14,7 @@ $numero = $numero ?? 0;
 
         <!-- Cara superior -->
         <div
-            @click="paint(<?= $numero ?>,'superior')"
+            @click="clickDiente(<?= $numero ?>,'superior')"
             :class="surfaceClass(<?= $numero ?>,'superior')"
             class="absolute top-0 left-1/2 -translate-x-1/2
                    w-6 h-3 border border-slate-500 rounded-t
@@ -23,7 +23,7 @@ $numero = $numero ?? 0;
 
         <!-- Cara izquierda -->
         <div
-            @click="paint(<?= $numero ?>,'izquierda')"
+            @click="clickDiente(<?= $numero ?>,'izquierda')"
             :class="surfaceClass(<?= $numero ?>,'izquierda')"
             class="absolute top-3 left-0
                    w-3 h-6 border border-slate-500 rounded-l
@@ -32,7 +32,7 @@ $numero = $numero ?? 0;
 
         <!-- Cara central -->
         <div
-            @click="paint(<?= $numero ?>,'oclusal')"
+            @click="clickDiente(<?= $numero ?>,'oclusal')"
             :class="surfaceClass(<?= $numero ?>,'oclusal')"
             class="absolute top-3 left-3
                    w-6 h-6 border border-slate-500
@@ -41,7 +41,7 @@ $numero = $numero ?? 0;
 
         <!-- Cara derecha -->
         <div
-            @click="paint(<?= $numero ?>,'derecha')"
+            @click="clickDiente(<?= $numero ?>,'derecha')"
             :class="surfaceClass(<?= $numero ?>,'derecha')"
             class="absolute top-3 right-0
                    w-3 h-6 border border-slate-500 rounded-r
@@ -50,7 +50,7 @@ $numero = $numero ?? 0;
 
         <!-- Cara inferior -->
         <div
-            @click="paint(<?= $numero ?>,'inferior')"
+            @click="clickDiente(<?= $numero ?>,'inferior')"
             :class="surfaceClass(<?= $numero ?>,'inferior')"
             class="absolute bottom-0 left-1/2 -translate-x-1/2
                    w-6 h-3 border border-slate-500 rounded-b

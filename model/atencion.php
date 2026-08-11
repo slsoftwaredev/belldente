@@ -36,5 +36,20 @@ class Atencion
     return ejecutarConsultaSP($sql);
 
     }
+
+    // Listar simbologías
+    public function listarSimbologias(){
+        $sql = "CALL sp_odontograma('simbologias', NULL)";
+        return ejecutarConsultaSP($sql);
+    }
+
+
+    // Listar piezas según dentición
+    public function listarPiezas($tipo_denticion){
+        $tipo_denticion = intval($tipo_denticion);
+        $sql = "CALL sp_odontograma('piezas',$tipo_denticion)";
+
+        return ejecutarConsultaSP($sql);
+    }
     
 }
