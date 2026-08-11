@@ -599,6 +599,120 @@ borrarPieza(pieza){
 
 },
 
+// ==========================================
+// ÍNDICE CPOD - DENTICIÓN PERMANENTE
+// ==========================================
+calcularCPOD(){
+
+    let C = 0;
+    let P = 0;
+    let O = 0;
+
+    this.piezasPermanentes.forEach(registro => {
+
+        const pieza = Number(registro.numero_pieza);
+        const estado = this.data[pieza];
+
+        if(!estado) return;
+
+        // ----------------------------------
+        // P = Perdido por caries
+        // ----------------------------------
+        if(
+            estado.simbolos.includes('perdida_caries')
+        ){
+            P++;
+            return;
+        }
+
+        const caras = Object.values(estado.caras);
+
+        // ----------------------------------
+        // C = Pieza con caries
+        // ----------------------------------
+        if(caras.includes('caries')){
+
+            C++;
+            return;
+        }
+
+        // ----------------------------------
+        // O = Pieza obturada
+        // ----------------------------------
+        if(caras.includes('obturacion')){
+
+            O++;
+        }
+
+    });
+
+    return {
+        C,
+        P,
+        O,
+        total: C + P + O
+    };
+
+},
+
+
+// ==========================================
+// ÍNDICE ceod - DENTICIÓN TEMPORAL
+// ==========================================
+calcularCEOD(){
+
+    let c = 0;
+    let e = 0;
+    let o = 0;
+
+    this.piezasTemporales.forEach(registro => {
+
+        const pieza = Number(registro.numero_pieza);
+        const estado = this.data[pieza];
+
+        if(!estado) return;
+
+        // ----------------------------------
+        // e = Extracción indicada
+        // ----------------------------------
+        if(
+            estado.simbolos.includes('extraccion')
+        ){
+            e++;
+            return;
+        }
+
+        const caras = Object.values(estado.caras);
+
+        // ----------------------------------
+        // c = Pieza temporal con caries
+        // ----------------------------------
+        if(caras.includes('caries')){
+
+            c++;
+            return;
+        }
+
+        // ----------------------------------
+        // o = Pieza temporal obturada
+        // ----------------------------------
+        if(caras.includes('obturacion')){
+
+            o++;
+        }
+
+    });
+
+    return {
+        c,
+        e,
+        o,
+        total: c + e + o
+    };
+
+},
+
+
     //   Pintamos la pieza dental
                 paint(pieza,cara){
 

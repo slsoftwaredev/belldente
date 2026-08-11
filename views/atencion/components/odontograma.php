@@ -14,7 +14,7 @@
                 : 'bg-white text-slate-700 hover:bg-slate-100'"
             class="px-5 py-2 font-medium transition">
 
-            Odontograma Adulto
+            Dentición Permanente
 
         </button>
 
@@ -25,7 +25,7 @@
                 : 'bg-white text-slate-700 hover:bg-slate-100'"
             class="px-5 py-2 font-medium border-l border-slate-300 transition">
 
-            OdontogramaInfantil
+            Dentición Temporal
 
         </button>
 
@@ -75,7 +75,7 @@
 
     </div>
 <!-- Odontograma infantil -->
- <div x-show="denticion==='temporal'" class="space-y-8">
+<div x-show="denticion==='temporal'" class="space-y-8">
 
     <div class="flex justify-center gap-4">
 
@@ -108,9 +108,145 @@
         ?>
 
     </div>
-        
-    </div>
-    <?php require __DIR__ . '/procedimientos.php'; ?>
 
 </div>
 
+
+<!-- ==========================================
+     ÍNDICES CPOD / ceod
+=========================================== -->
+
+<div class="border border-slate-300 rounded-lg overflow-hidden">
+
+    <div class="bg-slate-100 px-4 py-3 border-b border-slate-300">
+
+        <h3 class="font-semibold text-slate-800">
+            Índices de Caries
+        </h3>
+
+    </div>
+
+    <div class="p-4 grid grid-cols-1 lg:grid-cols-2 gap-6 bg-slate-200">
+
+        <!-- CPOD -->
+        <div>
+
+            <h4 class="font-semibold text-slate-700 mb-3">
+                Dentición Permanente - CPOD
+            </h4>
+
+            <div class="grid grid-cols-4 gap-2 text-center">
+
+                <div class="border rounded-lg p-3">
+                    <p class="text-xs text-slate-500">Cariados</p>
+
+                    <p
+                        class="text-xl font-bold"
+                        x-text="calcularCPOD().C">
+                    </p>
+
+                    <span class="text-xs font-semibold">C</span>
+                </div>
+
+                <div class="border rounded-lg p-3">
+                    <p class="text-xs text-slate-500">Perdidos</p>
+
+                    <p
+                        class="text-xl font-bold"
+                        x-text="calcularCPOD().P">
+                    </p>
+
+                    <span class="text-xs font-semibold">P</span>
+                </div>
+
+                <div class="border rounded-lg p-3">
+                    <p class="text-xs text-slate-500">Obturados</p>
+
+                    <p
+                        class="text-xl font-bold"
+                        x-text="calcularCPOD().O">
+                    </p>
+
+                    <span class="text-xs font-semibold">O</span>
+                </div>
+
+                <div class="border rounded-lg p-3 bg-blue-50">
+                    <p class="text-xs text-slate-500">Total</p>
+
+                    <p
+                        class="text-xl font-bold text-blue-700"
+                        x-text="calcularCPOD().total">
+                    </p>
+
+                    <span class="text-xs font-semibold">CPOD</span>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ceod -->
+        <div>
+
+            <h4 class="font-semibold text-slate-700 mb-3">
+                Dentición Temporal - ceod
+            </h4>
+
+            <div class="grid grid-cols-4 gap-2 text-center">
+
+                <div class="border rounded-lg p-3">
+                    <p class="text-xs text-slate-500">Cariados</p>
+
+                    <p
+                        class="text-xl font-bold"
+                        x-text="calcularCEOD().c">
+                    </p>
+
+                    <span class="text-xs font-semibold">c</span>
+                </div>
+
+                <div class="border rounded-lg p-3">
+                    <p class="text-xs text-slate-500">Extracción</p>
+
+                    <p
+                        class="text-xl font-bold"
+                        x-text="calcularCEOD().e">
+                    </p>
+
+                    <span class="text-xs font-semibold">e</span>
+                </div>
+
+                <div class="border rounded-lg p-3">
+                    <p class="text-xs text-slate-500">Obturados</p>
+
+                    <p
+                        class="text-xl font-bold"
+                        x-text="calcularCEOD().o">
+                    </p>
+
+                    <span class="text-xs font-semibold">o</span>
+                </div>
+
+                <div class="border rounded-lg p-3 bg-blue-50">
+                    <p class="text-xs text-slate-500">Total</p>
+
+                    <p
+                        class="text-xl font-bold text-blue-700"
+                        x-text="calcularCEOD().total">
+                    </p>
+
+                    <span class="text-xs font-semibold">ceod</span>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- Procedimientos -->
+<?php require __DIR__ . '/procedimientos.php'; ?>
