@@ -130,13 +130,13 @@ $id_cita = isset($_GET["id_cita"]) ? intval($_GET["id_cita"]) : 0;
         </button>
 
         <button
-            @click="tab='prescripcion'"
-            :class="tab==='prescripcion'
+            @click="tab='documentos'"
+            :class="tab==='documentos'
             ? 'bg-blue-600 text-white'
             : 'hover:bg-slate-100'"
             class="px-4 py-2 rounded-xl">
 
-            Prescripciones Médicas
+            Documentos
 
         </button>
     </div>
@@ -455,6 +455,115 @@ $id_cita = isset($_GET["id_cita"]) ? intval($_GET["id_cita"]) : 0;
                 <div id="listaTratamientos" class="space-y-4">
                 </div>
     </div>
+ <!-- ===========================
+                COMPLICACIONES
+    ============================ -->
+            <div class="bg-white rounded-2xl shadow-sm p-6">
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+                    <div>
+                        <h2 class="text-xl font-semibold">Complicaciones</h2>
+                        <p class="text-sm text-slate-500">Registre las complicaciones presentadas durante la atención.</p>
+                    </div>
+                    <button type="button" id="btnAgregarComplicacion" class=" bg-orange-600 hover:bg-orange-700 text-white px-5 py-3 rounded-xl"> + Agregar Complicación</button>
+                </div>
+                <div id="listaComplicaciones" class="space-y-4">
+                    <div class=" complicacion border rounded-2xl p-5 border-sky-700 bg-slate-50">
+                        <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-end">
+                            <div class="lg:col-span-10">
+                                <label class="block text-sm font-medium mb-2">Complicación</label>
+                                <input placeholder="Ingrese la complicación" type="text" name="complicacion[]" class="w-full border border-slate-300 rounded-xl px-4 py-3">
+                            </div>
+                            <div class="lg:col-span-2">
+                            <button type="button" class="btnEliminarComplicacion w-full bg-red-500 hover:bg-red-600 text-white px-5 py-3 rounded-xl">Eliminar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+<!-- ===========================
+        PRESCRIPCIÓN
+=========================== -->
+            <div class="bg-white rounded-2xl shadow-sm p-6">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+            <div>
+                <h2 class="text-xl font-semibold">
+                    Prescripción Médica
+                </h2>
+
+                <p class="text-sm text-slate-500">
+                    Registre los medicamentos prescritos.
+                </p>
+            </div>
+            <button type="button" id="btnAgregarMedicamento" class="bg-green-600 hover:bg-green-700 text-white px-5 py-3 rounded-xl">
+                + Agregar Medicamento
+            </button>
+        </div>
+        <div id="listaMedicamentos" class="space-y-5">
+            <div class="medicamento border border-sky-700 rounded-2xl p-5 bg-slate-50">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
+                    <div class="lg:col-span-3">
+                        <label class="block text-sm font-medium mb-2">
+                            Medicamento
+                        </label>
+
+                        <input
+                            type="text"
+                            name="medicamento[]"
+                            class="w-full border border-slate-300 rounded-xl px-4 py-3">
+                    </div>
+
+                    <div class="lg:col-span-2">
+                        <label class="block text-sm font-medium mb-2">
+                            Dosis
+                        </label>
+
+                        <input
+                            type="text"
+                            name="dosis[]"
+                            class="w-full border border-slate-300 rounded-xl px-4 py-3">
+                    </div>
+
+                    <div class="lg:col-span-2">
+                        <label class="block text-sm font-medium mb-2">
+                            Frecuencia
+                        </label>
+
+                        <input
+                            type="text"
+                            name="frecuencia[]"
+                            class="w-full border border-slate-300 rounded-xl px-4 py-3">
+                    </div>
+
+                    <div class="lg:col-span-2">
+                        <label class="block text-sm font-medium mb-2">
+                            Duración
+                        </label>
+
+                        <input
+                            type="text"
+                            name="duracion[]"
+                            class="w-full border border-slate-300 rounded-xl px-4 py-3">
+                    </div>
+
+                    <div class="lg:col-span-3">
+                        <label class="block text-sm font-medium mb-2">
+                            Indicaciones
+                        </label>
+
+                        <input type="text" name="indicaciones[]"class="w-full border border-slate-300 rounded-xl px-4 py-3">
+                    </div>
+                </div>
+
+                <div class="mt-5">
+                    <button type="button" class="btnEliminarMedicamento bg-red-500 hover:bg-red-600 text-white px-5 py-2 rounded-xl">
+                        Eliminar
+                    </button>
+                </div> <!-- Fin Boton eliminar -->
+            </div> <!-- Fin medicamento -->
+        </div> <!-- Fin lista medicamento -->
+    </div> <!-- Fin BG.WHITE -->
+
 </div>
 
 <!-- ===========================
@@ -474,14 +583,14 @@ $id_cita = isset($_GET["id_cita"]) ? intval($_GET["id_cita"]) : 0;
                 </p>
             </div>
 
-            <button type="button" id="btnAgregarFotografia" class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-3 rounded-xl">
+            <button type="button" id="btnAgregarFotografia" class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-xl">
                 + Agregar Fotografía
             </button>
 
         </div>
         <!--Aquí se listan las fotografias -->
         <div id="listaFotografias" class="space-y-5">
-            <div class="fotografia border rounded-2xl p-5 bg-slate-50">
+            <div class="fotografia border border-sky-700 rounded-2xl p-5 bg-slate-50">
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
                     <div class="lg:col-span-3">
                         <label class="block text-sm font-medium mb-2">
@@ -537,98 +646,45 @@ $id_cita = isset($_GET["id_cita"]) ? intval($_GET["id_cita"]) : 0;
     </div>
 </div>
 
-<!-- ===========================
-        PRESCRIPCIÓN
+        <!-- ===========================
+        DOCUMENTOS
 =========================== -->
-
-<div x-show="tab==='prescripcion'" x-transition class="space-y-6">
-    <div class="bg-white rounded-2xl shadow-sm p-6">
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-            <div>
-                <h2 class="text-xl font-semibold">
-                    Prescripción Médica
-                </h2>
-
-                <p class="text-sm text-slate-500">
-                    Registre los medicamentos prescritos.
-                </p>
-            </div>
-            <button type="button" id="btnAgregarMedicamento" class="bg-green-600 hover:bg-green-700 text-white px-5 py-3 rounded-xl">
-                + Agregar Medicamento
-            </button>
-        </div>
-        <div id="listaMedicamentos" class="space-y-5">
-            <div class="medicamento border rounded-2xl p-5 bg-slate-50">
-                <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
-                    <div class="lg:col-span-3">
-                        <label class="block text-sm font-medium mb-2">
-                            Medicamento
-                        </label>
-
-                        <input
-                            type="text"
-                            name="medicamento[]"
-                            class="w-full border border-slate-300 rounded-xl px-4 py-3">
-                    </div>
-
-                    <div class="lg:col-span-2">
-                        <label class="block text-sm font-medium mb-2">
-                            Dosis
-                        </label>
-
-                        <input
-                            type="text"
-                            name="dosis[]"
-                            class="w-full border border-slate-300 rounded-xl px-4 py-3">
-                    </div>
-
-                    <div class="lg:col-span-2">
-                        <label class="block text-sm font-medium mb-2">
-                            Frecuencia
-                        </label>
-
-                        <input
-                            type="text"
-                            name="frecuencia[]"
-                            class="w-full border border-slate-300 rounded-xl px-4 py-3">
-                    </div>
-
-                    <div class="lg:col-span-2">
-                        <label class="block text-sm font-medium mb-2">
-                            Duración
-                        </label>
-
-                        <input
-                            type="text"
-                            name="duracion[]"
-                            class="w-full border border-slate-300 rounded-xl px-4 py-3">
-                    </div>
-
-                    <div class="lg:col-span-3">
-                        <label class="block text-sm font-medium mb-2">
-                            Indicaciones
-                        </label>
-
-                        <input
-                            type="text"
-                            name="indicaciones[]"
-                            class="w-full border border-slate-300 rounded-xl px-4 py-3">
-                    </div>
+        <div x-show="tab==='documentos'" x-transition class="space-y-6">
+            <div class="bg-white rounded-2xl shadow-sm p-6">
+                <div class="mb-6">
+                    <h2 class="text-xl font-semibold">
+                        Documentos
+                    </h2>
+                    <p class="text-sm text-slate-500">
+                        Genere los documentos correspondientes a la atención del paciente.
+                    </p>
                 </div>
-
-                <div class="mt-5">
-                    <button type="button" class="btnEliminarMedicamento bg-red-500 hover:bg-red-600 text-white px-5 py-2 rounded-xl">
-                        Eliminar
-                    </button>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Consentimiento Informado -->
+                     <div class="border border-sky-700 rounded-2xl p-6 bg-slate-50">
+                        <h3 class="text-lg font-semibold text-slate-800">Consentimiento Informado</h3>
+                        <p class="">Genere el consentimiento informado correspondiente.</p>
+                        <div class="mt-6">
+                            <button type="button" id="btnGenerarConsentimiento" class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-3 rounded-xl">
+                                Generar Consentimiento
+                            </button>
+                        </div>
+                     </div>
+                     <!-- Certificado de reposo -->
+                      <div class="border border-sky-700 rounded-2xl p-6 bg-slate-50">
+                        <h3 class="text-lg font-semibold text-slate-800">Certificado de Reposo</h3>
+                        <p class="">Genere el certificado de reposo correspondiente.</p>
+                        <div class="mt-6">
+                            <button type="button" id="btnGenerarCertificado" class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-3 rounded-xl">
+                                Generar Certificado
+                            </button>
+                        </div>
+                      </div>
                 </div>
             </div>
         </div>
-    </div>
-</div>
-
-    </div>
-
-</div>
+    </div> <!-- FIN PESTAÑA DOCUMENTOS -->
+</div> <!-- FIN X-DATA -->
 <!-- ==========================================
         MODAL RESUMEN DE ATENCIÓN
 ========================================== -->
@@ -717,7 +773,7 @@ $id_cita = isset($_GET["id_cita"]) ? intval($_GET["id_cita"]) : 0;
             </button>
         </div>
     </div>
-</div>
+</div> <!-- FIN Modal resumen -->
 
 <script src="/public/js/odontograma.js"></script>
 <script src="/public/js/atencion.js"></script>

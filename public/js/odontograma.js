@@ -613,38 +613,142 @@ calcularCPOD(){
         const pieza = Number(registro.numero_pieza);
         const estado = this.data[pieza];
 
-        if(!estado) return;
+        const caras = estado
+            ? Object.values(estado.caras)
+            : [];
 
-        // ----------------------------------
-        // P = Perdido por caries
-        // ----------------------------------
+        const simbolos = estado
+            ? estado.simbolos
+            : [];
+
+
+        // ==========================================
+        // C = CARIADO
+        // ==========================================
+        // Según MSP:
+        // - Caries en una o varias superficies
+        // - Endodoncia por realizar
+        //
+        // Si existe obturación + caries,
+        // prevalece CARIES.
+
+        const tieneCaries =
+            caras.includes('caries');
+
+        const endodonciaRequerida =
+            simbolos.includes('endodoncia_requerida');
+
         if(
-            estado.simbolos.includes('perdida_caries')
+            tieneCaries ||
+            endodonciaRequerida
         ){
-            P++;
-            return;
-        }
-
-        const caras = Object.values(estado.caras);
-
-        // ----------------------------------
-        // C = Pieza con caries
-        // ----------------------------------
-        if(caras.includes('caries')){
-
             C++;
             return;
         }
 
-        // ----------------------------------
-        // O = Pieza obturada
-        // ----------------------------------
-        if(caras.includes('obturacion')){
 
+        // ==========================================
+        // P = PERDIDO
+        // ==========================================
+
+        const perdidoPorCaries =
+            simbolos.includes('perdida_caries');
+
+        if(perdidoPorCaries){
+            P++;
+            return;
+        }
+
+
+        // ==========================================
+        // O = OBTURADO
+        // ==========================================
+        // Según MSP:
+        // - Obturación
+        // - Endodoncia realizada
+        // - Corona realizada
+
+        const tieneObturacion =
+            caras.includes('obturacion');
+
+        const endodonciaRealizada =
+            simbolos.includes('endodoncia_realizada');
+
+        const coronaRealizada =
+            simbolos.includes('corona_realizada');
+
+        if(
+            tieneObturacion ||
+            endodonciaRealizada ||
+            coronaRealizada
+        ){
             O++;
+            return;
         }
 
     });
+
+
+    // ==========================================
+    // PRÓTESIS REMOVIBLE REALIZADA
+    // ==========================================
+
+    this.protesis
+        .filter(p =>
+            p.tipo === 'protesis_removible_realizada'
+        )
+        .forEach(protesis => {
+
+            protesis.piezas.forEach(pieza => {
+
+                // Evitar contar una pieza que ya
+                // esté registrada como perdida por caries
+                const estado = this.data[pieza];
+
+                if(
+                    estado &&
+                    estado.simbolos.includes('perdida_caries')
+                ){
+                    return;
+                }
+
+                P++;
+
+            });
+
+        });
+
+
+    // ==========================================
+    // PRÓTESIS TOTAL REALIZADA
+    // ==========================================
+    // MSP: registrar como perdidas,
+    // excepto terceros molares.
+
+    this.protesis
+        .filter(p =>
+            p.tipo === 'protesis_total_realizada'
+        )
+        .forEach(protesis => {
+
+            protesis.piezas.forEach(pieza => {
+
+                // Terceros molares
+                if(
+                    pieza === 18 ||
+                    pieza === 28 ||
+                    pieza === 38 ||
+                    pieza === 48
+                ){
+                    return;
+                }
+
+                P++;
+
+            });
+
+        });
+
 
     return {
         C,

@@ -452,6 +452,62 @@ async function agregarTratamiento(){
     `);
 
 }
+
+// ======================================================
+// COMPLICACIONES
+// ======================================================
+
+document.getElementById("btnAgregarComplicacion")?.addEventListener("click", function () {
+
+    const lista = document.getElementById("listaComplicaciones");
+
+    const nuevaComplicacion = document.createElement("div");
+
+    nuevaComplicacion.className =
+        "complicacion border rounded-2xl p-5 border-sky-700 bg-slate-50";
+
+    nuevaComplicacion.innerHTML = `
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-end">
+
+            <div class="lg:col-span-10">
+                <label class="block text-sm font-medium mb-2">
+                    Complicación
+                </label>
+
+                <input
+                    placeholder="Ingrese la complicación"
+                    type="text"
+                    name="complicacion[]"
+                    class="w-full border border-slate-300 rounded-xl px-4 py-3">
+            </div>
+
+            <div class="lg:col-span-2">
+                <button
+                    type="button"
+                    class="btnEliminarComplicacion w-full bg-red-500 hover:bg-red-600 text-white px-5 py-3 rounded-xl">
+                    Eliminar
+                </button>
+            </div>
+        </div>
+    `;
+    lista.appendChild(nuevaComplicacion);
+});
+// Boton eliminar de complicacion
+document.getElementById("listaComplicaciones")?.addEventListener("click", function (e) {
+
+    if (e.target.classList.contains("btnEliminarComplicacion")) {
+
+        const complicacion = e.target.closest(".complicacion");
+
+        if (complicacion) {
+            complicacion.remove();
+        }
+
+    }
+
+});
+
+
 /* ==========================================
    CALCULAR VALOR
 ========================================== */
