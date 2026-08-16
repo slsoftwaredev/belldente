@@ -278,97 +278,278 @@ $id_cita = isset($_GET["id_cita"]) ? intval($_GET["id_cita"]) : 0;
 </div>
 
 <!-- EXAMEN CLÍNICO -->
-<div x-show="tab==='examen'" x-transition>
+<div x-show="tab==='examen'" x-transition class="space-y-6">
 
-    <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
+    <!-- ===========================
+         CONSTANTES VITALES
+    ============================ -->
+    <div class="bg-white rounded-2xl shadow-sm p-6">
 
-        <div class="bg-white rounded-2xl shadow-sm p-6">
+        <h2 class="font-semibold mb-2">
+            Constantes Vitales
+        </h2>
 
-            <h2 class="font-semibold mb-6">
-                Constantes Vitales
-            </h2>
+        <p class="text-sm text-slate-500 mb-6">
+            Registre los signos vitales del paciente.
+        </p>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5">
 
-                <div>
-                    <label class="text-sm font-medium">
-                        Temperatura (°C)
-                    </label>
+            <div>
+                <label class="text-sm font-medium">
+                    Temperatura (°C)
+                </label>
 
-                    <input
-                        type="number"
-                        step="0.1"
-                        id="temperatura"
-                        class="w-full mt-2 border border-slate-300 rounded-xl p-3">
-                </div>
+                <input
+                    type="number"
+                    step="0.1"
+                    id="temperatura"
+                    class="w-full mt-2 border border-slate-300 rounded-xl p-3">
+            </div>
 
-                <div>
-                    <label class="text-sm font-medium">
-                        Pulso (lpm)
-                    </label>
+            <div>
+                <label class="text-sm font-medium">
+                    Pulso (lpm)
+                </label>
 
-                    <input
-                        type="number"
-                        id="pulso"
-                        class="w-full mt-2 border border-slate-300 rounded-xl p-3">
-                </div>
+                <input
+                    type="number"
+                    id="pulso"
+                    class="w-full mt-2 border border-slate-300 rounded-xl p-3">
+            </div>
 
-                <div>
-                    <label class="text-sm font-medium">
-                            Frecuencia Respiratoria (rpm)
-                    </label>
+            <div>
+                <label class="text-sm font-medium">
+                    Frecuencia Respiratoria (rpm)
+                </label>
 
-                    <input
-                            type="number"
-                            id="frecuencia_respiratoria"
-                            class="w-full mt-2 border border-slate-300 rounded-xl p-3">
-                </div>
+                <input
+                    type="number"
+                    id="frecuencia_respiratoria"
+                    class="w-full mt-2 border border-slate-300 rounded-xl p-3">
+            </div>
 
-                <div>
-                    <label class="text-sm font-medium">
-                                Presión Arterial
-                    </label>
+            <div>
+                <label class="text-sm font-medium">
+                    Presión Arterial
+                </label>
 
-                    <input
-                                type="text"
-                                placeholder="120/80"
-                                id="presion_arterial"
-                                class="w-full mt-2 border border-slate-300 rounded-xl p-3">
-                </div>
-
+                <input
+                    type="text"
+                    placeholder="120/80"
+                    id="presion_arterial"
+                    class="w-full mt-2 border border-slate-300 rounded-xl p-3">
             </div>
 
         </div>
 
-        <!-- EXAMEN ESTOMATOGNÁTICO -->
-        <div class="bg-white rounded-2xl shadow-sm p-6">
-                    <h2 class="font-semibold mb-6">
-                        Examen Estomatognático
-                    </h2>
-                    <div id="examen_estomatognatico" class="space-y-4">
-                    </div>
+    </div>
+
+
+    <!-- ===========================
+         EXAMEN ESTOMATOGNÁTICO
+    ============================ -->
+    <div class="bg-white rounded-2xl shadow-sm p-6">
+
+        <h2 class="font-semibold mb-2">
+            Examen del Sistema Estomatognático
+        </h2>
+
+        <p class="text-sm text-slate-500 mb-6">
+            Describa las alteraciones encontradas durante el examen.
+        </p>
+
+        <div
+            id="examen_estomatognatico"
+            class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-5">
+        </div>
+
+    </div>
+
+
+    <!-- ===========================
+         PEDIDO DE EXÁMENES
+         COMPLEMENTARIOS
+    ============================ -->
+    <div class="bg-white rounded-2xl shadow-sm p-6">
+
+        <h2 class="font-semibold mb-2">
+            Pedido de Exámenes Complementarios
+        </h2>
+
+        <p class="text-sm text-slate-500 mb-4">
+            Registre los exámenes complementarios solicitados al paciente.
+        </p>
+
+        <textarea
+            id="pedido_examen_complementario"
+            rows="3"
+            placeholder="Describa los exámenes complementarios solicitados..."
+            class="w-full border border-slate-300 rounded-xl p-3 resize-none"></textarea>
+
+    </div>
+
+
+    <!-- ===========================
+         INFORME DE EXÁMENES
+    ============================ -->
+    <div class="bg-white rounded-2xl shadow-sm p-6">
+
+        <h2 class="font-semibold mb-2">
+            Informe de Exámenes
+        </h2>
+
+        <p class="text-sm text-slate-500 mb-6">
+            Seleccione el tipo de examen y registre los resultados.
+        </p>
+
+        <!-- TIPOS -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-5">
+
+            <label class="flex items-center gap-3 border border-slate-300 rounded-xl p-4 cursor-pointer">
+                <input
+                    type="checkbox"
+                    value="BIOMETRIA"
+                    class="rounded border-slate-300">
+
+                <span class="text-sm font-medium">
+                    Biometría
+                </span>
+            </label>
+
+            <label class="flex items-center gap-3 border border-slate-300 rounded-xl p-4 cursor-pointer">
+                <input
+                    type="checkbox"
+                    value="QUIMICA_SANGUINEA"
+                    class="rounded border-slate-300">
+
+                <span class="text-sm font-medium">
+                    Química Sanguínea
+                </span>
+            </label>
+
+            <label class="flex items-center gap-3 border border-slate-300 rounded-xl p-4 cursor-pointer">
+                <input
+                    type="checkbox"
+                    value="RAYOS_X"
+                    class="rounded border-slate-300">
+
+                <span class="text-sm font-medium">
+                    Rayos-X
+                </span>
+            </label>
+
+            <label class="flex items-center gap-3 border border-slate-300 rounded-xl p-4 cursor-pointer">
+                <input
+                    type="checkbox"
+                    value="OTROS"
+                    class="rounded border-slate-300">
+
+                <span class="text-sm font-medium">
+                    Otros
+                </span>
+            </label>
+
+        </div>
+
+        <!-- RESULTADO -->
+        <div>
+            <label class="block text-sm font-medium mb-2">
+                Informe / Resultado
+            </label>
+
+            <textarea
+                id="informe_examen"
+                rows="4"
+                placeholder="Registre los resultados o informe de los exámenes..."
+                class="w-full border border-slate-300 rounded-xl p-3 resize-none"></textarea>
         </div>
     </div>
 </div>
 
 <!-- INDICADORES DE SALUD BUCAL -->
 <div x-show="tab==='indicadores'" x-transition>
-
     <div class="bg-white rounded-2xl shadow-sm p-6">
-
-        <h2 class="font-semibold mb-6">
+        <h2 class="font-semibold mb-2">
             Indicadores de Salud Bucal
         </h2>
         <p class="text-sm text-slate-500 mb-6">
-        Seleccione el estado correspondiente para cada indicador.
+            Registre la higiene oral simplificada y seleccione el estado
+            correspondiente para cada indicador.
         </p>
+        <!-- ==========================================
+             HIGIENE ORAL SIMPLIFICADA
+        =========================================== -->
+        <div class="border border-sky-700 rounded-2xl overflow-hidden mb-8">
+            <div class="bg-slate-50 px-5 py-4 border-b">
+                <h3 class="font-semibold text-slate-800">
+                    Higiene Oral Simplificada
+                </h3>
+                <p class="text-sm text-slate-500 mt-1">
+                    Seleccione la pieza examinada y registre placa, cálculo y gingivitis.
+                </p>
+            </div>
+
+            <!-- ENCABEZADOS -->
+            <div class="hidden md:grid md:grid-cols-12 gap-4 px-5 py-3 bg-slate-100 border-b">
+                <div class="col-span-5 text-sm font-semibold">
+                    Piezas dentales examinadas
+                </div>
+                <div class="col-span-2 text-sm font-semibold text-center">
+                    Placa
+                    <span class="block text-xs font-normal text-slate-500">
+                        0 - 1 - 2 - 3
+                    </span>
+                </div>
+                <div class="col-span-2 text-sm font-semibold text-center">
+                    Cálculo
+                    <span class="block text-xs font-normal text-slate-500">
+                        0 - 1 - 2 - 3
+                    </span>
+                </div>
+                <div class="col-span-3 text-sm font-semibold text-center">
+                    Gingivitis
+                    <span class="block text-xs font-normal text-slate-500">
+                        0 - 1
+                    </span>
+                </div>
+            </div>
+
+            <!-- FILAS -->
+            <div id="higieneOralSimplificada" class="divide-y">
+                <!-- El JS generará las 6 filas -->
+            </div>
+
+            <!-- TOTALES -->
+            <div class="grid grid-cols-12 gap-4 px-5 py-4 bg-slate-100">
+                <div class="col-span-5 font-semibold">
+                    Promedio
+                </div>
+                <div
+                    id="promedioPlaca"
+                    class="col-span-2 text-center font-semibold">
+                    0.00
+                </div>
+                <div
+                    id="promedioCalculo"
+                    class="col-span-2 text-center font-semibold">
+                    0.00
+                </div>
+                <div
+                    id="promedioGingivitis"
+                    class="col-span-3 text-center font-semibold">
+                    0.00
+                </div>
+            </div>
+        </div>
+        <!-- ==========================================
+             OTROS INDICADORES
+        =========================================== -->
         <div
             id="indicadores_salud"
             class="space-y-8">
         </div>
-
     </div>
-
 </div>
 
 <!-- ODONTOGRAMA -->

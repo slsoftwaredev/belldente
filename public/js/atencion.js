@@ -7,6 +7,7 @@ document.addEventListener("DOMContentLoaded", () => {
     listarIndicadores();
     comboCIE10();
     comboTratamientos();
+    cargarHigieneOral();
 
 });
 
@@ -170,6 +171,347 @@ async function listarIndicadores(){
     });
     contenedor.innerHTML = html;
 }
+// ======================================================
+// HIGIENE ORAL SIMPLIFICADA
+// ======================================================
+const piezasHigieneOral = [
+    ["16", "17", "55"],
+    ["11", "21", "51"],
+    ["26", "27", "65"],
+    ["36", "37", "75"],
+    ["31", "41", "71"],
+    ["46", "47", "85"]
+];
+
+function cargarHigieneOral(){
+    const contenedor = document.getElementById("higieneOralSimplificada");
+    if (!contenedor) return;
+    contenedor.innerHTML = "";
+    piezasHigieneOral.forEach((piezas, index) => {
+        contenedor.innerHTML += `
+            <div class="fila-higiene grid grid-cols-1 md:grid-cols-12 gap-4 px-5 py-4 items-center">
+                <!-- PIEZAS -->
+                <div class="md:col-span-5">
+                    <span class="block md:hidden text-sm font-semibold mb-2">
+                        Pieza examinada
+                    </span>
+                    <div class="flex flex-wrap gap-4">
+                        ${piezas.map(pieza => `
+
+    <div class="flex items-center gap-2">
+
+        <!-- PIEZA EXAMINADA -->
+        <label
+            class="flex items-center gap-1 cursor-pointer"
+            title="Pieza examinada">
+
+            <input
+                type="checkbox"
+                name="pieza_higiene_${index}"
+                value="${pieza}"
+                class="pieza-higiene w-4 h-4">
+
+            <span class="font-medium">
+                ${pieza}
+            </span>
+
+        </label>
+
+        <!-- PIEZA AUSENTE -->
+        <button
+            type="button"
+            class="pieza-ausente border border-slate-300 hover:bg-slate-200 rounded-lg px-2 py-1 text-slate-600"
+            data-pieza="${pieza}"
+            title="Marcar pieza como ausente">
+            —
+        </button>
+
+    </div>
+
+`).join("")}
+                    </div>
+                </div>
+
+                <!-- PLACA -->
+                <div class="md:col-span-2">
+                    <label class="block md:hidden text-sm font-semibold mb-2">
+                        Placa
+                    </label>
+                    <select
+                        class="placa-higiene w-full border border-slate-300 rounded-xl p-3"
+                        disabled>
+                        <option value="">-</option>
+                        <option value="0">0</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                    </select>
+                </div>
+
+                <!-- CÁLCULO -->
+                <div class="md:col-span-2">
+                    <label class="block md:hidden text-sm font-semibold mb-2">
+                        Cálculo
+                    </label>
+                    <select
+                        class="calculo-higiene w-full border border-slate-300 rounded-xl p-3"
+                        disabled>
+                        <option value="">-</option>
+                        <option value="0">0</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                    </select>
+                </div>
+
+                <!-- GINGIVITIS -->
+                <div class="md:col-span-3">
+                    <label class="block md:hidden text-sm font-semibold mb-2">
+                        Gingivitis
+                    </label>
+                    <select
+                        class="gingivitis-higiene w-full border border-slate-300 rounded-xl p-3"
+                        disabled>
+                        <option value="">-</option>
+                        <option value="0">0</option>
+                        <option value="1">1</option>
+                    </select>
+                </div>
+            </div>
+        `;
+    });
+}
+
+// ======================================================
+// EVENTOS HIGIENE ORAL SIMPLIFICADA
+// ======================================================
+
+document
+.getElementById("higieneOralSimplificada")
+?.addEventListener("change", function(e){
+    const fila = e.target.closest(".fila-higiene");
+    if (!fila) return;
+    // Seleccionó una pieza dental
+    if(e.target.classList.contains("pieza-higiene")){
+    const piezas =
+        fila.querySelectorAll(".pieza-higiene");
+    // Si acaba de marcar una pieza,
+    // desmarcar las demás de la misma fila
+    if(e.target.checked){
+        piezas.forEach(pieza => {
+            if(pieza !== e.target){
+                pieza.checked = false;
+            }
+        });
+    }
+
+    const hayPiezaSeleccionada =
+        fila.querySelector(".pieza-higiene:checked");
+    const placa =
+        fila.querySelector(".placa-higiene");
+    const calculo =
+        fila.querySelector(".calculo-higiene");
+    const gingivitis =
+        fila.querySelector(".gingivitis-higiene");
+
+    if(hayPiezaSeleccionada){
+        placa.disabled = false;
+        calculo.disabled = false;
+        gingivitis.disabled = false;
+    }else{
+        // Si quitó el check, limpiar la fila
+        placa.value = "";
+        calculo.value = "";
+        gingivitis.value = "";
+
+        placa.disabled = true;
+        calculo.disabled = true;
+        gingivitis.disabled = true;
+    }
+    calcularPromediosHigiene();
+}
+
+    // Cambió placa, cálculo o gingivitis
+    if(
+        e.target.classList.contains("placa-higiene") ||
+        e.target.classList.contains("calculo-higiene") ||
+        e.target.classList.contains("gingivitis-higiene")
+    ){
+        calcularPromediosHigiene();
+    }
+});
+
+// ======================================================
+// PIEZAS AUSENTES - HIGIENE ORAL
+// ======================================================
+
+document
+.getElementById("higieneOralSimplificada")
+?.addEventListener("click", function(e){
+
+    const boton = e.target.closest(".pieza-ausente");
+
+    if(!boton) return;
+
+    const fila = boton.closest(".fila-higiene");
+
+    const pieza = boton.dataset.pieza;
+
+    const checkbox = fila.querySelector(
+        `.pieza-higiene[value="${pieza}"]`
+    );
+
+
+    // CAMBIAR ESTADO AUSENTE
+    boton.classList.toggle("ausente");
+
+    const esAusente =
+        boton.classList.contains("ausente");
+
+
+    if(esAusente){
+
+        // Mostrar visualmente la raya activa
+        boton.classList.add(
+            "bg-slate-700",
+            "text-white",
+            "border-slate-700"
+        );
+
+        // No puede estar examinada y ausente
+        checkbox.checked = false;
+
+        checkbox.disabled = true;
+
+    }else{
+
+        boton.classList.remove(
+            "bg-slate-700",
+            "text-white",
+            "border-slate-700"
+        );
+
+        checkbox.disabled = false;
+
+    }
+
+
+    // COMPROBAR SI QUEDA ALGUNA PIEZA EXAMINADA
+    const piezaSeleccionada =
+        fila.querySelector(".pieza-higiene:checked");
+
+    const placa =
+        fila.querySelector(".placa-higiene");
+
+    const calculo =
+        fila.querySelector(".calculo-higiene");
+
+    const gingivitis =
+        fila.querySelector(".gingivitis-higiene");
+
+
+    if(!piezaSeleccionada){
+
+        placa.value = "";
+        calculo.value = "";
+        gingivitis.value = "";
+
+        placa.disabled = true;
+        calculo.disabled = true;
+        gingivitis.disabled = true;
+
+    }
+
+    calcularPromediosHigiene();
+
+});
+
+// ======================================================
+// CALCULAR PROMEDIOS HIGIENE ORAL
+// ======================================================
+
+function calcularPromediosHigiene(){
+
+    const filas =
+        document.querySelectorAll(".fila-higiene");
+
+    let totalPlaca = 0;
+
+    let totalCalculo = 0;
+
+    let totalGingivitis = 0;
+
+    let piezasExaminadas = 0;
+
+
+    filas.forEach(fila => {
+
+        const pieza =
+            fila.querySelector(".pieza-higiene:checked");
+
+        if(!pieza) return;
+
+
+        const placa =
+            fila.querySelector(".placa-higiene").value;
+
+        const calculo =
+            fila.querySelector(".calculo-higiene").value;
+
+        const gingivitis =
+            fila.querySelector(".gingivitis-higiene").value;
+
+
+        if(
+            placa !== "" &&
+            calculo !== "" &&
+            gingivitis !== ""
+        ){
+
+            totalPlaca += Number(placa);
+
+            totalCalculo += Number(calculo);
+
+            totalGingivitis += Number(gingivitis);
+
+            piezasExaminadas++;
+
+        }
+
+    });
+
+
+    const promedioPlaca =
+        piezasExaminadas > 0
+        ? totalPlaca / piezasExaminadas
+        : 0;
+
+
+    const promedioCalculo =
+        piezasExaminadas > 0
+        ? totalCalculo / piezasExaminadas
+        : 0;
+
+
+    const promedioGingivitis =
+        piezasExaminadas > 0
+        ? totalGingivitis / piezasExaminadas
+        : 0;
+
+
+    document.getElementById("promedioPlaca").textContent =
+        promedioPlaca.toFixed(2);
+
+
+    document.getElementById("promedioCalculo").textContent =
+        promedioCalculo.toFixed(2);
+
+
+    document.getElementById("promedioGingivitis").textContent =
+        promedioGingivitis.toFixed(2);
+
+}
+
 // ==========================================
 // CARGAR CATÁLOGO CIE-10
 // ==========================================
