@@ -750,7 +750,6 @@ $id_cita = isset($_GET["id_cita"]) ? intval($_GET["id_cita"]) : 0;
 <!-- ===========================
         FOTOGRAFÍAS CLÍNICAS
 =========================== -->
-
 <div x-show="tab==='fotografias'" x-transition class="space-y-6">
     <div class="bg-white rounded-2xl shadow-sm p-6">
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
@@ -758,57 +757,38 @@ $id_cita = isset($_GET["id_cita"]) ? intval($_GET["id_cita"]) : 0;
                 <h2 class="text-xl font-semibold">
                     Fotografías Clínicas
                 </h2>
-
                 <p class="text-sm text-slate-500">
                     Adjunte las fotografías correspondientes a la atención.
                 </p>
             </div>
-
-            <button type="button" id="btnAgregarFotografia" class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-xl">
+            <button
+                type="button"
+                id="btnAgregarFotografia"
+                class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-xl">
                 + Agregar Fotografía
             </button>
 
         </div>
-        <!--Aquí se listan las fotografias -->
+        <!-- AQUÍ SE LISTAN LAS FOTOGRAFÍAS -->
         <div id="listaFotografias" class="space-y-5">
             <div class="fotografia border border-sky-700 rounded-2xl p-5 bg-slate-50">
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
-                    <div class="lg:col-span-3">
-                        <label class="block text-sm font-medium mb-2">
-                            Tipo
-                        </label>
-                        <select
-                            name="tipo_fotografia[]"
-                            class="w-full border border-slate-300 rounded-xl px-4 py-3">
-
-                            <option value="">Seleccione...</option>
-                            <option value="Antes">Antes</option>
-                            <option value="Durante">Durante</option>
-                            <option value="Después">Después</option>
-                            <option value="Radiografía">Radiografía</option>
-                            <option value="Intraoral">Intraoral</option>
-                            <option value="Extraoral">Extraoral</option>
-                            <option value="Control">Control</option>
-                            <option value="Otro">Otro</option>
-                        </select>
-                    </div>
-                    <div class="lg:col-span-5">
+                    <!-- OBSERVACIÓN -->
+                    <div class="lg:col-span-6">
                         <label class="block text-sm font-medium mb-2">
                             Observación
                         </label>
-
                         <input
                             type="text"
                             name="observacion_fotografia[]"
+                            placeholder="Ej. Estado inicial de la pieza 16"
                             class="w-full border border-slate-300 rounded-xl px-4 py-3">
-
                     </div>
-
-                    <div class="lg:col-span-4">
+                    <!-- ARCHIVO -->
+                    <div class="lg:col-span-6">
                         <label class="block text-sm font-medium mb-2">
                             Fotografía
                         </label>
-
                         <input
                             type="file"
                             name="fotografia[]"
@@ -817,8 +797,9 @@ $id_cita = isset($_GET["id_cita"]) ? intval($_GET["id_cita"]) : 0;
                     </div>
                 </div>
                 <div class="mt-5">
-
-                    <button type="button" class="btnEliminarFotografia bg-red-500 hover:bg-red-600 text-white px-5 py-2 rounded-xl">
+                    <button
+                        type="button"
+                        class="btnEliminarFotografia bg-red-500 hover:bg-red-600 text-white px-5 py-2 rounded-xl">
                         Eliminar
                     </button>
                 </div>

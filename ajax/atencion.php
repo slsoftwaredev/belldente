@@ -1,4 +1,5 @@
 <?php
+session_start();
 require_once "../model/Atencion.php";
 
 $atencion = new Atencion();
@@ -84,7 +85,6 @@ case "listar_antecedentes":
 
     break;
 
-
     /* ========================================
        PIEZAS
     ======================================== */
@@ -108,5 +108,32 @@ case "listar_antecedentes":
 
         echo json_encode($data);
 
+    break;
+
+// CREAR ATENCIÓN
+    case "crear":
+    if (!isset($_SESSION["id_usuario"])) {
+        echo json_encode(["status" => false,"message" => "Sesión no válida"]);
+        exit;
+    }
+    $id_cita = isset($_POST["id_cita"])? (int) $_POST["id_cita"]: 0;
+    if ($id_cita <= 0) {
+        echo json_encode(["status" => false,"message" => "Cita no válida"]);
+        exit;
+    }
+    $id_usuario = (int) $_SESSION["id_usuario"];
+    $rspta = $atencion->crear($id_cita,$id_usuario);
+    if ($rspta) {
+        echo json_encode([
+            "status" => true,
+            "id_atencion" => $rspta["id_atencion"],
+            "resultado" => $rspta["resultado"]
+        ]);
+    } else {
+        echo json_encode([
+            "status" => false,
+            "message" => "No se pudo crear la atención"
+        ]);
+    }
     break;
 } 

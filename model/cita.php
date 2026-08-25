@@ -44,5 +44,8 @@ class Cita{
         return ejecutarConsultaSP(
             "CALL sp_cita('citas_atrasadas',0,0,NULL,0)");
     }
-    //Combo de pacientes
+    // Listamos las citas pendientes del día
+    public function pendientesHoy(){
+        return ejecutarConsultaSP("CALL sp_cita('pendientes_hoy',0,0,NULL,0)");
+    }
 }

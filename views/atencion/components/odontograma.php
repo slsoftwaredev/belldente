@@ -1,4 +1,4 @@
-<div x-data="odontograma()" class="space-y-8">
+<div x-data="odontograma()" id="odontograma" class="space-y-8">
     <!-- TOOLBAR -->
     <?php require __DIR__ . '/toolbar.php'; ?>
 

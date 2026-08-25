@@ -1,11 +1,7 @@
 function odontograma(){
-
     return{
-
         denticion:'permanente',
-
         tool:'caries',
-
         data:{},
         simbologias:[],
         piezasPermanentes:[],
@@ -13,7 +9,6 @@ function odontograma(){
         // Pieza donde comienza la selección de una prótesis
         protesisInicio:null,
         protesis:[],
-
 // Orden visual de las piezas
 ordenPermanenteSuperior:[
     18,17,16,15,14,13,12,11,
@@ -34,414 +29,263 @@ ordenTemporalInferior:[
     85,84,83,82,81,
     71,72,73,74,75
 ],
-
-        herramientas:[],
+herramientas:[],
 
 async init(){
     await this.cargarSimbologias();
     await this.cargarPiezas();
 },
 async cargarSimbologias(){
-
     try{
-
-        const respuesta = await fetch(
-            "../ajax/atencion.php?op=simbologias"
-        );
-
+        const respuesta = await fetch("../ajax/atencion.php?op=simbologias");
         this.simbologias = await respuesta.json();
         this.construirHerramientas();
-
-        console.log(
-            "Odontograma - simbologías:",
-            this.simbologias
-        );
-
+        console.log("Odontograma - simbologías:",this.simbologias);
     }catch(error){
-
-        console.error(
-            "Error cargando simbologías:",
-            error
-        );
-
+        console.error("Error cargando simbologías:",error);
     }
-
 },
 
 //Construimos las simbologías como herramientas para el odontograma
 construirHerramientas(){
-
     this.herramientas = this.simbologias.map(item => {
-
-        const configuracion =
-            this.configuracionSimbologia(
-                item.nombre_simbologia
-            );
-
+        const configuracion = this.configuracionSimbologia(item.nombre_simbologia);
         return {
-
             id: Number(item.id_simbologia),
-
             codigo: configuracion.codigo,
-
             nombre: item.nombre_simbologia,
-
             tipo: configuracion.tipo,
-
             color: item.color,
-
             simbolo: item.simbolo,
-
             active: configuracion.active,
-
             normal: configuracion.normal
-
         };
-
     });
 
     // Borrar no pertenece a la BDD.
     // Es únicamente una herramienta de la interfaz.
     this.herramientas.push({
-
         id:'borrar',
         codigo:'borrar',
         nombre:'Borrar',
         tipo:'borrar',
         active:'bg-gray-900',
         normal:'bg-gray-700'
-
     });
-
 },
 // Configuración de la simbología según su nombre
 configuracionSimbologia(nombre){
-
     const configuraciones = {
-
         'Caries': {
             codigo:'caries',
             tipo:'cara',
             active:'bg-red-700',
             normal:'bg-red-500'
         },
-
         'Obturado': {
             codigo:'obturacion',
             tipo:'cara',
             active:'bg-blue-700',
             normal:'bg-blue-500'
         },
-
         'Corona Indicada': {
             codigo:'corona_indicada',
             tipo:'simbolo',
             active:'bg-red-700',
             normal:'bg-red-500'
         },
-
         'Corona Realizada': {
             codigo:'corona_realizada',
             tipo:'simbolo',
             active:'bg-blue-700',
             normal:'bg-blue-500'
         },
-
         'Endodoncia por Realizar': {
             codigo:'endodoncia_requerida',
             tipo:'simbolo',
             active:'bg-red-700',
             normal:'bg-red-500'
         },
-
         'Endodoncia Realizada': {
             codigo:'endodoncia_realizada',
             tipo:'simbolo',
             active:'bg-blue-700',
             normal:'bg-blue-500'
         },
-
         'Extracción Indicada': {
             codigo:'extraccion',
             tipo:'simbolo',
             active:'bg-red-700',
             normal:'bg-red-500'
         },
-
         'Pérdida por Caries': {
             codigo:'perdida_caries',
             tipo:'simbolo',
             active:'bg-blue-700',
             normal:'bg-blue-500'
         },
-
         'Pérdida por Otra Causa': {
             codigo:'perdida_otra',
             tipo:'simbolo',
             active:'bg-gray-900',
             normal:'bg-gray-700'
         },
-
         'Sellante Necesario': {
             codigo:'sellante_necesario',
             tipo:'simbolo',
             active:'bg-red-700',
             normal:'bg-red-500'
         },
-
         'Sellante Realizado': {
             codigo:'sellante_realizado',
             tipo:'simbolo',
             active:'bg-blue-700',
             normal:'bg-blue-500'
         },
-
         'Prótesis Fija Indicada': {
             codigo:'protesis_fija_indicada',
             tipo:'simbolo',
             active:'bg-red-700',
             normal:'bg-red-500'
         },
-
         'Prótesis Fija Realizada': {
             codigo:'protesis_fija_realizada',
             tipo:'simbolo',
             active:'bg-blue-700',
             normal:'bg-blue-500'
         },
-
         'Prótesis Removible Indicada': {
             codigo:'protesis_removible_indicada',
             tipo:'simbolo',
             active:'bg-red-700',
             normal:'bg-red-500'
         },
-
         'Prótesis Removible Realizada': {
             codigo:'protesis_removible_realizada',
             tipo:'simbolo',
             active:'bg-blue-700',
             normal:'bg-blue-500'
         },
-
         'Prótesis Total Indicada': {
             codigo:'protesis_total_indicada',
             tipo:'simbolo',
             active:'bg-red-700',
             normal:'bg-red-500'
         },
-
         'Prótesis Total Realizada': {
             codigo:'protesis_total_realizada',
             tipo:'simbolo',
             active:'bg-blue-700',
             normal:'bg-blue-500'
         },
-
         'Ausente': {
             codigo:'ausente',
             tipo:'simbolo',
             active:'bg-gray-900',
             normal:'bg-gray-700'
         }
-
     };
-
     return configuraciones[nombre] ?? {
         codigo:'',
         tipo:'simbolo',
         active:'bg-gray-700',
         normal:'bg-gray-500'
     };
-
 },
-
+//Cargamos las piezas definidas al inicio
 async cargarPiezas(){
-
     try{
-
         // Dentición permanente
-        let respuesta = await fetch(
-            "../ajax/atencion.php?op=piezas&tipo_denticion=1"
-        );
-
-        this.piezasPermanentes =
-            await respuesta.json();
-
+        let respuesta = await fetch("../ajax/atencion.php?op=piezas&tipo_denticion=1");
+        this.piezasPermanentes =await respuesta.json();
 
         // Dentición temporal
-        respuesta = await fetch(
-            "../ajax/atencion.php?op=piezas&tipo_denticion=2"
-        );
-
-        this.piezasTemporales =
-            await respuesta.json();
-
-
-        console.log(
-            "Odontograma - permanentes:",
-            this.piezasPermanentes
-        );
-
-        console.log(
-            "Odontograma - temporales:",
-            this.piezasTemporales
-        );
-
+        respuesta = await fetch("../ajax/atencion.php?op=piezas&tipo_denticion=2");
+        this.piezasTemporales =await respuesta.json();
+        console.log("Odontograma - permanentes:",this.piezasPermanentes);
+        console.log("Odontograma - temporales:",this.piezasTemporales);
     }catch(error){
-
-        console.error(
-            "Error cargando piezas:",
-            error
-        );
-
+        console.error("Error cargando piezas:",error);
     }
-
 },
         // Iniciamos el odontograma
         initTooth(pieza){
-
             if(this.data[pieza]) return;
-
             this.data[pieza]={
-
-                caras:{
-                    superior:null,
-                    izquierda:null,
-                    oclusal:null,
-                    derecha:null,
-                    inferior:null
-                },
-
-                simbolos:[]
-
+                caras:{superior:null,izquierda:null,oclusal:null,derecha:null,inferior:null},simbolos:[]
             };
-
         },
 
-        // ==========================================
+// ==========================================
 // CONTROL DEL CLIC SOBRE EL DIENTE
 // ==========================================
-        clickDiente(pieza, cara){
-
-    const herramienta = this.herramientas.find(
-        h => h.codigo === this.tool
-    );
-
+    clickDiente(pieza, cara){const herramienta = this.herramientas.find(h => h.codigo === this.tool);
     if(!herramienta) return;
     // Si seleccionamos Borrar
 if(herramienta.tipo === 'borrar'){
-
     this.borrarPieza(pieza);
-
     return;
 }
-
-    const protesis = [
-        'protesis_fija_indicada',
-        'protesis_fija_realizada',
-        'protesis_removible_indicada',
-        'protesis_removible_realizada',
-        'protesis_total_indicada',
-        'protesis_total_realizada'
-    ];
+    const protesis = ['protesis_fija_indicada','protesis_fija_realizada','protesis_removible_indicada','protesis_removible_realizada','protesis_total_indicada','protesis_total_realizada'];
 
     // Si estamos trabajando con una prótesis
     if(protesis.includes(herramienta.codigo)){
-
         this.seleccionarProtesis(pieza);
         return;
-
     }
 
     // Para las demás herramientas
     this.paint(pieza,cara);
-
 },
 // ==========================================
 // OBTENER RANGO DE PIEZAS PARA PRÓTESIS
 // ==========================================
 obtenerRangoProtesis(inicio, fin){
-
     const arcadas = [
-
         this.ordenPermanenteSuperior,
         this.ordenPermanenteInferior,
         this.ordenTemporalSuperior,
         this.ordenTemporalInferior
-
     ];
-
     for(const arcada of arcadas){
-
         const posicionInicio = arcada.indexOf(inicio);
         const posicionFin = arcada.indexOf(fin);
 
         // Ambas piezas deben pertenecer
         // a la misma arcada
-        if(
-            posicionInicio !== -1 &&
-            posicionFin !== -1
-        ){
-
-            const desde = Math.min(
-                posicionInicio,
-                posicionFin
-            );
-
-            const hasta = Math.max(
-                posicionInicio,
-                posicionFin
-            );
-
-            return arcada.slice(
-                desde,
-                hasta + 1
-            );
-
+        if(posicionInicio !== -1 &&posicionFin !== -1){
+            const desde = Math.min(posicionInicio,posicionFin);
+            const hasta = Math.max(posicionInicio,posicionFin);
+            return arcada.slice(desde,hasta + 1);
         }
-
     }
-
     return [];
-
 },
 
 //===========================================
 //OBTENER ARCADA COMPLETA
 //===========================================
 obtenerArcadaCompleta(pieza){
-
     const arcadas = [
         this.ordenPermanenteSuperior,
         this.ordenPermanenteInferior,
         this.ordenTemporalSuperior,
         this.ordenTemporalInferior
     ];
-
     for(const arcada of arcadas){
-
         if(arcada.includes(pieza)){
             return [...arcada];
         }
-
     }
-
     return [];
-
 },
 
 // ==========================================
 // SELECCIONAR RANGO DE PRÓTESIS
 // ==========================================
 seleccionarProtesis(pieza){
-
-    const herramienta = this.herramientas.find(
-        h => h.codigo === this.tool
-    );
-
+    const herramienta = this.herramientas.find(h => h.codigo === this.tool);
     if(!herramienta) return;
-
     const protesis = [
         'protesis_fija_indicada',
         'protesis_fija_realizada',
@@ -455,33 +299,18 @@ seleccionarProtesis(pieza){
     // PRÓTESIS TOTAL
     // Un clic selecciona toda la arcada
     // ==========================================
-    if(
-        herramienta.codigo === 'protesis_total_indicada' ||
-        herramienta.codigo === 'protesis_total_realizada'
-    ){
-
+    if(herramienta.codigo === 'protesis_total_indicada' ||herramienta.codigo === 'protesis_total_realizada'){
         const piezasSeleccionadas =
             this.obtenerArcadaCompleta(pieza);
-
         if(piezasSeleccionadas.length === 0){
             return;
         }
-
         this.protesis.push({
-
             tipo: herramienta.codigo,
             piezas: piezasSeleccionadas
-
         });
-
-        console.log(
-            'Prótesis total:',
-            herramienta.codigo,
-            piezasSeleccionadas
-        );
-
+        console.log('Prótesis total:',herramienta.codigo,piezasSeleccionadas);
         this.protesisInicio = null;
-
         return;
     }
 
@@ -489,310 +318,159 @@ seleccionarProtesis(pieza){
     if(!protesis.includes(herramienta.codigo)){
         return;
     }
-
     // Primer clic
     if(this.protesisInicio === null){
-
         this.protesisInicio = pieza;
-
-        console.log(
-            'Inicio de prótesis:',
-            pieza
-        );
-
+        console.log('Inicio de prótesis:',pieza);
         return;
     }
-
     // Segundo clic
     const inicio = this.protesisInicio;
-const fin = pieza;
-
-const piezasSeleccionadas =
-    this.obtenerRangoProtesis(inicio, fin);
-
+    const fin = pieza;
+    const piezasSeleccionadas = this.obtenerRangoProtesis(inicio, fin);
 if(piezasSeleccionadas.length === 0){
-
-    console.warn(
-        'Las piezas seleccionadas no pertenecen a la misma arcada'
-    );
-
+    console.warn('Las piezas seleccionadas no pertenecen a la misma arcada');
     this.protesisInicio = null;
-
     return;
 }
-
-console.log(
-    'Prótesis seleccionada:',
-    inicio,
-    fin,
-    herramienta.codigo
-);
-
-console.log(
-    'Piezas de la prótesis:',
-    piezasSeleccionadas
-);
-this.protesis.push({
-
-    tipo: herramienta.codigo,
-    piezas: piezasSeleccionadas
-
-});
-
-console.log(
-    'Prótesis guardadas:',
-    this.protesis
-);
-
+console.log('Prótesis seleccionada:',inicio,fin,herramienta.codigo);
+console.log('Piezas de la prótesis:',piezasSeleccionadas);
+this.protesis.push({tipo: herramienta.codigo,piezas: piezasSeleccionadas});
+console.log('Prótesis guardadas:',this.protesis);
 this.protesisInicio = null;
-
-
 },
-
 hasProtesis(pieza, tipo){
-
-    return this.protesis.some(protesis =>
-
-        protesis.tipo === tipo &&
-        protesis.piezas.includes(pieza)
-
-    );
-
+    return this.protesis.some(protesis => protesis.tipo === tipo && protesis.piezas.includes(pieza));
 },
-
 esInicioProtesis(pieza, tipo){
-
-    return this.protesis.some(protesis =>
-
-        protesis.tipo === tipo &&
-        protesis.piezas[0] === pieza
-
-    );
-
+    return this.protesis.some(protesis => protesis.tipo === tipo && protesis.piezas[0] === pieza);
 },
-
 esFinProtesis(pieza, tipo){
-
     return this.protesis.some(protesis =>
-
-        protesis.tipo === tipo &&
-        protesis.piezas[
-            protesis.piezas.length - 1
-        ] === pieza
-
+        protesis.tipo === tipo && protesis.piezas[protesis.piezas.length - 1] === pieza
     );
-
 },
 
 //Borras protesis y símbolos de la pieza dental
 borrarPieza(pieza){
-
     // Borra símbolos y superficies normales
     if(this.data[pieza]){
         delete this.data[pieza];
     }
 
     // Borra cualquier prótesis que incluya esta pieza
-    this.protesis = this.protesis.filter(
-        protesis => !protesis.piezas.includes(pieza)
-    );
-
+    this.protesis = this.protesis.filter(protesis => !protesis.piezas.includes(pieza));
 },
 
 // ==========================================
 // ÍNDICE CPOD - DENTICIÓN PERMANENTE
 // ==========================================
 calcularCPOD(){
-
     let C = 0;
     let P = 0;
     let O = 0;
-
     this.piezasPermanentes.forEach(registro => {
-
         const pieza = Number(registro.numero_pieza);
         const estado = this.data[pieza];
+        const caras = estado ? Object.values(estado.caras) : [];
+        const simbolos = estado ? estado.simbolos : [];
 
-        const caras = estado
-            ? Object.values(estado.caras)
-            : [];
-
-        const simbolos = estado
-            ? estado.simbolos
-            : [];
-
-
-        // ==========================================
-        // C = CARIADO
-        // ==========================================
-        // Según MSP:
-        // - Caries en una o varias superficies
-        // - Endodoncia por realizar
-        //
-        // Si existe obturación + caries,
-        // prevalece CARIES.
-
-        const tieneCaries =
-            caras.includes('caries');
-
-        const endodonciaRequerida =
-            simbolos.includes('endodoncia_requerida');
-
-        if(
-            tieneCaries ||
-            endodonciaRequerida
-        ){
+// ==========================================
+// C = CARIADO
+// ==========================================
+// Según MSP:
+// - Caries en una o varias superficies
+// - Endodoncia por realizar
+// Si existe obturación + caries,
+// prevalece CARIES.
+        const tieneCaries = caras.includes('caries');
+        const endodonciaRequerida =simbolos.includes('endodoncia_requerida');
+        if(tieneCaries || endodonciaRequerida){
             C++;
             return;
         }
 
-
-        // ==========================================
-        // P = PERDIDO
-        // ==========================================
-
-        const perdidoPorCaries =
-            simbolos.includes('perdida_caries');
-
+// ==========================================
+// P = PERDIDO
+// ==========================================
+        const perdidoPorCaries = simbolos.includes('perdida_caries');
         if(perdidoPorCaries){
             P++;
             return;
         }
 
-
-        // ==========================================
-        // O = OBTURADO
-        // ==========================================
-        // Según MSP:
-        // - Obturación
-        // - Endodoncia realizada
-        // - Corona realizada
-
-        const tieneObturacion =
-            caras.includes('obturacion');
-
-        const endodonciaRealizada =
-            simbolos.includes('endodoncia_realizada');
-
-        const coronaRealizada =
-            simbolos.includes('corona_realizada');
-
-        if(
-            tieneObturacion ||
-            endodonciaRealizada ||
-            coronaRealizada
-        ){
+// ==========================================
+// O = OBTURADO
+// ==========================================
+// Según MSP: Obturación, Endodoncia realizada, Corona realizada
+        const tieneObturacion =caras.includes('obturacion');
+        const endodonciaRealizada =simbolos.includes('endodoncia_realizada');
+        const coronaRealizada =simbolos.includes('corona_realizada');
+        if(tieneObturacion ||endodonciaRealizada ||coronaRealizada){
             O++;
             return;
         }
-
     });
 
+// ==========================================
+// PRÓTESIS REMOVIBLE REALIZADA
+// ==========================================
 
-    // ==========================================
-    // PRÓTESIS REMOVIBLE REALIZADA
-    // ==========================================
-
-    this.protesis
-        .filter(p =>
-            p.tipo === 'protesis_removible_realizada'
-        )
-        .forEach(protesis => {
-
-            protesis.piezas.forEach(pieza => {
-
-                // Evitar contar una pieza que ya
-                // esté registrada como perdida por caries
-                const estado = this.data[pieza];
-
-                if(
-                    estado &&
-                    estado.simbolos.includes('perdida_caries')
-                ){
-                    return;
-                }
-
-                P++;
-
+    this.protesis.filter(p => p.tipo === 'protesis_removible_realizada').forEach(protesis => {
+        protesis.piezas.forEach(pieza => {
+        // Evitar contar una pieza que ya esté registrada como perdida por caries
+        const estado = this.data[pieza];
+        if(estado &&estado.simbolos.includes('perdida_caries')){
+            return;
+        }
+        P++;
             });
 
         });
 
-
-    // ==========================================
-    // PRÓTESIS TOTAL REALIZADA
-    // ==========================================
-    // MSP: registrar como perdidas,
-    // excepto terceros molares.
-
-    this.protesis
-        .filter(p =>
-            p.tipo === 'protesis_total_realizada'
-        )
-        .forEach(protesis => {
-
-            protesis.piezas.forEach(pieza => {
-
-                // Terceros molares
-                if(
-                    pieza === 18 ||
-                    pieza === 28 ||
-                    pieza === 38 ||
-                    pieza === 48
-                ){
-                    return;
-                }
-
+// ==========================================
+// PRÓTESIS TOTAL REALIZADA
+// ==========================================
+// MSP: registrar como perdidas, excepto terceros molares.
+    this.protesis.filter(p =>p.tipo === 'protesis_total_realizada').forEach(protesis => {
+        protesis.piezas.forEach(pieza => {
+            // Terceros molares
+            if(pieza === 18 ||pieza === 28 ||pieza === 38 ||pieza === 48){
+                return;
+            }
                 P++;
-
             });
-
         });
-
 
     return {
-        C,
-        P,
-        O,
-        total: C + P + O
+        C,P,O,total: C + P + O
     };
-
 },
-
 
 // ==========================================
 // ÍNDICE ceod - DENTICIÓN TEMPORAL
 // ==========================================
 calcularCEOD(){
-
     let c = 0;
     let e = 0;
     let o = 0;
-
     this.piezasTemporales.forEach(registro => {
-
         const pieza = Number(registro.numero_pieza);
         const estado = this.data[pieza];
-
         if(!estado) return;
-
         // ----------------------------------
         // e = Extracción indicada
         // ----------------------------------
-        if(
-            estado.simbolos.includes('extraccion')
-        ){
+        if(estado.simbolos.includes('extraccion')){
             e++;
             return;
         }
-
         const caras = Object.values(estado.caras);
 
         // ----------------------------------
         // c = Pieza temporal con caries
         // ----------------------------------
         if(caras.includes('caries')){
-
             c++;
             return;
         }
@@ -801,167 +479,164 @@ calcularCEOD(){
         // o = Pieza temporal obturada
         // ----------------------------------
         if(caras.includes('obturacion')){
-
             o++;
         }
-
     });
-
     return {
-        c,
-        e,
-        o,
-        total: c + e + o
+        c,e,o,total: c + e + o
     };
-
 },
 
-
     //   Pintamos la pieza dental
-                paint(pieza,cara){
-
-            this.initTooth(pieza);
-
-            const herramienta = this.herramientas.find(
-                h => h.codigo === this.tool
-            );
-
+    paint(pieza,cara){
+        this.initTooth(pieza);
+        const herramienta = this.herramientas.find(h => h.codigo === this.tool);
             if(!herramienta) return;
-
             switch(herramienta.tipo){
                 case 'borrar':
                     //   Borramos la pieza dental del odontograma
                     delete this.data[pieza];
-
                 break;
 
                 case 'cara':
                 //No permitir que se agregue un símbolo si la pieza está ausente o perdida
-                if(
-                        this.hasSymbol(pieza,'ausente') ||
-                        this.hasSymbol(pieza,'perdida_caries') ||
-                        this.hasSymbol(pieza,'perdida_otra')
-                    ){
-                        return;
-                    }
-                    //   Pintamos la cara de la pieza dental
-                    this.data[pieza].caras[cara]=herramienta.codigo;
-                    
-
+                if(this.hasSymbol(pieza,'ausente') ||this.hasSymbol(pieza,'perdida_caries') ||this.hasSymbol(pieza,'perdida_otra')){
+                    return;
+                }
+                //   Pintamos la cara de la pieza dental
+                this.data[pieza].caras[cara]=herramienta.codigo;
                 break;
 
                 case 'simbolo':
-                    const exclusivos=[
-                        'ausente',
-                        'extraccion',
-                        'perdida_caries',
-                        'perdida_otra'
-                    ];
+                    const exclusivos=['ausente','extraccion','perdida_caries','perdida_otra'];
                     if(exclusivos.includes(herramienta.codigo)){
                         this.replaceExclusiveSymbol(pieza,herramienta.codigo);
                     }else{
-
                     if(!this.data[pieza].simbolos.includes(herramienta.codigo)){
-
                         this.data[pieza].simbolos.push(herramienta.codigo);
-
                         }
                     }
-
                 break;
-
             }
-
         },
         //   Obtenemos el color de la superficie
         surfaceClass(pieza,cara){
-
             if(!this.data[pieza]){
-
                 return 'bg-white';
-
             }
-
             const estado = this.data[pieza].caras[cara];
-
             if(!estado){
-
                 return 'bg-white';
-
             }
-
             switch(estado){
-
                 case 'caries':
-
                     return 'bg-red-500';
 
                 case 'obturacion':
-
                     return 'bg-blue-500';
-
                 default:
-
                     return 'bg-white';
-
             }
-
         },
 
         //   Obtenemos el símbolo de la pieza dental
         getSymbol(pieza){
-
             if(!this.data[pieza]) return '';
-
             if(!this.data[pieza].simbolos.length) return '';
-
             const simbolo = this.data[pieza].simbolos[0];
-
             switch(simbolo){
-
                 case 'ausente':
                     return 'A';
-
                 case 'corona':
                     return '□';
-
                 case 'endodoncia':
                     return '△';
-
                 default:
                     return '';
-
             }
-
         },
+
         //   Verificamos si la pieza dental tiene un símbolo específico
         hasSymbol(pieza, simbolo){
-
             if(!this.data[pieza]) return false;
-
             return this.data[pieza].simbolos.includes(simbolo);
-
         },
-
         //  Reemplazamos un símbolo exclusivo en la pieza dental
         replaceExclusiveSymbol(pieza,nuevo){
+            const exclusivos=['ausente','extraccion','perdida_caries','perdida_otra'];
+            this.data[pieza].simbolos = this.data[pieza].simbolos.filter(s => !exclusivos.includes(s));
+            this.data[pieza].simbolos.push(nuevo);
+        },//TERMINA PAINT
 
-            const exclusivos=[
-                'ausente',
-                'extraccion',
-                'perdida_caries',
-                'perdida_otra'
+        //CAPTURAMOS DATOS DEL ODONTOGRAMA
+        verDatosOdontograma(){
+        console.log("DATA ODONTOGRAMA:",this.data);
+        console.log("DATA ODONTOGRAMA JSON:",JSON.stringify(this.data, null, 2));
+        },
+        obtenerDatosOdontograma(){
+    const piezas = [];
+    /* =========================================
+       RECORRER PIEZAS MODIFICADAS
+    ========================================= */
+    Object.entries(this.data).forEach(
+        ([numeroPieza, estado]) => {
+            const caras = [];
+            /* =================================
+               CARAS DENTALES
+            ================================= */
+            Object.entries(estado.caras).forEach(([cara, simbologia]) => {
+                if(simbologia){
+                    caras.push({cara: cara,simbologia: simbologia
+                    });
+                }
+            });
+
+            /* =================================
+               SÍMBOLOS DE LA PIEZA
+            ================================= */
+            const simbolos = [
+                ...estado.simbolos
             ];
 
-            this.data[pieza].simbolos =
-                this.data[pieza].simbolos.filter(
-                    s => !exclusivos.includes(s)
-                );
-
-            this.data[pieza].simbolos.push(nuevo);
-
+            /* =================================
+               SOLO GUARDAR SI TIENE DATOS
+            ================================= */
+            if(caras.length > 0 ||simbolos.length > 0){
+                piezas.push({
+                    pieza:Number(numeroPieza),
+                    caras:caras,
+                    simbolos:simbolos
+                });
+            }
         }
+    );
 
-    }
+    /* =========================================
+       PRÓTESIS
+    ========================================= */
+    const protesis = this.protesis.map(
+        item => ({
+            tipo:item.tipo,
+            piezas:[...item.piezas]
+        })
+    );
 
+    /* =========================================
+       ÍNDICES
+    ========================================= */
+    const cpod =this.calcularCPOD();
+    const ceod =this.calcularCEOD();
+
+    /* =========================================
+       RESULTADO
+    ========================================= */
+    return {
+        denticion:this.denticion,
+        piezas:piezas,
+        protesis:protesis,
+        cpod:cpod,
+        ceod:ceod
+        };
+      }
+    } 
 }

@@ -131,8 +131,52 @@ switch ($_GET["op"]) {
 
     $rspta = $cita->citasHoy();
 
+    $data = [];
+
+    while ($reg = $rspta->fetch_object()) {
+
+        switch ($reg->estado_cita) {
+
+            case 1:
+                $estado = "Agendada";
+                break;
+
+            case 2:
+                $estado = "Reagendada";
+                break;
+
+            case 3:
+                $estado = "En atención";
+                break;
+
+            case 4:
+                $estado = "Atendida";
+                break;
+
+            case 5:
+                $estado = "No asistió";
+                break;
+
+            case 6:
+                $estado = "Cancelada";
+                break;
+
+            default:
+                $estado = "Desconocido";
+        }
+
+        $data[] = [
+            "id_cita" => $reg->id_cita,
+            "paciente" => $reg->paciente,
+            "fecha" => $reg->fecha_cita,
+            "estado_id" => $reg->estado_cita,
+            "estado" => $estado
+        ];
+    }
+
     echo json_encode([
-        "total" => $rspta->num_rows
+        "total" => count($data),
+        "citas" => $data
     ]);
 
     break;
@@ -145,5 +189,11 @@ switch ($_GET["op"]) {
         "total" => $rspta->num_rows
     ]);
 
+    break;
+    case "pendientes_hoy":
+    $rspta = $cita->pendientesHoy();
+    echo json_encode([
+        "total" => $rspta->num_rows
+    ]);
     break;
 }

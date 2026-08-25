@@ -163,4 +163,14 @@ switch ($_GET["op"]) {
     }
     echo json_encode($data);
     break;
+    // Buscar paciente por cédula
+    case 'buscar_cedula':
+    $cedula = limpiarCadena($_POST["cedula"]);
+    $rspta = $paciente->buscarCedula($cedula);
+    if ($rspta && $rspta->num_rows > 0) {
+        echo json_encode(["existe" => true]);
+    } else {
+        echo json_encode(["existe" => false]);
+    }
+    break;
 }

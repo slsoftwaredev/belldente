@@ -34,4 +34,9 @@ public function combo(){
     $sql = "CALL sp_paciente('combo',0,'','','',NULL,'','','','',0)";
     return ejecutarConsultaSP($sql);
 }
+// Método para buscar un paciente por cédula
+public function buscarCedula($cedula){
+    $sql = "CALL sp_paciente('buscar_cedula',0,'','','$cedula',NULL,'','','','',0)";
+    return ejecutarConsultaSP($sql);
+}
 }

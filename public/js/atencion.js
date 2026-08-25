@@ -1,5 +1,6 @@
 let listaCIE10 = [];
 let listaTratamientos = [];
+let idAtencionActual = null;
 document.addEventListener("DOMContentLoaded", () => {
     cargarCita();
     listarAntecedentes();
@@ -8,9 +9,10 @@ document.addEventListener("DOMContentLoaded", () => {
     comboCIE10();
     comboTratamientos();
     cargarHigieneOral();
+    crearAtencion();
 
 });
-
+//FUNCION CARGAR CITA
 async function cargarCita() {
 
     const id_cita = document.getElementById("id_cita").value;
@@ -108,7 +110,6 @@ async function listarEstomatognatico(){
         console.error(error);
     }
 }
-
 // INDICADORES DE SALUD
 async function listarIndicadores(){
 
@@ -281,14 +282,11 @@ function cargarHigieneOral(){
         `;
     });
 }
-
 // ======================================================
 // EVENTOS HIGIENE ORAL SIMPLIFICADA
 // ======================================================
 
-document
-.getElementById("higieneOralSimplificada")
-?.addEventListener("change", function(e){
+document.getElementById("higieneOralSimplificada")?.addEventListener("change", function(e){
     const fila = e.target.closest(".fila-higiene");
     if (!fila) return;
     // Seleccionó una pieza dental
@@ -345,9 +343,7 @@ document
 // PIEZAS AUSENTES - HIGIENE ORAL
 // ======================================================
 
-document
-.getElementById("higieneOralSimplificada")
-?.addEventListener("click", function(e){
+document.getElementById("higieneOralSimplificada")?.addEventListener("click", function(e){
 
     const boton = e.target.closest(".pieza-ausente");
 
@@ -562,10 +558,7 @@ async function comboTratamientos(){
    AGREGAR DIAGNÓSTICO
 ========================================== */
 
-document
-.getElementById("btnAgregarDiagnostico")
-.addEventListener("click", agregarDiagnostico);
-
+document.getElementById("btnAgregarDiagnostico").addEventListener("click", agregarDiagnostico);
 async function agregarDiagnostico(){
 
     try{
@@ -675,7 +668,6 @@ async function agregarDiagnostico(){
 /* ==========================================
    ELIMINAR DIAGNÓSTICO
 ========================================== */
-
 function eliminarDiagnostico(boton){
 
     boton
@@ -684,13 +676,10 @@ function eliminarDiagnostico(boton){
 
 }
 
-document
-.getElementById("btnAgregarTratamiento")
-.addEventListener("click", agregarTratamiento);
+document.getElementById("btnAgregarTratamiento").addEventListener("click", agregarTratamiento);
 /* ==========================================
    AGREGAR TRATAMIENTO
 ========================================== */
-
 async function agregarTratamiento(){
 
     let opciones = `
@@ -798,7 +787,6 @@ async function agregarTratamiento(){
 // ======================================================
 // COMPLICACIONES
 // ======================================================
-
 document.getElementById("btnAgregarComplicacion")?.addEventListener("click", function () {
 
     const lista = document.getElementById("listaComplicaciones");
@@ -849,11 +837,9 @@ document.getElementById("listaComplicaciones")?.addEventListener("click", functi
 
 });
 
-
 /* ==========================================
    CALCULAR VALOR
 ========================================== */
-
 function calcularSubtotal(control){
 
     const fila = control.closest(".tratamiento");
@@ -873,7 +859,6 @@ function calcularSubtotal(control){
 /* ==========================================
    ELIMINAR TRATAMIENTO
 ========================================== */
-
 function eliminarTratamiento(boton){
 
     boton
@@ -884,45 +869,25 @@ function eliminarTratamiento(boton){
 /*=========================================
 AGREGAR FOTOGRAFÍA
 =========================================*/
-
-document
-.getElementById("btnAgregarFotografia")
-.addEventListener("click", agregarFotografia);
-
+/*=========================================
+AGREGAR FOTOGRAFÍA
+=========================================*/
+document.getElementById("btnAgregarFotografia").addEventListener("click", agregarFotografia);
 function agregarFotografia(){
-
-    const lista =
-    document.getElementById("listaFotografias");
-
-    const fotografia =
-    lista.querySelector(".fotografia");
-
-    const copia =
-    fotografia.cloneNode(true);
-
-    // Limpiar controles
-
-    copia
-    .querySelector("select")
-    .selectedIndex = 0;
-
-    copia
-    .querySelectorAll("input")
-    .forEach(input => {
-
+    const lista =document.getElementById("listaFotografias");
+    const fotografia =lista.querySelector(".fotografia");
+    const copia =fotografia.cloneNode(true);
+    // Limpiar todos los inputs de la copia
+    copia.querySelectorAll("input").forEach(input => {
         input.value = "";
-
     });
-
     lista.appendChild(copia);
-
 }
+
 /*=========================================
 ELIMINAR FOTOGRAFÍA
 =========================================*/
-
-document
-.addEventListener("click", function(e){
+document.addEventListener("click", function(e){
 
     if(
         e.target.classList.contains("btnEliminarFotografia")
@@ -950,14 +915,11 @@ document
     }
 
 });
+
 /*=========================================
 AGREGAR MEDICAMENTO
 =========================================*/
-
-document
-.getElementById("btnAgregarMedicamento")
-.addEventListener("click", agregarMedicamento);
-
+document.getElementById("btnAgregarMedicamento").addEventListener("click", agregarMedicamento);
 function agregarMedicamento(){
 
     const lista =
@@ -983,10 +945,7 @@ function agregarMedicamento(){
 /*=========================================
 ELIMINAR MEDICAMENTO
 =========================================*/
-
-document
-.addEventListener("click", function(e){
-
+document.addEventListener("click", function(e){
     if(
         e.target.classList.contains("btnEliminarMedicamento")
     ){
@@ -1014,35 +973,24 @@ document
 /*=========================================
 MOSTRAR RESUMEN
 =========================================*/
-
-document.getElementById("btnFinalizar").addEventListener("click", mostrarResumen);
-
+document.getElementById("btnFinalizar").addEventListener("click", function(){
+    const datos =recopilarDatosAtencion();
+    console.log("DATOS COMPLETOS DE LA ATENCIÓN:");
+    console.log(datos);
+    console.log(JSON.stringify(datos, null, 2));
+    mostrarResumen();
+});
 function mostrarResumen(){
-
    actualizarResumen();
-
-    document
-    .getElementById("modalResumen")
-    .classList.remove("hidden");
-
-    document
-    .getElementById("modalResumen")
-    .classList.add("flex");
-
+    document.getElementById("modalResumen").classList.remove("hidden");
+    document.getElementById("modalResumen").classList.add("flex");
 }
 
 /*=========================================
 CERRAR RESUMEN
 =========================================*/
-
-document
-.getElementById("btnCerrarResumen")
-.addEventListener("click", cerrarResumen);
-
-document
-.getElementById("btnCancelarResumen")
-.addEventListener("click", cerrarResumen);
-
+document.getElementById("btnCerrarResumen").addEventListener("click", cerrarResumen);
+document.getElementById("btnCancelarResumen").addEventListener("click", cerrarResumen);
 function cerrarResumen(){
 
     document
@@ -1058,280 +1006,370 @@ function cerrarResumen(){
 /*=========================================
 ACTUALIZAR RESUMEN
 =========================================*/
-
 function actualizarResumen(){
-
-    /*==============================
-    DIAGNÓSTICOS
-    ==============================*/
-console.log(
-    document.querySelectorAll("#listaDiagnosticos .diagnostico")
-);
+/*==============================
+DIAGNÓSTICOS
+==============================*/
+console.log(document.querySelectorAll("#listaDiagnosticos .diagnostico"));
     let htmlDiagnosticos = "";
-
-    document
-    .querySelectorAll("#listaDiagnosticos .diagnostico")
-    .forEach(item=>{
-
-        const cie10 =
-            item.querySelector("select[name='cie10[]']");
-
-        const tipo =
-            item.querySelector("select[name='tipo_diagnostico[]']");
-
+    document.querySelectorAll("#listaDiagnosticos .diagnostico").forEach(item=>{
+        const cie10 =item.querySelector("select[name='cie10[]']");
+        const tipo =item.querySelector("select[name='tipo_diagnostico[]']");
         if(cie10 && cie10.value!=""){
-
             htmlDiagnosticos += `
-
                 <div class="border-b pb-2 mb-2">
-
                     <strong>
-
                         ${cie10.options[cie10.selectedIndex].text}
-
                     </strong>
-
                     <br>
-
                     <span class="text-sm text-slate-500">
-
                         ${
-                            tipo.value=="P"
-                            ? "Presuntivo"
-                            : "Definitivo"
+                            tipo.value=="P"? "Presuntivo": "Definitivo"
                         }
-
                     </span>
-
                 </div>
-
             `;
-
         }
-
     });
-
     if(htmlDiagnosticos==""){
-
         htmlDiagnosticos=`
             <p class="text-slate-500">
                 Sin diagnósticos registrados.
             </p>
         `;
-
     }
+    document.getElementById("resumenDiagnosticos").innerHTML =htmlDiagnosticos;
 
-    document.getElementById("resumenDiagnosticos").innerHTML =
-        htmlDiagnosticos;
-
-
-    /*==============================
+/*==============================
     TRATAMIENTOS
-    ==============================*/
+==============================*/
     let htmlTratamientos="";
-
     let total=0;
-
-    document
-    .querySelectorAll("#listaTratamientos .tratamiento")
-    .forEach(item=>{
-
-        const tratamiento =
-            item.querySelector("select[name='tratamiento[]']");
-
-        const cantidad =
-            Number(
-                item.querySelector("input[name='cantidad[]']").value || 0
-            );
-
-        const subtotal =
-            Number(
-                item.querySelector("input[name='valor[]']").value || 0
-            );
-
+    document.querySelectorAll("#listaTratamientos .tratamiento").forEach(item=>{
+        const tratamiento =item.querySelector("select[name='tratamiento[]']");
+        const cantidad =Number(item.querySelector("input[name='cantidad[]']").value || 0);
+        const subtotal =Number(item.querySelector("input[name='valor[]']").value || 0);
         if(tratamiento && tratamiento.value!=""){
-
             total += subtotal;
-
             htmlTratamientos += `
-
                 <div class="border-b pb-2 mb-2">
-
                     <strong>
-
                         ${tratamiento.options[tratamiento.selectedIndex].text}
-
                     </strong>
-
                     <br>
-
                     Cantidad:
                     ${cantidad}
-
                     <br>
-
                     Subtotal:
-
                     <strong>
-
                         $ ${subtotal.toFixed(2)}
-
                     </strong>
-
                 </div>
-
             `;
-
         }
-
     });
 
     if(htmlTratamientos==""){
-
         htmlTratamientos=`
             <p class="text-slate-500">
                 Sin tratamientos registrados.
             </p>
         `;
-
     }
+    document.getElementById("resumenTratamientos").innerHTML =htmlTratamientos;
+    document.getElementById("lblTotalTratamientos").textContent ="$ "+total.toFixed(2);
 
-    document.getElementById("resumenTratamientos").innerHTML =
-        htmlTratamientos;
-
-    document.getElementById("lblTotalTratamientos").textContent =
-        "$ "+total.toFixed(2);
-
-
-    /*==============================
+/*==============================
     FOTOGRAFÍAS
-    ==============================*/
-
-    let htmlFotos="";
-
-    let cantidadFotos=0;
-
-    document
-    .querySelectorAll("#listaFotografias .fotografia")
-    .forEach(item=>{
-
-        const tipo =
-            item.querySelector("select[name='tipo_fotografia[]']");
-
-        const observacion =
-            item.querySelector("input[name='observacion_fotografia[]']");
-
-        const archivo =
-            item.querySelector("input[name='fotografia[]']");
-
-        if(archivo.files.length>0){
-
-            cantidadFotos++;
-
-            htmlFotos += `
-
-                <div class="border-b pb-2 mb-2">
-
-                    <strong>
-
-                        ${tipo.value}
-
-                    </strong>
-
-                    <br>
-
-                    ${observacion.value}
-
-                    <br>
-
+==============================*/
+let htmlFotos = "";
+let cantidadFotos = 0;
+document.querySelectorAll("#listaFotografias .fotografia").forEach(item => {
+    const observacion =item.querySelector("input[name='observacion_fotografia[]']");
+    const archivo =item.querySelector("input[name='fotografia[]']");
+    if(archivo &&archivo.files.length > 0){
+        cantidadFotos++;
+        htmlFotos += `
+            <div class="border-b pb-2 mb-2">
+                <strong>
                     ${archivo.files[0].name}
-
-                </div>
-
-            `;
-
-        }
-
-    });
-
-    if(cantidadFotos==0){
-
-        htmlFotos=`
-            <p class="text-slate-500">
-                Sin fotografías registradas.
-            </p>
+                </strong>
+                <br>
+                <span class="text-sm text-slate-500">
+                    ${
+                        observacion && observacion.value.trim() !== ""
+                        ? observacion.value
+                        : "Sin observación"
+                    }
+                </span>
+            </div>
         `;
-
     }
+});
 
-    document.getElementById("resumenFotografias").innerHTML =
-        htmlFotos;
+if(cantidadFotos === 0){
+    htmlFotos = `
+        <p class="text-slate-500">
+            Sin fotografías registradas.
+        </p>
+    `;
+}
+document.getElementById("resumenFotografias").innerHTML = htmlFotos;
 
-
-    /*==============================
+/*==============================
     MEDICAMENTOS
-    ==============================*/
-
+==============================*/
     let htmlMedicamentos="";
-
-    document
-    .querySelectorAll("#listaMedicamentos .medicamento")
-    .forEach(item=>{
-
+    document.querySelectorAll("#listaMedicamentos .medicamento").forEach(item=>{
         const medicamento =
             item.querySelector("input[name='medicamento[]']").value;
-
         if(medicamento!=""){
-
             htmlMedicamentos += `
-
                 <div class="border-b pb-2 mb-2">
-
                     <strong>
-
                         ${medicamento}
-
                     </strong>
-
                     <br>
-
                     Dosis:
                     ${item.querySelector("input[name='dosis[]']").value}
-
                     <br>
-
                     Frecuencia:
                     ${item.querySelector("input[name='frecuencia[]']").value}
-
                     <br>
-
                     Duración:
                     ${item.querySelector("input[name='duracion[]']").value}
-
                     <br>
-
                     Indicaciones:
                     ${item.querySelector("input[name='indicaciones[]']").value}
-
                 </div>
-
             `;
-
         }
-
     });
-
     if(htmlMedicamentos==""){
-
         htmlMedicamentos=`
             <p class="text-slate-500">
                 Sin medicamentos registrados.
             </p>
         `;
-
     }
+    document.getElementById("resumenMedicamentos").innerHTML = htmlMedicamentos;
+}
+//RECOPILAMOS DATOS
+function recopilarDatosAtencion() {
+    /* =========================================
+       ANTECEDENTES PERSONALES
+    ========================================= */
+    const antecedentesPersonales = [];
+    document.querySelectorAll("#antecedentes_personales input[type='checkbox']:checked").forEach(check => {
+        antecedentesPersonales.push(Number(check.value));
+    });
 
-    document.getElementById("resumenMedicamentos").innerHTML =
-        htmlMedicamentos;
+    /* =========================================
+       ANTECEDENTES FAMILIARES
+    ========================================= */
+    const antecedentesFamiliares = [];
+    document.querySelectorAll("#antecedentes_familiares input[type='checkbox']:checked").forEach(check => {
+        antecedentesFamiliares.push(Number(check.value));
+    });
 
+    /* =========================================
+       EXAMEN ESTOMATOGNÁTICO
+    ========================================= */
+    const estomatognatico = [];
+    document.querySelectorAll("#examen_estomatognatico textarea").forEach(campo => {
+        // Solo agregamos estructuras que tengan información
+        if (campo.value.trim() !== "") {
+            estomatognatico.push({estructura_id:
+                    Number(campo.dataset.estructura),observacion:campo.value.trim()
+            });
+        }
+    });
+
+    /* =========================================
+       INDICADORES DE SALUD BUCAL
+    ========================================= */
+    const indicadores = [];
+    document.querySelectorAll("#indicadores_salud select").forEach(select => {
+        if (select.value !== "") {
+            indicadores.push({
+                tipo_indicador_id:Number(select.dataset.tipo),
+                indicador_id:Number(select.value)
+            });
+        }
+    });
+
+    /* =========================================
+       HIGIENE ORAL SIMPLIFICADA
+    ========================================= */
+    const higieneOral = [];
+    document.querySelectorAll(".fila-higiene").forEach(fila => {
+        const pieza =fila.querySelector(".pieza-higiene:checked");
+        if (!pieza) {
+            return;
+        }
+        higieneOral.push({
+            pieza:pieza.value,
+            placa:fila.querySelector(".placa-higiene").value,
+            calculo:fila.querySelector(".calculo-higiene").value,
+            gingivitis:fila.querySelector(".gingivitis-higiene").value
+        });
+    });
+
+    /* =========================================
+       DIAGNÓSTICOS
+    ========================================= */
+    const diagnosticos = [];
+    document.querySelectorAll("#listaDiagnosticos .diagnostico").forEach(item => {
+        const cie10 =item.querySelector("select[name='cie10[]']");
+        const tipo =item.querySelector("select[name='tipo_diagnostico[]']");
+        if (cie10 && cie10.value !== "") {
+            diagnosticos.push({
+                cie10_id:Number(cie10.value),
+                tipo:tipo.value
+            });
+        }
+    });
+
+    /* =========================================
+       TRATAMIENTOS
+    ========================================= */
+    const tratamientos = [];
+    document.querySelectorAll("#listaTratamientos .tratamiento").forEach(item => {
+        const tratamiento =item.querySelector("select[name='tratamiento[]']");
+        if (tratamiento &&tratamiento.value !== "") {
+            tratamientos.push({
+                procedimiento_id:Number(tratamiento.value),
+                cantidad:Number(item.querySelector("input[name='cantidad[]']").value || 0),
+                subtotal:Number(item.querySelector("input[name='valor[]']").value || 0)
+            });
+        }
+    });
+
+    /* =========================================
+       COMPLICACIONES
+    ========================================= */
+    const complicaciones = [];
+    document.querySelectorAll("#listaComplicaciones .complicacion").forEach(item => {
+        const input =item.querySelector("input[name='complicacion[]']");
+        if (input &&input.value.trim() !== "") {
+            complicaciones.push(input.value.trim());
+        }
+    });
+
+    /* =========================================
+       PRESCRIPCIÓN
+    ========================================= */
+    const prescripcion = [];
+    document.querySelectorAll("#listaMedicamentos .medicamento").forEach(item => {
+        const medicamento =item.querySelector("input[name='medicamento[]']").value.trim();
+        if (medicamento !== "") {
+            prescripcion.push({
+                medicamento: medicamento,
+                dosis:item.querySelector("input[name='dosis[]']").value.trim(),
+                frecuencia:item.querySelector("input[name='frecuencia[]']").value.trim(),
+                duracion:item.querySelector("input[name='duracion[]']").value.trim(),
+                indicaciones:item.querySelector("input[name='indicaciones[]']").value.trim()
+            });
+        }
+    });
+
+    /* =========================================
+       EXÁMENES INFORMADOS
+    ========================================= */
+    const tiposExamen = [];
+    document.querySelectorAll("input[type='checkbox'][value='BIOMETRIA'], " +"input[type='checkbox'][value='QUIMICA_SANGUINEA'], " +
+        "input[type='checkbox'][value='RAYOS_X'], " +
+        "input[type='checkbox'][value='OTROS']"
+    )
+    .forEach(check => {
+        if (check.checked) {
+            tiposExamen.push(check.value);
+        }
+    });
+
+/* =========================================
+   FOTOGRAFÍAS - METADATOS
+========================================= */
+const fotografias = [];
+document.querySelectorAll("#listaFotografias .fotografia").forEach(item => {
+    const archivo =item.querySelector("input[name='fotografia[]']");
+    const observacion =item.querySelector("input[name='observacion_fotografia[]']");
+    if (archivo &&archivo.files.length > 0) {
+        fotografias.push({nombre_archivo:archivo.files[0].name,observacion:observacion? observacion.value.trim(): ""});
+    }
+});
+
+    /* =========================================
+       OBJETO COMPLETO
+    ========================================= */
+    let datosOdontograma = null;
+const elementoOdontograma = document.getElementById("odontograma");
+if (elementoOdontograma) {
+    const componenteOdontograma =Alpine.$data(elementoOdontograma);
+    if (componenteOdontograma &&typeof componenteOdontograma.obtenerDatosOdontograma === "function") {
+        datosOdontograma =componenteOdontograma.obtenerDatosOdontograma();
+    }
+}
+console.log("ODONTOGRAMA CAPTURADO:",datosOdontograma);
+    const datos = {
+        id_atencion:Number(idAtencionActual),
+        id_cita:Number(document.getElementById("id_cita").value),
+        antecedentes: {
+            personales: antecedentesPersonales,
+            observacion_personal:document.getElementById("observacion_personal").value.trim(),
+            familiares:antecedentesFamiliares,
+            observacion_familiar:document.getElementById("observacion_familiar").value.trim()
+        },
+        examen_clinico: {
+            temperatura:document.getElementById("temperatura").value,
+            pulso:document.getElementById("pulso").value,
+            frecuencia_respiratoria:document.getElementById("frecuencia_respiratoria").value,
+            presion_arterial:document.getElementById("presion_arterial").value,
+            pedido_examen_complementario:document.getElementById("pedido_examen_complementario").value.trim(),
+            tipos_examen:tiposExamen,
+            informe_examen:document.getElementById("informe_examen").value.trim()
+        },
+        estomatognatico:estomatognatico,
+        indicadores:indicadores,
+        higiene_oral: {
+            registros:higieneOral,
+            promedio_placa:Number(document.getElementById("promedioPlaca").textContent),
+            promedio_calculo:
+                Number(document.getElementById("promedioCalculo").textContent),
+            promedio_gingivitis:
+                Number(document.getElementById("promedioGingivitis").textContent)
+        },
+        odontograma:datosOdontograma,
+        diagnosticos:diagnosticos,
+        tratamientos:tratamientos,
+        complicaciones:complicaciones,
+        prescripcion:prescripcion,
+        fotografias:fotografias
+    };
+    return datos;
+}
+
+/*=============================
+Crear atención
+===============================*/
+function crearAtencion() {
+    const id_cita = document.getElementById("id_cita").value;
+    const formData = new FormData();
+    formData.append("id_cita", id_cita);
+    fetch("../ajax/atencion.php?op=crear", {
+        method: "POST",
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status) {
+            idAtencionActual = data.id_atencion;
+            console.log("Atención actual:",idAtencionActual);
+        } else {
+            console.error(data.message);
+        }
+    })
+    .catch(error => {
+        console.error(error);
+    });
 }
