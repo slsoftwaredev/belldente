@@ -409,8 +409,8 @@ $id_cita = isset($_GET["id_cita"]) ? intval($_GET["id_cita"]) : 0;
             <label class="flex items-center gap-3 border border-slate-300 rounded-xl p-4 cursor-pointer">
                 <input
                     type="checkbox"
-                    value="BIOMETRIA"
-                    class="rounded border-slate-300">
+                    value="1"
+                    class="tipo-examen rounded border-slate-300">
 
                 <span class="text-sm font-medium">
                     Biometría
@@ -420,8 +420,8 @@ $id_cita = isset($_GET["id_cita"]) ? intval($_GET["id_cita"]) : 0;
             <label class="flex items-center gap-3 border border-slate-300 rounded-xl p-4 cursor-pointer">
                 <input
                     type="checkbox"
-                    value="QUIMICA_SANGUINEA"
-                    class="rounded border-slate-300">
+                    value="2"
+                    class="tipo-examen rounded border-slate-300">
 
                 <span class="text-sm font-medium">
                     Química Sanguínea
@@ -431,8 +431,8 @@ $id_cita = isset($_GET["id_cita"]) ? intval($_GET["id_cita"]) : 0;
             <label class="flex items-center gap-3 border border-slate-300 rounded-xl p-4 cursor-pointer">
                 <input
                     type="checkbox"
-                    value="RAYOS_X"
-                    class="rounded border-slate-300">
+                    value="3"
+                    class="tipo-examen rounded border-slate-300">
 
                 <span class="text-sm font-medium">
                     Rayos-X
@@ -442,8 +442,8 @@ $id_cita = isset($_GET["id_cita"]) ? intval($_GET["id_cita"]) : 0;
             <label class="flex items-center gap-3 border border-slate-300 rounded-xl p-4 cursor-pointer">
                 <input
                     type="checkbox"
-                    value="OTROS"
-                    class="rounded border-slate-300">
+                    value="7"
+                    class="tipo-examen rounded border-slate-300">
 
                 <span class="text-sm font-medium">
                     Otros

@@ -50,13 +50,25 @@ class Atencion
         return ejecutarConsultaSP($sql);
     }
 
-
     // Listar piezas según dentición
     public function listarPiezas($tipo_denticion){
         $tipo_denticion = intval($tipo_denticion);
         $sql = "CALL sp_odontograma('piezas',$tipo_denticion)";
 
         return ejecutarConsultaSP($sql);
+    }
+
+    //Finalizamos la atención
+    public function finalizar($id_atencion,$id_cita,$id_usuario,$datos){
+        global $conexion;
+        $id_atencion = intval($id_atencion);
+        $id_cita = intval($id_cita);
+        $id_usuario = intval($id_usuario);
+
+        // Escapar JSON para enviarlo completo al SP
+        $datos = mysqli_real_escape_string($conexion,$datos);
+        $sql = "CALL sp_atencion('finalizar','$id_atencion',0,'$id_usuario','$id_cita','$datos')";
+        return ejecutarConsultaSimpleFilaAssoc($sql);
     }
     
 }

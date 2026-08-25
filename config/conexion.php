@@ -37,12 +37,16 @@ if (!function_exists('ejecutarConsulta')) {
 		return $row;
 		}
 	function ejecutarConsultaSimpleFilaAssoc($sql){
-		global $conexion;
+    global $conexion;
 
-		$query = $conexion->query($sql);
+    $query = $conexion->query($sql);
 
-		return $query->fetch_assoc();
-	}
+    if (!$query) {
+        die("ERROR MYSQL: " . $conexion->error);
+    }
+
+    return $query->fetch_assoc();
+}
 	function ejecutarConsulta_retornarID($sql){
 		global $conexion;
 		$query=$conexion->query($sql);

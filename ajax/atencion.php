@@ -1,4 +1,7 @@
 <?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 session_start();
 require_once "../model/Atencion.php";
 
@@ -135,5 +138,57 @@ case "listar_antecedentes":
             "message" => "No se pudo crear la atención"
         ]);
     }
+    break;
+
+// FINALIZAR ATENCIÓN
+    case "finalizar":
+        // Validar que haya una sesión activa
+        if(!isset($_SESSION["id_usuario"])) {
+            echo json_encode(["status" => false,"message" => "Sesión no válida"]);
+            exit;
+        }
+
+    // Recibimos el JSON que enviamos desde atencion.js
+        $datosJSON = $_POST["datos"] ?? "";
+        //Validamos si es que llega o no los datos
+        if($datosJSON === "") {
+            echo json_encode(["status" => false,"message" => "No se recibieron los datos de la atención"]);
+            exit;
+        }
+
+    // Convertimos el JSON para obtener IDs
+        $datos = json_decode($datosJSON,true);
+
+    // Verificamos nuestro JSON para enviar
+        if(json_last_error() !== JSON_ERROR_NONE) {
+            echo json_encode(["status" => false,"message" => "JSON de atención no válido"]);
+            exit;
+        }
+
+    // Obtenemos IDs
+        $id_atencion =intval($datos["id_atencion"] ?? 0);
+        $id_cita =intval($datos["id_cita"] ?? 0);
+        $id_usuario =intval($_SESSION["id_usuario"]);
+
+    // Validamos atención
+        if($id_atencion <= 0) {
+            echo json_encode(["status" => false,"message" => "Atención no válida"]);
+            exit;
+        }
+
+    // Validar cita
+        if($id_cita <= 0) {
+            echo json_encode(["status" => false,"message" => "Cita no válida"]);
+            exit;
+        }
+
+    // Enviamos todo el JSON al modelo
+        $rspta = $atencion->finalizar($id_atencion,$id_cita,$id_usuario,$datosJSON);
+        if ($rspta) {
+            echo json_encode(["status" => true,"id_atencion" =>$rspta["id_atencion"],"resultado" =>$rspta["resultado"]]);
+        } else {
+            echo json_encode(["status" => false,"message" =>"No se pudo finalizar la atención"
+            ]);
+        }
     break;
 } 

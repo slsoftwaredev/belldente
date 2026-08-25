@@ -1274,18 +1274,12 @@ function recopilarDatosAtencion() {
     });
 
     /* =========================================
-       EXÁMENES INFORMADOS
-    ========================================= */
+   EXÁMENES COMPLEMENTARIOS
+========================================= */
     const tiposExamen = [];
-    document.querySelectorAll("input[type='checkbox'][value='BIOMETRIA'], " +"input[type='checkbox'][value='QUIMICA_SANGUINEA'], " +
-        "input[type='checkbox'][value='RAYOS_X'], " +
-        "input[type='checkbox'][value='OTROS']"
-    )
-    .forEach(check => {
-        if (check.checked) {
-            tiposExamen.push(check.value);
-        }
-    });
+    document.querySelectorAll(".tipo-examen:checked").forEach(check => {
+            tiposExamen.push(Number(check.value));
+        });
 
 /* =========================================
    FOTOGRAFÍAS - METADATOS
@@ -1373,3 +1367,61 @@ function crearAtencion() {
         console.error(error);
     });
 }
+
+/*=============================
+fINALIZAR ATENCIÓN
+===============================*/
+function finalizarAtencion() {
+    // Recopilamos toda la información llamando a la función donde recopilamos
+    const datos = recopilarDatosAtencion();
+    console.log("DATOS ENVIADOS AL SP:");
+    console.log(datos);
+    console.log(JSON.stringify(datos, null, 2));
+
+    // Validamos que exista una atención
+    if (!datos.id_atencion || datos.id_atencion <= 0) {
+        alert("No existe una atención activa.");
+        return;
+    }
+
+    // Validamos que exista la cita
+    if (!datos.id_cita || datos.id_cita <= 0) {
+        alert("No se encontró la cita asociada.");
+        return;
+    }
+
+    // Creamos FormData
+    const formData = new FormData();
+    // Mandamos el objeto completo convertido a JSON
+    formData.append("datos",JSON.stringify(datos));
+    fetch("../ajax/atencion.php?op=finalizar", {
+        method: "POST",
+        body: formData
+    }).then(async response => {
+        // Por ahora usamos text() para poder ver
+        // cualquier error PHP/MySQL
+        const texto = await response.text();
+        console.log("RESPUESTA FINALIZAR:",texto);
+        try {
+            return JSON.parse(texto);
+        } catch (error) {
+            console.error("PHP NO DEVOLVIÓ JSON:",texto);
+            throw new Error("La respuesta del servidor no es JSON válido");
+        }
+    }).then(data => {
+        if (data.status) {
+            console.log("ATENCIÓN FINALIZADA:",data);
+            alert("Atención finalizada correctamente");
+        } else {
+            alert(data.message ||"No se pudo finalizar la atención");
+        }
+    }).catch(error => {
+        console.error("ERROR AL FINALIZAR ATENCIÓN:",error);
+        alert("Ocurrió un error al guardar la atención.");
+    });
+}
+
+//Boton de confirmar la finalización de atención
+document.getElementById("btnConfirmarAtencion").addEventListener("click", function () {
+    finalizarAtencion();
+});
