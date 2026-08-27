@@ -1278,10 +1278,10 @@ function recopilarDatosAtencion() {
 ========================================= */
 const fotografias = [];
 document.querySelectorAll("#listaFotografias .fotografia").forEach(item => {
-    const archivo =item.querySelector("input[name='fotografia[]']");
-    const observacion =item.querySelector("input[name='observacion_fotografia[]']");
-    if (archivo &&archivo.files.length > 0) {
-        fotografias.push({nombre_archivo:archivo.files[0].name,observacion:observacion? observacion.value.trim(): ""});
+    const archivo = item.querySelector("input[name='fotografia[]']");
+    const observacion = item.querySelector("input[name='observacion_fotografia[]']");
+    if (archivo && archivo.files.length > 0) {
+        fotografias.push({nombre_archivo: archivo.files[0].name,observacion: observacion? observacion.value.trim(): ""});
     }
 });
 
@@ -1386,6 +1386,13 @@ function finalizarAtencion() {
     const formData = new FormData();
     // Mandamos el objeto completo convertido a JSON
     formData.append("datos",JSON.stringify(datos));
+    // Archivos de fotografía
+    document.querySelectorAll("#listaFotografias .fotografia"). forEach(item => {
+        const archivo = item.querySelector("input[name='fotografia[]']");
+        if(archivo && archivo.files && archivo.files.length > 0){
+            formData.append("fotografias[]",archivo.files[0]);
+        }
+    });
     fetch("../ajax/atencion.php?op=finalizar", {
         method: "POST",
         body: formData
