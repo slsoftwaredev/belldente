@@ -179,10 +179,62 @@ case "listar_antecedentes":
             exit;
         }
 
-    // Enviamos todo el JSON al modelo
+    //GUARDAMOS LAS FOTOGRAFÍAS DE MANERA FÍSICA
+        $fotografiasGuardadas=[];
+        //Observaciones que vienen del JSON
+        $fotografiasMetadata = $datos["fotografias"]??[];
+        if(isset($_FILES["fotografias"]) && isset($_FILES["fotografias"]["name"]) && is_array($_FILES["fotografias"]["name"])){
+            //Carpeta física
+            $directorio = "../uploads/fotografias/";
+            //Creamos la carpeta si no existe
+            if(!is_dir($directorio)){
+                if(!mkdir($directorio,0775,true)){
+                    echo json_encode(["status"=>false,"message"=>"No se pudo crear la carpeta fotografías"]);
+                    exit;
+                }
+            }
+            $totalArchivos = count($_FILES["fotografias"]["name"]);
+            for($i = 0; $i < $totalArchivos; $i++){
+                $nombreOriginal = $_FILES["fotografias"]["name"][$i];
+                $tmp = $_FILES["fotografias"]["tmp_name"][$i];
+                $error = $_FILES["fotografias"]["error"][$i];
+                if ($error !== UPLOAD_ERR_OK) {
+                    continue;
+                }
+                //Validamos la extensión del archivo
+                $extension = strtolower(pathinfo($nombreOriginal, PATHINFO_EXTENSION));
+                $extensionesPermitidas = ["jpg","jpeg","png","webp"];
+                if (!in_array($extension,$extensionesPermitidas)) {
+                    continue;
+                }
+                //Creamos un nombre único al archivo
+                $nombreNuevo = "atencion_" . $id_atencion . "_". uniqid(). ".". $extension;
+                $rutaFisica = $directorio . $nombreNuevo;
+                //Ruta que guardaremos en la BDD
+                $rutaBDD = "uploads/fotografias/".$nombreNuevo;
+                //Movemos el archivo al directorio
+                if (move_uploaded_file($tmp,$rutaFisica)) {
+                    $observacion = "";
+                    if (isset($fotografiasMetadata[$i]["observacion"])) {
+                        $observacion = trim($fotografiasMetadata[$i]["observacion"]);
+                    }
+                    $fotografiasGuardadas[] = [
+                        "nombre_archivo" => $nombreOriginal,
+                        "ruta_archivo" => $rutaBDD,
+                        "observacion" => $observacion
+                    ];
+                }
+            }
+        }
+        // REEMPLAZAMOS FOTOGRAFIAS DEL JSON
+        $datos["fotografias"] = $fotografiasGuardadas;
+        //Convertimos nuevamente todo a JSON
+        $datosJSON = json_encode($datos,JSON_UNESCAPED_UNICODE);
+
+    // Enviamos todo el JSON al modelo SP
         $rspta = $atencion->finalizar($id_atencion,$id_cita,$id_usuario,$datosJSON);
         if ($rspta) {
-            echo json_encode(["status" => true,"id_atencion" =>$rspta["id_atencion"],"resultado" =>$rspta["resultado"]]);
+            echo json_encode(["status" => true,"id_atencion" =>$rspta["id_atencion"],"resultado" =>$rspta["resultado"], "fotografias" => $fotografiasGuardadas]);
         } else {
             echo json_encode(["status" => false,"message" =>"No se pudo finalizar la atención"
             ]);
