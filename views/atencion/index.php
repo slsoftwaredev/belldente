@@ -1,20 +1,12 @@
 <?php 
 $id_cita = isset($_GET["id_cita"]) ? intval($_GET["id_cita"]) : 0;
 ?>
-
-<input
-    type="hidden"
-    id="id_cita"
-    value="<?= $id_cita ?>">
-
+<input type="hidden" id="id_cita" value="<?= $id_cita ?>">
 <div x-data="{ tab:'datos' }" class="w-full max-w-7xl mx-auto space-y-6">
     <!-- CABECERA -->
     <div class="bg-white rounded-2xl shadow-sm p-6">
-
         <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between ">
-
             <div>
-
                 <h1 class="text-2xl font-bold text-slate-800">
                 Atención Clínica
                 </h1>
@@ -26,118 +18,50 @@ $id_cita = isset($_GET["id_cita"]) ? intval($_GET["id_cita"]) : 0;
             </div>
 
             <div class="flex flex-col sm:flex-row gap-3">
+                <button id="btnGenerarConsentimiento" class="px-5 py-3 rounded-xl bg-orange-600 hover:bg-orange-700 text-white">
+                            Generar Consentimiento
+                </button>
 
-                <button
-                        id="btnCancelar"
-                        class="px-5 py-3 rounded-xl bg-blue-600 text-white">
+                <button id="btnCancelar" class="px-5 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white">
                             Cancelar
-
                 </button>
 
-                <button
-                        id="btnFinalizar"
-                        class="px-5 py-3 rounded-xl bg-green-600 text-white">
-
+                <button id="btnFinalizar" class="px-5 py-3 rounded-xl bg-green-600 hover:bg-green-700 text-white">
                             Finalizar
-
                 </button>
-
         </div>
-
     </div>
-
 </div>
 
     <!-- PESTAÑAS -->
 <div class="bg-white rounded-2xl shadow-sm p-2 overflow-x-auto">
-
     <div class="flex flex-col sm:flex-row gap-2 min-w-max">
-
-        <button
-            @click="tab='datos'"
-            :class="tab==='datos'
-            ? 'bg-blue-600 text-white'
-            : 'hover:bg-slate-100'"
-            class="px-4 py-2 rounded-xl">
-
+        <button @click="tab='datos'":class="tab==='datos' ? 'bg-blue-600 text-white' : 'hover:bg-slate-100'" class="px-4 py-2 rounded-xl">
             Datos
-
         </button>
 
-        <button
-            @click="tab='antecedentes'"
-            :class="tab==='antecedentes'
-            ? 'bg-blue-600 text-white'
-            : 'hover:bg-slate-100'"
-            class="px-4 py-2 rounded-xl">
-
+        <button @click="tab='antecedentes'" :class="tab==='antecedentes' ? 'bg-blue-600 text-white': 'hover:bg-slate-100'" class="px-4 py-2 rounded-xl">
             Antecedentes
-
         </button>
 
-        <button
-            @click="tab='examen'"
-            :class="tab==='examen'
-            ? 'bg-blue-600 text-white'
-            : 'hover:bg-slate-100'"
-            class="px-4 py-2 rounded-xl">
-
+        <button @click="tab='examen'" :class="tab==='examen' ? 'bg-blue-600 text-white': 'hover:bg-slate-100'" class="px-4 py-2 rounded-xl">
             Examen
-
         </button>
-        <button
-            @click="tab='indicadores'"
-            :class="tab==='indicadores'
-            ? 'bg-blue-600 text-white'
-            : 'hover:bg-slate-100'"
-            class="px-4 py-2 rounded-xl">
 
+        <button @click="tab='indicadores'":class="tab==='indicadores'? 'bg-blue-600 text-white': 'hover:bg-slate-100'" class="px-4 py-2 rounded-xl">
             Indicadores
-
         </button>
 
-        <button
-            @click="tab='odontograma'"
-            :class="tab==='odontograma'
-            ? 'bg-blue-600 text-white'
-            : 'hover:bg-slate-100'"
-            class="px-4 py-2 rounded-xl">
-
+        <button @click="tab='odontograma'":class="tab==='odontograma'? 'bg-blue-600 text-white': 'hover:bg-slate-100'" class="px-4 py-2 rounded-xl">
             Odontograma
-
         </button>
 
-        <button
-            @click="tab='diagnostico'"
-            :class="tab==='diagnostico'
-            ? 'bg-blue-600 text-white'
-            : 'hover:bg-slate-100'"
-            class="px-4 py-2 rounded-xl">
-
+        <button @click="tab='diagnostico'":class="tab==='diagnostico'? 'bg-blue-600 text-white': 'hover:bg-slate-100'"class="px-4 py-2 rounded-xl">
             Diagnóstico y Tratamiento
-
         </button>
 
-        <button
-            @click="tab='fotografias'"
-            :class="tab==='fotografias'
-            ? 'bg-blue-600 text-white'
-            : 'hover:bg-slate-100'"
-            class="px-4 py-2 rounded-xl">
-
+        <button @click="tab='fotografias'":class="tab==='fotografias'? 'bg-blue-600 text-white': 'hover:bg-slate-100'"class="px-4 py-2 rounded-xl">
             Fotografías Clínicas
-
-        </button>
-
-        <button
-            @click="tab='documentos'"
-            :class="tab==='documentos'
-            ? 'bg-blue-600 text-white'
-            : 'hover:bg-slate-100'"
-            class="px-4 py-2 rounded-xl">
-
-            Documentos
-
         </button>
     </div>
 </div>
@@ -145,17 +69,12 @@ $id_cita = isset($_GET["id_cita"]) ? intval($_GET["id_cita"]) : 0;
     <!-- CONTENIDO DE LAS PESTAÑAS -->
      <!-- DATOS -->
 <div x-show="tab==='datos'" x-transition>
-
     <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
-
         <div class="bg-white rounded-2xl shadow-sm p-6">
-
             <h2 class="font-semibold text-slate-700 mb-4">
                 Información del Paciente
             </h2>
-
             <div class="space-y-3 text-sm">
-
                 <p>
                     <span class="font-medium">Paciente:</span>
                     <span id="paciente"></span>
@@ -181,13 +100,11 @@ $id_cita = isset($_GET["id_cita"]) ? intval($_GET["id_cita"]) : 0;
         </div>
 
         <div class="bg-white rounded-2xl shadow-sm p-6">
-
             <h2 class="font-semibold text-slate-700 mb-4">
                 Contacto
             </h2>
 
             <div class="space-y-3 text-sm">
-
                 <p>
                     <span class="font-medium">Teléfono:</span>
                     <span id="telefono"></span>
@@ -202,19 +119,15 @@ $id_cita = isset($_GET["id_cita"]) ? intval($_GET["id_cita"]) : 0;
                     <span class="font-medium">Dirección:</span>
                     <span id="direccion"></span>
                 </p>
-
             </div>
-
         </div>
 
         <div class="bg-white rounded-2xl shadow-sm p-6">
-
             <h2 class="font-semibold text-slate-700 mb-4">
                 Atención
             </h2>
 
             <div class="space-y-3 text-sm">
-
                 <p>
                     <span class="font-medium">Establecimiento:</span>
                     BellDente
@@ -229,22 +142,15 @@ $id_cita = isset($_GET["id_cita"]) ? intval($_GET["id_cita"]) : 0;
                     <span class="font-medium">Estado:</span>
                     <span id="estado_cita"></span>
                 </p>
-
             </div>
-
         </div>
-
     </div>
-
 </div>
 
 <!-- ANTECEDENTES -->
 <div x-show="tab==='antecedentes'" x-transition>
-
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-
         <div class="bg-white rounded-2xl shadow-sm p-6">
-
             <h2 class="font-semibold mb-5">
                 Antecedentes Personales
             </h2>
@@ -252,39 +158,27 @@ $id_cita = isset($_GET["id_cita"]) ? intval($_GET["id_cita"]) : 0;
                 <div class="space-y-3" id="antecedentes_personales">
                 </div>
 
-                <textarea
-                    id="observacion_personal"
-                    placeholder="Observaciones"
-                    class="w-full mt-5 border rounded-xl p-3">
-                </textarea>
+                <textarea id="observacion_personal" placeholder="Observaciones" class="w-full mt-5 border rounded-xl p-3"></textarea>
         </div>
 
         <div class="bg-white rounded-2xl shadow-sm p-6">
-
             <h2 class="font-semibold mb-5">
                 Antecedentes Familiares
             </h2>
-
                 <div class="space-y-3" id="antecedentes_familiares">
                 </div>
 
-                <textarea
-                    id="observacion_familiar"
-                    placeholder="Observaciones"
-                    class="w-full mt-5 border rounded-xl p-3">
-                </textarea>
+                <textarea id="observacion_familiar"placeholder="Observaciones"class="w-full mt-5 border rounded-xl p-3"></textarea>
         </div>
     </div>
 </div>
 
 <!-- EXAMEN CLÍNICO -->
 <div x-show="tab==='examen'" x-transition class="space-y-6">
-
     <!-- ===========================
          CONSTANTES VITALES
     ============================ -->
     <div class="bg-white rounded-2xl shadow-sm p-6">
-
         <h2 class="font-semibold mb-2">
             Constantes Vitales
         </h2>
@@ -292,9 +186,7 @@ $id_cita = isset($_GET["id_cita"]) ? intval($_GET["id_cita"]) : 0;
         <p class="text-sm text-slate-500 mb-6">
             Registre los signos vitales del paciente.
         </p>
-
         <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5">
-
             <div>
                 <label class="text-sm font-medium">
                     Temperatura (°C)
@@ -311,46 +203,29 @@ $id_cita = isset($_GET["id_cita"]) ? intval($_GET["id_cita"]) : 0;
                 <label class="text-sm font-medium">
                     Pulso (lpm)
                 </label>
-
-                <input
-                    type="number"
-                    id="pulso"
-                    class="w-full mt-2 border border-slate-300 rounded-xl p-3">
+                <input type="number" id="pulso" class="w-full mt-2 border border-slate-300 rounded-xl p-3">
             </div>
 
             <div>
                 <label class="text-sm font-medium">
                     Frecuencia Respiratoria (rpm)
                 </label>
-
-                <input
-                    type="number"
-                    id="frecuencia_respiratoria"
-                    class="w-full mt-2 border border-slate-300 rounded-xl p-3">
+                <input type="number" id="frecuencia_respiratoria" class="w-full mt-2 border border-slate-300 rounded-xl p-3">
             </div>
 
             <div>
                 <label class="text-sm font-medium">
                     Presión Arterial
                 </label>
-
-                <input
-                    type="text"
-                    placeholder="120/80"
-                    id="presion_arterial"
-                    class="w-full mt-2 border border-slate-300 rounded-xl p-3">
+                <input type="text" placeholder="120/80" id="presion_arterial" class="w-full mt-2 border border-slate-300 rounded-xl p-3">
             </div>
-
         </div>
-
     </div>
-
 
     <!-- ===========================
          EXAMEN ESTOMATOGNÁTICO
     ============================ -->
     <div class="bg-white rounded-2xl shadow-sm p-6">
-
         <h2 class="font-semibold mb-2">
             Examen del Sistema Estomatognático
         </h2>
@@ -359,42 +234,28 @@ $id_cita = isset($_GET["id_cita"]) ? intval($_GET["id_cita"]) : 0;
             Describa las alteraciones encontradas durante el examen.
         </p>
 
-        <div
-            id="examen_estomatognatico"
-            class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-5">
-        </div>
+        <div id="examen_estomatognatico" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-5"> </div>
 
     </div>
-
 
     <!-- ===========================
          PEDIDO DE EXÁMENES
          COMPLEMENTARIOS
     ============================ -->
     <div class="bg-white rounded-2xl shadow-sm p-6">
-
         <h2 class="font-semibold mb-2">
             Pedido de Exámenes Complementarios
         </h2>
-
         <p class="text-sm text-slate-500 mb-4">
             Registre los exámenes complementarios solicitados al paciente.
         </p>
-
-        <textarea
-            id="pedido_examen_complementario"
-            rows="3"
-            placeholder="Describa los exámenes complementarios solicitados..."
-            class="w-full border border-slate-300 rounded-xl p-3 resize-none"></textarea>
-
+        <textarea id="pedido_examen_complementario" rows="3" placeholder="Describa los exámenes complementarios solicitados..." class="w-full border border-slate-300 rounded-xl p-3 resize-none"></textarea>
     </div>
-
 
     <!-- ===========================
          INFORME DE EXÁMENES
     ============================ -->
     <div class="bg-white rounded-2xl shadow-sm p-6">
-
         <h2 class="font-semibold mb-2">
             Informe de Exámenes
         </h2>
@@ -405,46 +266,29 @@ $id_cita = isset($_GET["id_cita"]) ? intval($_GET["id_cita"]) : 0;
 
         <!-- TIPOS -->
         <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-5">
-
             <label class="flex items-center gap-3 border border-slate-300 rounded-xl p-4 cursor-pointer">
-                <input
-                    type="checkbox"
-                    value="1"
-                    class="tipo-examen rounded border-slate-300">
-
+                <input type="checkbox" value="1" class="tipo-examen rounded border-slate-300">
                 <span class="text-sm font-medium">
                     Biometría
                 </span>
             </label>
 
             <label class="flex items-center gap-3 border border-slate-300 rounded-xl p-4 cursor-pointer">
-                <input
-                    type="checkbox"
-                    value="2"
-                    class="tipo-examen rounded border-slate-300">
-
+                <input type="checkbox" value="2" class="tipo-examen rounded border-slate-300">
                 <span class="text-sm font-medium">
                     Química Sanguínea
                 </span>
             </label>
 
             <label class="flex items-center gap-3 border border-slate-300 rounded-xl p-4 cursor-pointer">
-                <input
-                    type="checkbox"
-                    value="3"
-                    class="tipo-examen rounded border-slate-300">
-
+                <input type="checkbox" value="3" class="tipo-examen rounded border-slate-300">
                 <span class="text-sm font-medium">
                     Rayos-X
                 </span>
             </label>
 
             <label class="flex items-center gap-3 border border-slate-300 rounded-xl p-4 cursor-pointer">
-                <input
-                    type="checkbox"
-                    value="7"
-                    class="tipo-examen rounded border-slate-300">
-
+                <input type="checkbox" value="7" class="tipo-examen rounded border-slate-300">
                 <span class="text-sm font-medium">
                     Otros
                 </span>
@@ -458,11 +302,7 @@ $id_cita = isset($_GET["id_cita"]) ? intval($_GET["id_cita"]) : 0;
                 Informe / Resultado
             </label>
 
-            <textarea
-                id="informe_examen"
-                rows="4"
-                placeholder="Registre los resultados o informe de los exámenes..."
-                class="w-full border border-slate-300 rounded-xl p-3 resize-none"></textarea>
+            <textarea id="informe_examen" rows="4" placeholder="Registre los resultados o informe de los exámenes..." class="w-full border border-slate-300 rounded-xl p-3 resize-none"></textarea>
         </div>
     </div>
 </div>
@@ -575,52 +415,33 @@ $id_cita = isset($_GET["id_cita"]) ? intval($_GET["id_cita"]) : 0;
 =========================== -->
 
 <div x-show="tab==='diagnostico'" x-transition class="space-y-6">
-    <!-- ===========================
-            DIAGNÓSTICOS
-    ============================ -->
     <div class="bg-white rounded-2xl shadow-sm p-6">
-
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-
             <div>
-
                 <h2 class="text-xl font-semibold">
-
                     Diagnósticos CIE-10
-
                 </h2>
 
                 <p class="text-sm text-slate-500">
-
                     Registre uno o varios diagnósticos para esta atención.
-
                 </p>
 
             </div>
-
             <button type="button" id="btnAgregarDiagnostico"class="bg-green-600 hover:bg-green-700 text-white px-5 py-3 rounded-xl">
                 + Agregar Diagnóstico
             </button>
-
         </div>
-
-        <!-- AQUÍ EL JS AGREGARÁ LOS DIAGNÓSTICOS -->
-
+        <!-- Cargamos los diagnosticos del JS -->
         <div id="listaDiagnosticos" class="space-y-4">
         </div>
-
     </div>
 
     <!-- ===========================
                 TRATAMIENTOS
     ============================ -->
-
         <div class="bg-white rounded-2xl shadow-sm p-6">
-
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-
                 <div>
-
                     <h2 class="text-xl font-semibold">
                             Tratamientos
                     </h2>
@@ -632,7 +453,7 @@ $id_cita = isset($_GET["id_cita"]) ? intval($_GET["id_cita"]) : 0;
                         + Agregar Tratamiento
                 </button>
             </div>
-                <!-- AQUÍ EL JS AGREGARÁ LOS TRATAMIENTOS -->
+                <!-- Se listan los tratamientos obtenidos en el JS -->
                 <div id="listaTratamientos" class="space-y-4">
                 </div>
     </div>
@@ -687,11 +508,7 @@ $id_cita = isset($_GET["id_cita"]) ? intval($_GET["id_cita"]) : 0;
                         <label class="block text-sm font-medium mb-2">
                             Medicamento
                         </label>
-
-                        <input
-                            type="text"
-                            name="medicamento[]"
-                            class="w-full border border-slate-300 rounded-xl px-4 py-3">
+                        <input type="text" name="medicamento[]" class="w-full border border-slate-300 rounded-xl px-4 py-3">
                     </div>
 
                     <div class="lg:col-span-2">
@@ -699,10 +516,7 @@ $id_cita = isset($_GET["id_cita"]) ? intval($_GET["id_cita"]) : 0;
                             Dosis
                         </label>
 
-                        <input
-                            type="text"
-                            name="dosis[]"
-                            class="w-full border border-slate-300 rounded-xl px-4 py-3">
+                        <input type="text" name="dosis[]" class="w-full border border-slate-300 rounded-xl px-4 py-3">
                     </div>
 
                     <div class="lg:col-span-2">
@@ -710,10 +524,7 @@ $id_cita = isset($_GET["id_cita"]) ? intval($_GET["id_cita"]) : 0;
                             Frecuencia
                         </label>
 
-                        <input
-                            type="text"
-                            name="frecuencia[]"
-                            class="w-full border border-slate-300 rounded-xl px-4 py-3">
+                        <input type="text" name="frecuencia[]" class="w-full border border-slate-300 rounded-xl px-4 py-3">
                     </div>
 
                     <div class="lg:col-span-2">
@@ -721,10 +532,7 @@ $id_cita = isset($_GET["id_cita"]) ? intval($_GET["id_cita"]) : 0;
                             Duración
                         </label>
 
-                        <input
-                            type="text"
-                            name="duracion[]"
-                            class="w-full border border-slate-300 rounded-xl px-4 py-3">
+                        <input type="text" name="duracion[]" class="w-full border border-slate-300 rounded-xl px-4 py-3">
                     </div>
 
                     <div class="lg:col-span-3">
@@ -744,7 +552,6 @@ $id_cita = isset($_GET["id_cita"]) ? intval($_GET["id_cita"]) : 0;
             </div> <!-- Fin medicamento -->
         </div> <!-- Fin lista medicamento -->
     </div> <!-- Fin BG.WHITE -->
-
 </div>
 
 <!-- ===========================
@@ -761,10 +568,7 @@ $id_cita = isset($_GET["id_cita"]) ? intval($_GET["id_cita"]) : 0;
                     Adjunte las fotografías correspondientes a la atención.
                 </p>
             </div>
-            <button
-                type="button"
-                id="btnAgregarFotografia"
-                class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-xl">
+            <button type="button" id="btnAgregarFotografia" class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-xl">
                 + Agregar Fotografía
             </button>
 
@@ -778,28 +582,18 @@ $id_cita = isset($_GET["id_cita"]) ? intval($_GET["id_cita"]) : 0;
                         <label class="block text-sm font-medium mb-2">
                             Observación
                         </label>
-                        <input
-                            type="text"
-                            name="observacion_fotografia[]"
-                            placeholder="Ej. Estado inicial de la pieza 16"
-                            class="w-full border border-slate-300 rounded-xl px-4 py-3">
+                        <input type="text" name="observacion_fotografia[]" placeholder="Ej. Estado inicial de la pieza 16" class="w-full border border-slate-300 rounded-xl px-4 py-3">
                     </div>
                     <!-- ARCHIVO -->
                     <div class="lg:col-span-6">
                         <label class="block text-sm font-medium mb-2">
                             Fotografía
                         </label>
-                        <input
-                            type="file"
-                            name="fotografia[]"
-                            accept="image/*"
-                            class="w-full border border-slate-300 rounded-xl px-4 py-3">
+                        <input type="file" name="fotografia[]" accept="image/*" class="w-full border border-slate-300 rounded-xl px-4 py-3">
                     </div>
                 </div>
                 <div class="mt-5">
-                    <button
-                        type="button"
-                        class="btnEliminarFotografia bg-red-500 hover:bg-red-600 text-white px-5 py-2 rounded-xl">
+                    <button type="button" class="btnEliminarFotografia bg-red-500 hover:bg-red-600 text-white px-5 py-2 rounded-xl">
                         Eliminar
                     </button>
                 </div>
@@ -807,50 +601,11 @@ $id_cita = isset($_GET["id_cita"]) ? intval($_GET["id_cita"]) : 0;
         </div>
     </div>
 </div>
-
-        <!-- ===========================
-        DOCUMENTOS
-=========================== -->
-        <div x-show="tab==='documentos'" x-transition class="space-y-6">
-            <div class="bg-white rounded-2xl shadow-sm p-6">
-                <div class="mb-6">
-                    <h2 class="text-xl font-semibold">
-                        Documentos
-                    </h2>
-                    <p class="text-sm text-slate-500">
-                        Genere los documentos correspondientes a la atención del paciente.
-                    </p>
-                </div>
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    <!-- Consentimiento Informado -->
-                     <div class="border border-sky-700 rounded-2xl p-6 bg-slate-50">
-                        <h3 class="text-lg font-semibold text-slate-800">Consentimiento Informado</h3>
-                        <p class="">Genere el consentimiento informado correspondiente.</p>
-                        <div class="mt-6">
-                            <button type="button" id="btnGenerarConsentimiento" class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-3 rounded-xl">
-                                Generar Consentimiento
-                            </button>
-                        </div>
-                     </div>
-                     <!-- Certificado de reposo -->
-                      <div class="border border-sky-700 rounded-2xl p-6 bg-slate-50">
-                        <h3 class="text-lg font-semibold text-slate-800">Certificado de Reposo</h3>
-                        <p class="">Genere el certificado de reposo correspondiente.</p>
-                        <div class="mt-6">
-                            <button type="button" id="btnGenerarCertificado" class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-3 rounded-xl">
-                                Generar Certificado
-                            </button>
-                        </div>
-                      </div>
-                </div>
-            </div>
-        </div>
-    </div> <!-- FIN PESTAÑA DOCUMENTOS -->
 </div> <!-- FIN X-DATA -->
+
 <!-- ==========================================
         MODAL RESUMEN DE ATENCIÓN
 ========================================== -->
-
 <div id="modalResumen" class="fixed inset-0 bg-black/60 hidden items-center justify-center p-4 z-50">
     <div class="bg-white rounded-3xl w-full max-w-5xl max-h-[90vh] overflow-y-auto">
         <!-- Header -->
@@ -915,7 +670,6 @@ $id_cita = isset($_GET["id_cita"]) ? intval($_GET["id_cita"]) : 0;
                     <span class="text-xl font-semibold">
                         Total Tratamientos
                     </span>
-
                     <span id="lblTotalTratamientos" class="text-4xl font-bold text-green-700">
                         $0.00
                     </span>

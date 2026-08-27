@@ -1,35 +1,59 @@
 <?php
 date_default_timezone_set('America/Guayaquil');
-
 require_once __DIR__ . '/../../libs/fpdf.php';
-/* =========================================================
-   CONVERSIÓN DE TEXTO PARA FPDF
-========================================================= */
-
+//Convertimos el texto a PDF
 function pdfText($texto){
     return iconv('UTF-8', 'windows-1252//TRANSLIT', $texto);
 }
+//Datos de la atención que obtendremos
+$id_atencion = isset($_GET["id_atencion"])? intval($_GET["id_atencion"]): 0;
+if ($id_atencion <= 0) {
+    die("No se encontró una atención válida para generar el consentimiento.");
+}
 
-/* =========================================================
-   DATOS DE PRUEBA
+//Datos para el consentimiento
+require_once __DIR__ . '/../../model/atencion.php';
+$atencionModel = new Atencion();
+$datosConsentimiento = $atencionModel->obtenerConsentimiento($id_atencion);
+if (!$datosConsentimiento) {
+    die("No se encontraron datos de la atención.");
+}
 
-   Posteriormente estos datos vendrán de la BDD.
-========================================================= */
-$historiaClinica = '';
-$cedula = '';
+//Datos del paciente
+$historiaClinica = $datosConsentimiento["cedula_paciente"] ?? '';
+$cedula = $datosConsentimiento["cedula_paciente"] ?? '';
+$nombres = $datosConsentimiento["nombre_paciente"] ?? '';
+$edad = $datosConsentimiento["edad_paciente"] ?? '';
+
+//Apellidos y los separamos para los campos de la plantilla
+$apellidosCompletos = trim($datosConsentimiento["apellido_paciente"] ?? '');
+$partesApellidos = preg_split('/\s+/', $apellidosCompletos, 2);
+$apellidoPaterno = $partesApellidos[0] ?? '';
+$apellidoMaterno = $partesApellidos[1] ?? '';
+
+//Fecha y Hora
 $fecha = date('d/m/Y');
 $hora = date('H:i');
+if (!empty($datosConsentimiento["fecha_inicio"])) {
 
-$apellidoPaterno = '';
-$apellidoMaterno = '';
-$nombres = '';
-$edad = '';
+    $fechaInicio = strtotime(
+        $datosConsentimiento["fecha_inicio"]
+    );
+    if ($fechaInicio !== false) {
+        $fecha = date('d/m/Y', $fechaInicio);
+        $hora  = date('H:i', $fechaInicio);
+    }
+}
 
+//TIPO DE ATENCIÓN
 $tipoAtencion = 'Ambulatoria';
 
-$procedimiento = '';
+//PROCEDIMIENTO
+
+$procedimiento = $datosConsentimiento["procedimientos"] ?? '';
 $duracion = '';
 
+//INFORMACIÓN ESPECÍFICA DEL CONSENTIMIENTO
 $beneficios = '';
 $riesgosFrecuentes = '';
 $riesgosGraves = '';
@@ -38,7 +62,8 @@ $alternativas = '';
 $manejoPosterior = '';
 $consecuencias = '';
 
-$nombreProfesional = '';
+//PROFESIONAL
+$nombreProfesional = trim(($datosConsentimiento["nombre_usuario"] ?? '') . ' ' .($datosConsentimiento["apellido_usuario"] ?? ''));
 $codigoProfesional = '';
 
 /* =========================================================
@@ -189,8 +214,8 @@ $pdf->campoTexto('CONSECUENCIAS POSIBLES SI NO SE REALIZA EL PROCEDIMIENTO',$con
 $pdf->Ln(2);
 $pdf->tituloSeccion('DECLARACIÓN DE CONSENTIMIENTO INFORMADO');
 $pdf->SetFont('Arial', '', 9);
-$pdf->Cell(95,6,pdfText('Fecha: __________________________'),0,0);
-$pdf->Cell(95,6,pdfText('Hora: __________________________'),0,1);
+$pdf->Cell(95,6,pdfText('Fecha: '. $fecha),0,0);
+$pdf->Cell(95,6,pdfText('Hora: '. $hora),0,1);
 $pdf->Ln(2);
 $declaracion =
     'He facilitado la información completa que conozco sobre los antecedentes '
@@ -214,13 +239,25 @@ $pdf->MultiCell(0,5,pdfText($declaracion),0,'J');
 $pdf->Ln(8);
 $x = $pdf->GetX();
 $y = $pdf->GetY();
+//Nombre del paciente
+$pdf->SetFont('Arial', '', 8);
+$pdf->SetXY($x, $y - 5);
+$pdf->Cell(80,5,pdfText($nombres . ''. $apellidosCompletos),0,0,'C');
+$pdf->SetXY($x, $y);
+//Fin nombre del paciente
 $pdf->Line($x,$y,$x + 80,$y);
 $pdf->Line($x + 110,$y,$x + 190,$y);
 $pdf->SetFont('Arial', '', 8);
 $pdf->Cell(80,5,pdfText('Nombre del paciente'),0,0,'C');
 $pdf->Cell(30,5,'',0);
 $pdf->Cell(80,5,pdfText('Firma del paciente'),0,1,'C');
+//Datos del dentista
 $pdf->Ln(10);
+$yDentista = $pdf->GetY();
+$pdf->SetXY($x, $yDentista - 5);
+$pdf->Cell(80,5,pdfText($nombreProfesional),0,0,'C');
+$pdf->SetXY($x, $yDentista);
+//Fin
 $pdf->Line($x,$pdf->GetY(),$x + 80,$pdf->GetY());
 $pdf->Line($x + 110,$pdf->GetY(),$x + 190,$pdf->GetY());
 
@@ -247,7 +284,7 @@ $pdf->Cell(90,6,pdfText('C.I.: ___________________________'),0,1);
 $pdf->Ln(5);
 $pdf->tituloSeccion('NEGATIVA DEL CONSENTIMIENTO INFORMADO');
 $pdf->SetFont('Arial', '', 9);
-$pdf->Cell(0,6,pdfText('Fecha: ______________________________'),0,1);
+$pdf->Cell(0,6,pdfText('Fecha: ' . $fecha),0,1);
 $negativa =
     'No autorizo y me niego a que se me realice el procedimiento propuesto, '
     . 'asumo la responsabilidad sobre mi salud y deslindo de responsabilidades '
@@ -302,9 +339,9 @@ $pdf->tituloSeccion('REVOCATORIA DE CONSENTIMIENTO INFORMADO');
 $pdf->SetFont('Arial', '', 9);
 $revocatoria =
     'Revoco el consentimiento informado realizado en fecha '
-    . '____________________________ y no deseo proseguir el tratamiento '
-    . 'que doy por finalizado en esta fecha ____________________________. '
-    . 'Asumo la responsabilidad sobre mi salud y deslindo de '
+    .$fecha. ' y no deseo proseguir el tratamiento '
+    . 'que doy por finalizado en esta fecha '
+    .$fecha. '. Asumo la responsabilidad sobre mi salud y deslindo de '
     . 'responsabilidades futuras de cualquier índole al servicio de salud '
     . 'y al profesional sanitario que me atiende.';
 

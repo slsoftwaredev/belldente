@@ -1,9 +1,6 @@
 <?php
-
-require_once "../config/conexion.php";
-
-class Atencion
-{
+require_once __DIR__ . "/../config/conexion.php";
+class Atencion{
     // Método para obtener la información de una cita específica
     public function obtenerCita($id_cita){
         $sql = "CALL sp_cita('obtener','$id_cita',NULL,NULL,NULL)";
@@ -68,6 +65,13 @@ class Atencion
         // Escapar JSON para enviarlo completo al SP
         $datos = mysqli_real_escape_string($conexion,$datos);
         $sql = "CALL sp_atencion('finalizar','$id_atencion',0,'$id_usuario','$id_cita','$datos')";
+        return ejecutarConsultaSimpleFilaAssoc($sql);
+    }
+
+    // Obtener datos para generar el consentimiento informado
+    public function obtenerConsentimiento($id_atencion){
+        $id_atencion = intval($id_atencion);
+        $sql = "CALL sp_atencion('obtener_consentimiento','$id_atencion',0,0,0,NULL)";
         return ejecutarConsultaSimpleFilaAssoc($sql);
     }
     

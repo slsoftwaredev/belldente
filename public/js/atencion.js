@@ -50,13 +50,40 @@ document.getElementById("btnCancelar").addEventListener("click", () => {
     }
 });
 
+// GENERAR CONSENTIMIENTO INFORMADO
+document.getElementById("btnGenerarConsentimiento").addEventListener("click", async function () {
+    const idAtencion = Number(idAtencionActual);
+    // Validamos que exista una atención activa
+    if (!idAtencion || idAtencion <= 0) {
+        alert("No existe una atención activa.");
+        return;
+    }
+
+    try {
+        const formData = new FormData();
+        formData.append("id_atencion", idAtencion);
+        const response = await fetch("../ajax/atencion.php?op=obtener_consentimiento",{method: "POST",body: formData});
+        const data = await response.json();
+        console.log("DATOS CONSENTIMIENTO:", data);
+        if (!data.status) {
+            alert(data.message ||"No se pudieron obtener los datos del consentimiento.");
+            return;
+        }
+
+        // Si los datos existen, abrimos el consentimiento
+        const url = "../reportes/atencion/consentimiento.php?id_atencion=" + encodeURIComponent(idAtencion);
+        window.open(url, "_blank");
+    } catch (error) {
+        console.error("ERROR AL GENERAR CONSENTIMIENTO:", error);
+        alert("Ocurrió un error al obtener los datos del consentimiento.");
+    }
+});
+
 // ANTECEDENTES
 // Función para listar los antecedentes
 async function listarAntecedentes(){
     try{
-        const respuesta = await fetch(
-            "../ajax/atencion.php?op=listar_antecedentes"
-        );
+        const respuesta = await fetch("../ajax/atencion.php?op=listar_antecedentes");
         const data = await respuesta.json();
         const personales = document.getElementById("antecedentes_personales");
         const familiares = document.getElementById("antecedentes_familiares");
@@ -65,10 +92,7 @@ async function listarAntecedentes(){
         data.forEach(antecedente => {
             const html = `
                 <label class="flex items-center gap-3 cursor-pointer">
-                    <input
-                        type="checkbox"
-                        class="rounded border-slate-300"
-                        value="${antecedente.id_antecedente}">
+                    <input type="checkbox" class="rounded border-slate-300" value="${antecedente.id_antecedente}">
                     <span>${antecedente.nombre_antecedente}</span>
                 </label>
             `;
@@ -531,10 +555,10 @@ async function comboCIE10(){
     }
 
 }
+
 // ==========================================
 // CARGAR CATÁLOGO DE TRATAMIENTOS
 // ==========================================
-
 async function comboTratamientos(){
 
     try{
@@ -554,117 +578,61 @@ async function comboTratamientos(){
     }
 
 }
+
 /* ==========================================
    AGREGAR DIAGNÓSTICO
 ========================================== */
-
 document.getElementById("btnAgregarDiagnostico").addEventListener("click", agregarDiagnostico);
 async function agregarDiagnostico(){
-
     try{
-
-        const respuesta = await fetch(
-            "../ajax/atencion.php?op=combo_cie10"
-        );
-
+        const respuesta = await fetch("../ajax/atencion.php?op=combo_cie10");
         const data = await respuesta.json();
-
-        let opciones = `
-            <option value="">
-                Seleccione un diagnóstico
-            </option>
-        `;
-
+        let opciones = `<option value="">Seleccione un diagnóstico</option>`;
         data.forEach(cie10 => {
-
-            opciones += `
-                <option value="${cie10.id_cie10}">
-                    ${cie10.codigo_cie10} - ${cie10.descripcion_cie10}
-                </option>
-            `;
-
+            opciones += ` <option value="${cie10.id_cie10}">${cie10.codigo_cie10} - ${cie10.descripcion_cie10} </option>`;
         });
-
-        document
-        .getElementById("listaDiagnosticos")
-        .insertAdjacentHTML("beforeend",`
-
+        document.getElementById("listaDiagnosticos").insertAdjacentHTML("beforeend",`
             <div class="border border-sky-700 rounded-2xl p-5 bg-slate-50 diagnostico">
-
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
-
                     <div class="lg:col-span-6">
-
                         <label class="block text-sm font-medium mb-2">
-
                             Diagnóstico CIE-10
-
                         </label>
 
-                        <select
-                            name="cie10[]"
-                            class="w-full border border-slate-300 rounded-xl px-4 py-3">
-
+                        <select name="cie10[]" class="w-full border border-slate-300 rounded-xl px-4 py-3">
                             ${opciones}
-
                         </select>
-
                     </div>
 
                     <div class="lg:col-span-3">
-
                         <label class="block text-sm font-medium mb-2">
-
                             Tipo
-
                         </label>
 
-                        <select
-                            name="tipo_diagnostico[]"
-                            class="w-full border border-slate-300 rounded-xl px-4 py-3">
-
+                        <select name="tipo_diagnostico[]" class="w-full border border-slate-300 rounded-xl px-4 py-3">
                             <option value="PRE">
-
                                 Presuntivo
-
                             </option>
 
                             <option value="DEF">
-
                                 Definitivo
-
                             </option>
-
                         </select>
-
                     </div>
 
                     <div class="lg:col-span-3 flex items-end">
-
-                        <button
-                            type="button"
-                            class="w-full bg-red-500 hover:bg-red-600 text-white rounded-xl py-3"
-                            onclick="eliminarDiagnostico(this)">
-
+                        <button type="button" class="w-full bg-red-500 hover:bg-red-600 text-white rounded-xl py-3" onclick="eliminarDiagnostico(this)">
                             Eliminar
-
                         </button>
-
                     </div>
-
                 </div>
-
             </div>
-
         `);
-
     }catch(error){
-
         console.error(error);
-
     }
-
 }
+
 /* ==========================================
    ELIMINAR DIAGNÓSTICO
 ========================================== */
@@ -676,145 +644,76 @@ function eliminarDiagnostico(boton){
 
 }
 
-document.getElementById("btnAgregarTratamiento").addEventListener("click", agregarTratamiento);
 /* ==========================================
    AGREGAR TRATAMIENTO
 ========================================== */
+document.getElementById("btnAgregarTratamiento").addEventListener("click", agregarTratamiento);
 async function agregarTratamiento(){
-
-    let opciones = `
-        <option value="">
-            Seleccione un tratamiento
-        </option>
-    `;
-
+    let opciones = `<option value=""> Seleccione un tratamiento</option>`;
     listaTratamientos.forEach(tratamiento => {
-
-        opciones += `
-            <option
-                value="${tratamiento.id_procedimiento}"
-                data-valor="${tratamiento.costo_procedimiento}">
-
+        opciones += `<option value="${tratamiento.id_procedimiento}" data-valor="${tratamiento.costo_procedimiento}">
                 ${tratamiento.nombre_procedimiento}
-
             </option>
         `;
-
     });
 
-    document
-    .getElementById("listaTratamientos")
-    .insertAdjacentHTML("beforeend",`
-
+    document.getElementById("listaTratamientos").insertAdjacentHTML("beforeend",`
         <div class="border border-sky-700 rounded-2xl p-5 bg-slate-50 tratamiento">
-
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
-
                 <div class="lg:col-span-5">
-
                     <label class="block text-sm font-medium mb-2">
-
                         Tratamiento
-
                     </label>
-
-                    <select
-                        name="tratamiento[]"
-                        class="cmbTratamiento w-full border border-slate-300 rounded-xl px-4 py-3"
-                        onchange="calcularSubtotal(this)">
-
+                    <select name="tratamiento[]" class="cmbTratamiento w-full border border-slate-300 rounded-xl px-4 py-3" onchange="calcularSubtotal(this)">
                         ${opciones}
-
                     </select>
-
                 </div>
 
                 <div class="lg:col-span-2">
-
                     <label class="block text-sm font-medium mb-2">
-
                         Cantidad
-
                     </label>
 
-                    <input
-                        type="number"
-                        name="cantidad[]"
-                        value="1"
-                        min="1"
-                        class="cantidad w-full border border-slate-300 rounded-xl px-4 py-3"
-                        oninput="calcularSubtotal(this)">
-
+                    <input type="number" name="cantidad[]" value="1" min="1" class="cantidad w-full border border-slate-300 rounded-xl px-4 py-3" oninput="calcularSubtotal(this)">
                 </div>
 
                 <div class="lg:col-span-2">
-
                     <label class="block text-sm font-medium mb-2">
-
                         Valor
-
                     </label>
 
-                    <input
-                        type="text"
-                        name="valor[]"
-                        readonly
-                        class="valor w-full border border-slate-300 rounded-xl px-4 py-3 bg-slate-100">
-
+                    <input type="text" name="valor[]" readonly class="valor w-full border border-slate-300 rounded-xl px-4 py-3 bg-slate-100">
                 </div>
 
                 <div class="lg:col-span-3 flex items-end">
-
-                    <button
-                        type="button"
-                        class="w-full bg-red-500 hover:bg-red-600 text-white rounded-xl py-3"
-                        onclick="eliminarTratamiento(this)">
-
+                    <button type="button" class="w-full bg-red-500 hover:bg-red-600 text-white rounded-xl py-3" onclick="eliminarTratamiento(this)">
                         Eliminar
-
                     </button>
-
                 </div>
-
             </div>
-
         </div>
-
     `);
-
 }
 
 // ======================================================
 // COMPLICACIONES
 // ======================================================
 document.getElementById("btnAgregarComplicacion")?.addEventListener("click", function () {
-
     const lista = document.getElementById("listaComplicaciones");
-
     const nuevaComplicacion = document.createElement("div");
-
-    nuevaComplicacion.className =
-        "complicacion border rounded-2xl p-5 border-sky-700 bg-slate-50";
-
+    nuevaComplicacion.className = "complicacion border rounded-2xl p-5 border-sky-700 bg-slate-50";
     nuevaComplicacion.innerHTML = `
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-end">
-
             <div class="lg:col-span-10">
                 <label class="block text-sm font-medium mb-2">
                     Complicación
                 </label>
 
-                <input
-                    placeholder="Ingrese la complicación"
-                    type="text"
-                    name="complicacion[]"
-                    class="w-full border border-slate-300 rounded-xl px-4 py-3">
+                <input placeholder="Ingrese la complicación" type="text" name="complicacion[]" class="w-full border border-slate-300 rounded-xl px-4 py-3">
             </div>
 
             <div class="lg:col-span-2">
-                <button
-                    type="button"
-                    class="btnEliminarComplicacion w-full bg-red-500 hover:bg-red-600 text-white px-5 py-3 rounded-xl">
+                <button type="button" class="btnEliminarComplicacion w-full bg-red-500 hover:bg-red-600 text-white px-5 py-3 rounded-xl">
                     Eliminar
                 </button>
             </div>
@@ -1423,4 +1322,16 @@ function finalizarAtencion() {
 //Boton de confirmar la finalización de atención
 document.getElementById("btnConfirmarAtencion").addEventListener("click", function () {
     finalizarAtencion();
+});
+
+const formData = new FormData();
+formData.append("id_atencion", 1);
+
+fetch("../ajax/atencion.php?op=obtener_consentimiento", {
+    method: "POST",
+    body: formData
+})
+.then(response => response.json())
+.then(data => {
+    console.log("CONSENTIMIENTO:", data);
 });

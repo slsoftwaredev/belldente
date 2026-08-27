@@ -252,4 +252,31 @@ case "listar_antecedentes":
             ]);
         }
     break;
+
+    /* ========================================
+    OBTENER DATOS PARA CONSENTIMIENTO INFORMADO
+    ======================================== */
+    case "obtener_consentimiento":
+        // Validamos que exista una sesión activa
+        if (!isset($_SESSION["id_usuario"])) {
+            echo json_encode(["status" => false,"message" => "Sesión no válida"]);
+            exit;
+        }
+        // Recibimos el ID de la atención
+        $id_atencion = isset($_POST["id_atencion"]) ? intval($_POST["id_atencion"]) : 0;
+        // Validamos el ID
+        if ($id_atencion <= 0) {
+            echo json_encode(["status" => false, "message" => "Atención no válida"]);
+            exit;
+        }
+        // Consultamos los datos
+        $rspta = $atencion->obtenerConsentimiento($id_atencion);
+
+        // Verificamos que exista la atención
+        if ($rspta) {
+            echo json_encode(["status" => true,"datos" => $rspta]);
+        } else {
+            echo json_encode(["status" => false,"message" => "No se encontraron datos para el consentimiento"]);
+        }
+    break;
 } 
