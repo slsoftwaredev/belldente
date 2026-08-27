@@ -573,24 +573,70 @@ calcularCEOD(){
         console.log("DATA ODONTOGRAMA:",this.data);
         console.log("DATA ODONTOGRAMA JSON:",JSON.stringify(this.data, null, 2));
         },
+
+// ==========================================
+// CONVERTIR POSICIÓN VISUAL A SUPERFICIE
+// ==========================================
+obtenerSuperficieClinica(pieza, cara){
+    pieza = Number(pieza);
+    // Cara central
+    if(cara === 'oclusal'){
+        return 'Oclusal/Incisal';
+    }
+    // Determinar cuadrante
+    const cuadrante = Math.floor(pieza / 10);
+    /*
+       SUPERIOR:
+       Cuadrantes 1, 2, 5 y 6
+    */
+    const esSuperior = [1, 2, 5, 6].includes(cuadrante);
+    /*
+       En nuestro dibujo:
+       - arriba/abajo representan Vestibular o Lingual/Palatina
+       - izquierda/derecha representan Mesial o Distal
+    */
+    if(cara === 'superior'){
+        return esSuperior ? 'Vestibular' : 'Lingual/Palatina';
+    }
+    if(cara === 'inferior'){
+        return esSuperior ? 'Lingual/Palatina' : 'Vestibular';
+    }
+    /*
+       Mesial siempre apunta hacia la línea media.
+       Cuadrantes 1, 4, 5, 8 están visualmente a la izquierda
+       de su respectiva mitad.
+    */
+    const ladoDerechoPaciente = [1, 4, 5, 8].includes(cuadrante);
+    if(cara === 'izquierda'){
+        return ladoDerechoPaciente ? 'Distal' : 'Mesial';
+    }
+    if(cara === 'derecha'){
+        return ladoDerechoPaciente ? 'Mesial' : 'Distal';
+    }
+    return null;
+},
+
         obtenerDatosOdontograma(){
+            console.log("NUEVA VERSION obtenerDatosOdontograma");
     const piezas = [];
     /* =========================================
        RECORRER PIEZAS MODIFICADAS
     ========================================= */
     Object.entries(this.data).forEach(
-        ([numeroPieza, estado]) => {
-            const caras = [];
-            /* =================================
-               CARAS DENTALES
-            ================================= */
-            Object.entries(estado.caras).forEach(([cara, simbologia]) => {
-                if(simbologia){
-                    caras.push({cara: cara,simbologia: simbologia
-                    });
-                }
-            });
-
+    ([numeroPieza, estado]) => {
+        const caras = [];
+        /* =================================
+           CARAS DENTALES
+        ================================= */
+        Object.entries(estado.caras).forEach(([cara, simbologia]) => {
+            if(simbologia){
+                const superficie = this.obtenerSuperficieClinica(Number(numeroPieza),cara);
+                caras.push({
+                    cara: superficie,
+                    simbologia: simbologia
+                });
+            }
+        });
             /* =================================
                SÍMBOLOS DE LA PIEZA
             ================================= */

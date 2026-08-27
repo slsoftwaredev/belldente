@@ -623,13 +623,13 @@ async function agregarDiagnostico(){
                             name="tipo_diagnostico[]"
                             class="w-full border border-slate-300 rounded-xl px-4 py-3">
 
-                            <option value="P">
+                            <option value="PRE">
 
                                 Presuntivo
 
                             </option>
 
-                            <option value="D">
+                            <option value="DEF">
 
                                 Definitivo
 
@@ -1024,7 +1024,7 @@ console.log(document.querySelectorAll("#listaDiagnosticos .diagnostico"));
                     <br>
                     <span class="text-sm text-slate-500">
                         ${
-                            tipo.value=="P"? "Presuntivo": "Definitivo"
+                            tipo.value=="PRE"? "Presuntivo": "Definitivo"
                         }
                     </span>
                 </div>
