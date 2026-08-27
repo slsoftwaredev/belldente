@@ -183,6 +183,9 @@ case "listar_antecedentes":
         $fotografiasGuardadas=[];
         //Observaciones que vienen del JSON
         $fotografiasMetadata = $datos["fotografias"]??[];
+        //Temporal para ver errores
+            error_log("FILES RECIBIDOS:");
+            error_log(print_r($_FILES, true));
         if(isset($_FILES["fotografias"]) && isset($_FILES["fotografias"]["name"]) && is_array($_FILES["fotografias"]["name"])){
             //Carpeta física
             $directorio = "../uploads/fotografias/";
@@ -198,6 +201,10 @@ case "listar_antecedentes":
                 $nombreOriginal = $_FILES["fotografias"]["name"][$i];
                 $tmp = $_FILES["fotografias"]["tmp_name"][$i];
                 $error = $_FILES["fotografias"]["error"][$i];
+                //Temporal para ver errores
+                error_log("ARCHIVO: " . $nombreOriginal);
+                error_log("TMP: " . $tmp);
+                error_log("ERROR UPLOAD: " . $error);
                 if ($error !== UPLOAD_ERR_OK) {
                     continue;
                 }
@@ -214,6 +221,8 @@ case "listar_antecedentes":
                 $rutaBDD = "uploads/fotografias/".$nombreNuevo;
                 //Movemos el archivo al directorio
                 if (move_uploaded_file($tmp,$rutaFisica)) {
+                    //Temporal
+                    error_log("FOTO MOVIDA CORRECTAMENTE: " . $rutaFisica);
                     $observacion = "";
                     if (isset($fotografiasMetadata[$i]["observacion"])) {
                         $observacion = trim($fotografiasMetadata[$i]["observacion"]);
@@ -223,6 +232,9 @@ case "listar_antecedentes":
                         "ruta_archivo" => $rutaBDD,
                         "observacion" => $observacion
                     ];
+                    //else temporal
+                }else{
+                    error_log("ERROR AL MOVER FOTO: " . $rutaFisica);
                 }
             }
         }
@@ -234,7 +246,7 @@ case "listar_antecedentes":
     // Enviamos todo el JSON al modelo SP
         $rspta = $atencion->finalizar($id_atencion,$id_cita,$id_usuario,$datosJSON);
         if ($rspta) {
-            echo json_encode(["status" => true,"id_atencion" =>$rspta["id_atencion"],"resultado" =>$rspta["resultado"], "fotografias" => $fotografiasGuardadas]);
+            echo json_encode(["status" => true,"id_atencion" =>$rspta["id_atencion"],"resultado" =>$rspta["resultado"], "fotografias" => $fotografiasGuardadas, "files_recibidos"=>$_FILES]);
         } else {
             echo json_encode(["status" => false,"message" =>"No se pudo finalizar la atención"
             ]);
