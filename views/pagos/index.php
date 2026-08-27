@@ -54,15 +54,15 @@
 
     <!-- Filtros -->
     <div class="flex flex-wrap gap-3">
-        <button class="px-5 py-2 rounded-xl bg-blue-600 text-white">
+        <button class="px-5 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white">
             Todos
         </button>
 
-        <button class="px-5 py-2 rounded-xl bg-yellow-500 text-white">
+        <button class="px-5 py-2 rounded-xl bg-yellow-500 hover:bg-yellow-600 text-white">
             Pendientes
         </button>
 
-        <button class="px-5 py-2 rounded-xl bg-green-600 text-white">
+        <button class="px-5 py-2 rounded-xl bg-green-600 hover:bg-green-700 text-white">
             Pagadas
         </button>
     </div>
@@ -108,6 +108,230 @@
     <!-- Cards Mobile -->
     <div id="cardsPagos" class="grid gap-4 lg:hidden">
     </div>
+</div>
 
+<!-- =========================================================
+     MODAL DETALLE DE PAGO
+========================================================= -->
+<div id="modalDetallePago" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 p-4">
+    <div class="bg-white w-full max-w-4xl rounded-2xl shadow-xl max-h-[90vh] overflow-y-auto">
+        <!-- ENCABEZADO -->
+        <div class="flex items-center justify-between px-6 py-5 border-b border-slate-200">
+            <div>
+                <h2 class="text-xl font-bold text-slate-800">
+                    Detalle de la Orden
+                </h2>
+
+                <p id="detalleNumeroOrden" class="text-sm text-slate-500 mt-1">
+                    Orden #-
+                </p>
+            </div>
+
+            <button type="button" onclick="cerrarDetallePago()" class="text-slate-400 hover:text-slate-700 text-2xl leading-none">
+                &times;
+            </button>
+        </div>
+        <div class="p-6 space-y-6">
+
+            <!-- =============================================
+                 DATOS DEL PACIENTE
+            ============================================== -->
+            <div class="bg-slate-50 rounded-xl p-5">
+                <h3 class="font-semibold text-slate-800 mb-4">
+                    Información del Paciente
+                </h3>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                    <div>
+                        <p class="text-slate-500">
+                            Paciente
+                        </p>
+
+                        <p id="detallePaciente" class="font-medium text-slate-800 mt-1">
+                            -
+                        </p>
+                    </div>
+
+
+                    <div>
+                        <p class="text-slate-500">
+                            Cédula
+                        </p>
+
+                        <p id="detalleCedula" class="font-medium text-slate-800 mt-1">
+                            -
+                        </p>
+                    </div>
+
+                    <div>
+                        <p class="text-slate-500">
+                            Fecha de atención
+                        </p>
+
+                        <p id="detalleFecha" class="font-medium text-slate-800 mt-1">
+                            -
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- =============================================
+                 RESUMEN DE LA ORDEN
+            ============================================== -->
+            <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
+
+                <div class="border border-slate-200 rounded-xl p-4">
+
+                    <p class="text-sm text-slate-500">
+                        Total
+                    </p>
+
+                    <p
+                        id="detalleTotal"
+                        class="text-xl font-bold text-slate-800 mt-1"
+                    >
+                        $0.00
+                    </p>
+
+                </div>
+
+
+                <div class="border border-slate-200 rounded-xl p-4">
+
+                    <p class="text-sm text-slate-500">
+                        Abonado
+                    </p>
+
+                    <p
+                        id="detalleAbonado"
+                        class="text-xl font-bold text-blue-600 mt-1"
+                    >
+                        $0.00
+                    </p>
+
+                </div>
+
+
+                <div class="border border-slate-200 rounded-xl p-4">
+
+                    <p class="text-sm text-slate-500">
+                        Saldo
+                    </p>
+
+                    <p
+                        id="detalleSaldo"
+                        class="text-xl font-bold text-red-600 mt-1"
+                    >
+                        $0.00
+                    </p>
+
+                </div>
+
+
+                <div class="border border-slate-200 rounded-xl p-4">
+
+                    <p class="text-sm text-slate-500">
+                        Estado
+                    </p>
+
+                    <div class="mt-2">
+                        <span
+                            id="detalleEstado"
+                            class="inline-flex px-3 py-1
+                                   rounded-full text-xs font-semibold"
+                        >
+                            -
+                        </span>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =============================================
+                 TRATAMIENTOS
+            ============================================== -->
+
+            <div>
+
+                <h3 class="font-semibold text-slate-800 mb-4">
+                    Tratamientos
+                </h3>
+
+                <div class="border border-slate-200 rounded-xl overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm">
+                            <thead class="bg-slate-100 text-slate-600">
+                                <tr>
+                                    <th class="px-4 py-3 text-left">
+                                        Procedimiento
+                                    </th>
+
+                                    <th class="px-4 py-3 text-center">
+                                        Cantidad
+                                    </th>
+
+                                    <th class="px-4 py-3 text-right">
+                                        Precio
+                                    </th>
+
+                                    <th class="px-4 py-3 text-right">
+                                        Subtotal
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody id="detalleTratamientos">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- =============================================
+                 HISTORIAL DE PAGOS
+            ============================================== -->
+            <div>
+                <h3 class="font-semibold text-slate-800 mb-4">
+                    Historial de Pagos
+                </h3>
+
+                <div class="border border-slate-200 rounded-xl overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm">
+                            <thead class="bg-slate-100 text-slate-600">
+                                <tr>
+                                    <th class="px-4 py-3 text-left">
+                                        Fecha
+                                    </th>
+
+                                    <th class="px-4 py-3 text-left">
+                                        Forma de pago
+                                    </th>
+
+                                    <th class="px-4 py-3 text-left">
+                                        Observación
+                                    </th>
+
+                                    <th class="px-4 py-3 text-right">
+                                        Valor
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody id="detalleAbonos">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PIE -->
+        <div class="flex justify-end px-6 py-4 border-t border-slate-200">
+            <button type="button" onclick="cerrarDetallePago()" class="px-5 py-2.5 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-700 font-medium">
+                Cerrar
+            </button>
+        </div>
+    </div>
 </div>
 <script src="/public/js/pagos.js"></script>

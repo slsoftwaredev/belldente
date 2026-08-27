@@ -294,10 +294,184 @@ function escaparHTML(texto) {
     return div.innerHTML;
 }
 
-//Prósimas funciones
-function verDetallePago(idOrdenPago) {
-    console.log("Ver detalle orden:",idOrdenPago);
+//Ver el detalle del pago
+async function verDetallePago(idOrdenPago) {
+    try {
+        const formData = new FormData();
+        formData.append("id_orden_pago",idOrdenPago);
+
+        /* ==========================================
+           CONSULTAMOS LOS 3 DATOS
+        ========================================== */
+        const [
+            responseOrden,
+            responseDetalle,
+            responseAbonos
+        ] = await Promise.all([
+            fetch("../ajax/pagos.php?op=obtener",{
+                    method: "POST",
+                    body: formData
+                }
+            ),
+            fetch("../ajax/pagos.php?op=detalle",{
+                    method: "POST",
+                    body: crearFormDataOrden(idOrdenPago)
+                }
+            ),
+            fetch("../ajax/pagos.php?op=listar_abonos",{
+                    method: "POST",
+                    body: crearFormDataOrden(idOrdenPago)
+                }
+            )
+        ]);
+
+        const ordenData = await responseOrden.json();
+        const detalleData = await responseDetalle.json();
+        const abonosData = await responseAbonos.json();
+        if (!ordenData.status) {
+            alert(ordenData.message || "No se pudo obtener la orden.");
+            return;
+        }
+
+        //Datos generales
+        const orden = ordenData.datos;
+        document.getElementById("detalleNumeroOrden").textContent = `Orden #${orden.id_orden_pago}`;
+        document.getElementById("detallePaciente").textContent = `${orden.nombre_paciente || ""} ${orden.apellido_paciente || ""}`.trim();
+        document.getElementById("detalleCedula").textContent = orden.cedula_paciente || "-";
+        document.getElementById("detalleFecha").textContent = formatearFecha(orden.fecha_fin || orden.fecha_inicio);
+        document.getElementById("detalleTotal").textContent = formatoMoneda(orden.total);
+        document.getElementById("detalleAbonado").textContent = formatoMoneda(orden.abonado);
+        document.getElementById("detalleSaldo").textContent = formatoMoneda(orden.saldo);
+
+        //Estado
+        const estado = obtenerEstado(orden.estado_pago);
+        const badgeEstado = document.getElementById("detalleEstado");
+        badgeEstado.textContent = estado.texto;
+        badgeEstado.className = `inline-flex px-3 py-1 rounded-full text-xs font-semibold ${estado.clase}`;
+
+        //Tratamientos
+        renderizarDetalleTratamientos(detalleData.data || []);
+
+        //Abonos
+        renderizarDetalleAbonos(abonosData.data || []);
+
+        //Abrir modal de Ver Detalle
+        const modal = document.getElementById("modalDetallePago");
+        modal.classList.remove("hidden");
+        modal.classList.add("flex");
+    } catch (error) {
+        console.error("ERROR AL OBTENER DETALLE:",error);
+        alert("Ocurrió un error al consultar la orden.");
+    }
 }
+//Formato de la Data
+function crearFormDataOrden(idOrdenPago) {
+    const formData = new FormData();
+    formData.append("id_orden_pago",idOrdenPago);
+    return formData;
+}
+
+//Cargamos tratamientos
+function renderizarDetalleTratamientos(tratamientos) {
+    const tbody = document.getElementById("detalleTratamientos");
+    tbody.innerHTML = "";
+    if (tratamientos.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="4" class="px-4 py-6 text-center text-slate-500">
+                    No existen tratamientos registrados.
+                </td>
+            </tr>
+        `;
+        return;
+    }
+
+    tratamientos.forEach(function (item) {
+        const fila = document.createElement("tr");
+        fila.className = "border-t border-slate-100";
+        fila.innerHTML = `
+            <td class="px-4 py-3 text-slate-700">
+                ${escaparHTML(item.procedimiento)}
+            </td>
+
+            <td class="px-4 py-3 text-center">
+                ${item.cantidad}
+            </td>
+
+            <td class="px-4 py-3 text-right">
+                ${formatoMoneda(item.precio_unitario)}
+            </td>
+
+            <td class="px-4 py-3 text-right font-semibold">
+                ${formatoMoneda(item.subtotal)}
+            </td>
+        `;
+        tbody.appendChild(fila);
+    });
+}
+
+//Cargamos el historial de Abonos
+function renderizarDetalleAbonos(abonos) {
+    const tbody = document.getElementById("detalleAbonos");
+    tbody.innerHTML = "";
+    if (abonos.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="4" class="px-4 py-6 text-center text-slate-500">
+                    Todavía no existen pagos registrados.
+                </td>
+            </tr>
+        `;
+        return;
+    }
+
+    abonos.forEach(function (abono) {
+        const fila = document.createElement("tr");
+        fila.className = "border-t border-slate-100";
+        fila.innerHTML = `
+            <td class="px-4 py-3 text-slate-600">
+                ${formatearFechaHora(abono.fecha_abono)}
+            </td>
+
+            <td class="px-4 py-3 text-slate-700">
+                ${escaparHTML(abono.forma_pago)}
+            </td>
+
+            <td class="px-4 py-3 text-slate-600">
+                ${escaparHTML(abono.observacion || "-")}
+            </td>
+
+            <td class="px-4 py-3 text-right
+                       font-semibold text-green-600">
+                ${formatoMoneda(abono.valor_abono)}
+            </td>
+        `;
+        tbody.appendChild(fila);
+    });
+}
+
+//Fecha y hora
+function formatearFechaHora(fecha) {
+    if (!fecha) {
+        return "-";
+    }
+
+    const partes = String(fecha).split(" ");
+    const fechaFormateada = formatearFecha(partes[0]);
+    if (!partes[1]) {
+        return fechaFormateada;
+    }
+    const hora = partes[1].substring(0, 5);
+    return `${fechaFormateada} ${hora}`;
+}
+
+//Cerrar modal
+function cerrarDetallePago() {
+    const modal = document.getElementById("modalDetallePago");
+    modal.classList.add("hidden");
+    modal.classList.remove("flex");
+}
+
 function abrirPago(idOrdenPago) {
     console.log("Registrar pago orden:",idOrdenPago);
 }
