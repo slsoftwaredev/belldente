@@ -884,36 +884,28 @@ function agregarFotografia(){
     lista.appendChild(copia);
 }
 
-/*=========================================
-ELIMINAR FOTOGRAFÍA
-=========================================*/
+//*=========================================
+// ELIMINAR / VACIAR FOTOGRAFÍA
+//=========================================*/
 document.addEventListener("click", function(e){
-
-    if(
-        e.target.classList.contains("btnEliminarFotografia")
-    ){
-
-        const lista =
-        document.getElementById("listaFotografias");
-
-        // No permitir eliminar la última
-
-        if(
-            lista.querySelectorAll(".fotografia").length == 1
-        ){
-
-            alert("Debe existir al menos una fotografía.");
-
+    if(e.target.classList.contains("btnEliminarFotografia")){
+        const lista = document.getElementById("listaFotografias");
+        const item = e.target.closest(".fotografia");
+        const fotografias = lista.querySelectorAll(".fotografia");
+        // Si solamente queda una fila, no la eliminamos:
+        // simplemente vaciamos todos sus campos.
+        if(fotografias.length === 1){
+            item.querySelectorAll("input").forEach(input => {
+                input.value = "";
+            });
+            item.querySelectorAll("textarea").forEach(textarea => {
+                textarea.value = "";
+            });
             return;
-
         }
-
-        e.target
-        .closest(".fotografia")
-        .remove();
-
+        // Si existen varias, eliminamos la seleccionada
+        item.remove();
     }
-
 });
 
 /*=========================================
