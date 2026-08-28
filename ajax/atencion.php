@@ -253,9 +253,8 @@ case "listar_antecedentes":
         }
     break;
 
-    /* ========================================
-    OBTENER DATOS PARA CONSENTIMIENTO INFORMADO
-    ======================================== */
+
+//OBTENER DATOS PARA CONSENTIMIENTO INFORMADO
     case "obtener_consentimiento":
         // Validamos que exista una sesión activa
         if (!isset($_SESSION["id_usuario"])) {
@@ -278,5 +277,99 @@ case "listar_antecedentes":
         } else {
             echo json_encode(["status" => false,"message" => "No se encontraron datos para el consentimiento"]);
         }
+    break;
+
+//Listar historias clínicas
+    case 'listar_historias':
+    $rspta = $atencion->listarHistorias();
+    $data = [];
+    while ($reg = $rspta->fetch_object()) {
+        $data[] = [
+            "id_paciente"      => $reg->id_paciente,
+            "cedula"           => $reg->cedula_paciente,
+            "nombre"           => $reg->nombre_paciente,
+            "apellido"         => $reg->apellido_paciente,
+            "total_atenciones" => $reg->total_atenciones,
+            "ultima_atencion"  => $reg->ultima_atencion
+        ];
+    }
+    echo json_encode([
+        "status" => true,
+        "data"   => $data
+    ]);
+    break;
+
+// Listar atenciones finalizadas de un paciente
+case 'listar_atenciones_paciente':
+    $id_paciente = isset($_POST["id_paciente"]) ? intval($_POST["id_paciente"]) : 0;
+    if ($id_paciente <= 0) {
+        echo json_encode([
+            "status" => false,
+            "message" => "ID de paciente no válido"
+        ]);
+        break;
+    }
+    $rspta = $atencion->listarAtencionesPaciente($id_paciente);
+    $data = [];
+    while ($reg = $rspta->fetch_object()) {
+        $data[] = [
+            "id_atencion" => $reg->id_atencion,
+            "id_cita" => $reg->id_cita,
+
+            "id_paciente" => $reg->id_paciente,
+            "cedula" => $reg->cedula_paciente,
+            "nombre" => $reg->nombre_paciente,
+            "apellido" => $reg->apellido_paciente,
+
+            "fecha_nacimiento" => $reg->fecha_nacimiento,
+            "edad_atencion" => $reg->edad_atencion,
+            "sexo" => $reg->sexo_paciente,
+            "telefono" => $reg->telefono_paciente,
+            "correo" => $reg->correo_paciente,
+            "direccion" => $reg->direccion_paciente,
+
+            "fecha_inicio" => $reg->fecha_inicio,
+            "fecha_fin" => $reg->fecha_fin,
+
+            "nombre_profesional" => $reg->nombre_profesional,
+            "apellido_profesional" => $reg->apellido_profesional,
+            "rol_profesional" => $reg->nombre_rol
+        ];
+    }
+    echo json_encode([
+        "status" => true,
+        "data" => $data
+    ]);
+    break;
+
+// Obtenemos la historia completa
+    case 'obtener_historia_completa':
+    $id_atencion = isset($_POST["id_atencion"]) ? intval($_POST["id_atencion"]) : 0;
+    if ($id_atencion <= 0) {
+        echo json_encode([
+            "status" => false,
+            "message" => "ID de atención no válido"
+        ]);
+        break;
+    }
+    try {
+        $historia = $atencion->obtenerHistoriaCompleta($id_atencion);
+        if (empty($historia["cabecera"])) {
+            echo json_encode([
+                "status" => false,
+                "message" => "No se encontró la atención finalizada"
+            ]);
+            break;
+        }
+        echo json_encode([
+            "status" => true,
+            "data" => $historia
+        ]);
+    } catch (Exception $e) {
+        echo json_encode([
+            "status" => false,
+            "message" => $e->getMessage()
+        ]);
+    }
     break;
 } 

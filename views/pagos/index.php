@@ -53,19 +53,46 @@
     </div>
 
     <!-- Filtros -->
-    <div class="flex flex-wrap gap-3">
-        <button class="px-5 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white">
-            Todos
-        </button>
+<div class="flex flex-wrap gap-3">
 
-        <button class="px-5 py-2 rounded-xl bg-yellow-500 hover:bg-yellow-600 text-white">
-            Pendientes
-        </button>
+    <button
+        type="button"
+        data-filtro="Todos"
+        class="filtro-pago px-5 py-2 rounded-xl
+               bg-blue-600 hover:bg-blue-700 text-white
+               ring-2 ring-offset-2 ring-slate-400"
+    >
+        Todos
+    </button>
 
-        <button class="px-5 py-2 rounded-xl bg-green-600 hover:bg-green-700 text-white">
-            Pagadas
-        </button>
-    </div>
+    <button
+        type="button"
+        data-filtro="Pendiente"
+        class="filtro-pago px-5 py-2 rounded-xl
+               bg-yellow-500 hover:bg-yellow-600 text-white"
+    >
+        Pendientes
+    </button>
+
+    <button
+        type="button"
+        data-filtro="Abonado"
+        class="filtro-pago px-5 py-2 rounded-xl
+               bg-orange-500 hover:bg-orange-600 text-white"
+    >
+        Abonadas
+    </button>
+
+    <button
+        type="button"
+        data-filtro="Pagado"
+        class="filtro-pago px-5 py-2 rounded-xl
+               bg-green-600 hover:bg-green-700 text-white"
+    >
+        Pagadas
+    </button>
+
+</div>
 
     <!-- Tabla Desktop -->
     <div class="hidden lg:block bg-white rounded-2xl shadow-sm overflow-hidden">
@@ -332,6 +359,130 @@
                 Cerrar
             </button>
         </div>
+    </div>
+</div>
+
+<!-- =========================================================
+     MODAL REGISTRAR PAGO
+========================================================= -->
+<div id="modalRegistrarPago" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 p-4">
+    <div class="bg-white w-full max-w-2xl rounded-2xl shadow-xl">
+        <!-- ENCABEZADO -->
+        <div class="flex items-center justify-between px-6 py-5 border-b border-slate-200">
+            <div>
+                <h2 class="text-xl font-bold text-slate-800">
+                    Registrar Pago
+                </h2>
+
+                <p id="pagoNumeroOrden" class="text-sm text-slate-500 mt-1">
+                    Orden #-
+                </p>
+            </div>
+
+            <button type="button" onclick="cerrarPago()" class="text-slate-400 hover:text-slate-700 text-2xl leading-none">
+                &times;
+            </button>
+        </div>
+
+        <form id="formRegistrarPago">
+            <div class="p-6 space-y-6">
+                <!-- ID ORDEN -->
+                <input type="hidden" id="pagoIdOrden"name="id_orden_pago">
+
+                <!-- PACIENTE -->
+                <div class="bg-slate-50 rounded-xl p-5">
+                    <p class="text-sm text-slate-500">
+                        Paciente
+                    </p>
+
+                    <p id="pagoPaciente" class="font-semibold text-slate-800 mt-1">
+                        -
+                    </p>
+
+                    <p id="pagoCedula" class="text-sm text-slate-500 mt-1">
+                        -
+                    </p>
+                </div>
+
+                <!-- RESUMEN -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div class="border border-slate-200 rounded-xl p-4">
+                        <p class="text-sm text-slate-500">
+                            Total
+                        </p>
+
+                        <p id="pagoTotal" class="text-xl font-bold text-slate-800 mt-1">
+                            $0.00
+                        </p>
+                    </div>
+
+                    <div class="border border-slate-200 rounded-xl p-4">
+                        <p class="text-sm text-slate-500">
+                            Abonado
+                        </p>
+
+                        <p id="pagoAbonado"class="text-xl font-bold text-blue-600 mt-1">
+                            $0.00
+                        </p>
+                    </div>
+
+                    <div class="border border-slate-200 rounded-xl p-4">
+                        <p class="text-sm text-slate-500">
+                            Saldo pendiente
+                        </p>
+
+                        <p id="pagoSaldo"class="text-xl font-bold text-red-600 mt-1">
+                            $0.00
+                        </p>
+                    </div>
+                </div>
+
+                <!-- DATOS DEL PAGO -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div>
+                        <label for="pagoFormaPago" class="block text-sm font-medium text-slate-700 mb-2">
+                            Forma de pago
+                        </label>
+
+                        <select id="pagoFormaPago" name="forma_pago_id" required class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="">
+                                Seleccione...
+                            </option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label for="pagoValor" class="block text-sm font-medium text-slate-700 mb-2">
+                            Valor a pagar
+                        </label>
+
+                        <input type="number" id="pagoValor" name="valor_abono" min="0.01" step="0.01" required placeholder="0.00" class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500">
+
+                        <p id="pagoSaldoDisponible" class="text-xs text-slate-500 mt-2">
+                        </p>
+                    </div>
+                </div>
+
+                <!-- OBSERVACIÓN -->
+                <div>
+                    <label for="pagoObservacion" class="block text-sm font-medium text-slate-700 mb-2" >
+                        Observación
+                    </label>
+
+                    <textarea id="pagoObservacion" name="observacion" rows="3" placeholder="Observación opcional..." class="w-full px-4 py-3 border border-slate-300 rounded-xl resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                </div>
+            </div>
+            <!-- PIE -->
+            <div class="flex justify-end gap-3 px-6 py-4 border-t border-slate-200">
+                <button type="button" onclick="cerrarPago()" class="px-5 py-2.5 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-700 font-medium">
+                    Cancelar
+                </button>
+
+                <button type="submit" id="btnGuardarPago" class="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-medium">
+                    Registrar pago
+                </button>
+            </div>
+        </form>
     </div>
 </div>
 <script src="/public/js/pagos.js"></script>

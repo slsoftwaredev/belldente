@@ -20,6 +20,12 @@ document.querySelectorAll(".filtro-pago").forEach(function (boton) {
     });
 });
 
+//Registrar pago cargamos
+    const formRegistrarPago = document.getElementById("formRegistrarPago");
+    if (formRegistrarPago) {
+        formRegistrarPago.addEventListener("submit", registrarPago);
+    }
+
 //Listar pagos
 async function listarPagos() {
     try {
@@ -472,6 +478,160 @@ function cerrarDetallePago() {
     modal.classList.remove("flex");
 }
 
-function abrirPago(idOrdenPago) {
-    console.log("Registrar pago orden:",idOrdenPago);
+//Abrir pago
+async function abrirPago(idOrdenPago) {
+    try {
+        const formData = new FormData();
+        formData.append("id_orden_pago", idOrdenPago);
+        const [
+            responseOrden,
+            responseFormas
+        ] = await Promise.all([
+            fetch("../ajax/pagos.php?op=obtener",{
+                    method: "POST",
+                    body: formData
+                }
+            ),
+            fetch("../ajax/pagos.php?op=formas_pago")
+        ]);
+
+        const ordenData = await responseOrden.json();
+        const formasData = await responseFormas.json();
+        if (!ordenData.status) {
+            alert(ordenData.message || "No se pudo obtener la orden.");
+            return;
+        }
+
+        if (!formasData.status) {
+            alert(formasData.message || "No se pudieron cargar las formas de pago.");
+            return;
+        }
+        const orden = ordenData.datos;
+
+        //Evitar pagar una orden pagada
+        if (Number(orden.saldo) <= 0) {
+            alert("Esta orden ya se encuentra pagada.");
+            listarPagos();
+            return;
+        }
+
+        //Datos de la orden de pago
+        document.getElementById("pagoIdOrden").value = orden.id_orden_pago;
+        document.getElementById("pagoNumeroOrden").textContent = `Orden #${orden.id_orden_pago}`;
+        document.getElementById("pagoPaciente").textContent = `${orden.nombre_paciente || ""} ${orden.apellido_paciente || ""}`.trim();
+        document.getElementById("pagoCedula").textContent = orden.cedula_paciente || "-";
+        document.getElementById("pagoTotal").textContent = formatoMoneda(orden.total);
+        document.getElementById("pagoAbonado").textContent = formatoMoneda(orden.abonado);
+        document.getElementById("pagoSaldo").textContent = formatoMoneda(orden.saldo);
+
+        //Valor a pagar
+        const inputValor = document.getElementById("pagoValor");
+        inputValor.value = "";
+        inputValor.max = Number(orden.saldo).toFixed(2);
+        document.getElementById("pagoSaldoDisponible").textContent = `Máximo a pagar: ${formatoMoneda(orden.saldo)}`;
+
+        //Limpiar la observación
+        document.getElementById("pagoObservacion").value = "";
+
+        //Formas de pago
+        const select = document.getElementById("pagoFormaPago");
+        select.innerHTML = `
+            <option value="">
+                Seleccione...
+            </option>
+        `;
+
+        formasData.data.forEach(function (forma) {
+            const option = document.createElement("option");
+            option.value = forma.id_forma_pago;
+            option.textContent = forma.nombre_forma_pago;
+            select.appendChild(option);
+        });
+
+        //Abrir modal
+        const modal = document.getElementById("modalRegistrarPago");
+        modal.classList.remove("hidden");
+        modal.classList.add("flex");
+    } catch (error) {
+        console.error("ERROR AL ABRIR PAGO:",error);
+        alert("Ocurrió un error al consultar la orden.");
+    }
+}
+
+//Registrar pago
+async function registrarPago(event) {
+    event.preventDefault();
+    const idOrdenPago = Number(document.getElementById("pagoIdOrden").value);
+    const formaPagoId = Number(document.getElementById("pagoFormaPago").value);
+    const inputValor = document.getElementById("pagoValor");
+    const valorAbono = Number(inputValor.value);
+    const saldoMaximo = Number(inputValor.max);
+    const observacion = document.getElementById("pagoObservacion").value.trim();
+
+    //Validaciones
+    if (!idOrdenPago) {
+        alert("Orden de pago no válida.");
+        return;
+    }
+
+    if (!formaPagoId) {
+        alert("Seleccione una forma de pago.");
+        return;
+    }
+
+    if (!valorAbono || valorAbono <= 0) {
+        alert("Ingrese un valor válido.");
+        inputValor.focus();
+        return;
+    }
+
+    if (valorAbono > saldoMaximo) {
+        alert(`El valor no puede superar el saldo de ${formatoMoneda(saldoMaximo)}.`);
+        inputValor.focus();
+        return;
+    }
+
+    //Datos
+    const formData = new FormData();
+    formData.append("id_orden_pago",idOrdenPago);
+    formData.append("forma_pago_id",formaPagoId);
+    formData.append("valor_abono",valorAbono.toFixed(2));
+    formData.append("observacion",observacion);
+    const boton = document.getElementById("btnGuardarPago");
+    const textoOriginal = boton.textContent;
+    try {
+        boton.disabled = true;
+        boton.textContent = "Registrando...";
+        const response = await fetch("../ajax/pagos.php?op=registrar_abono",{
+                method: "POST",
+                body: formData
+            }
+        );
+
+        const data = await response.json();
+        if (!data.status) {
+            alert(data.message || "No se pudo registrar el pago.");
+            return;
+        }
+        alert("Pago registrado correctamente.");
+        cerrarPago();
+        //Actualizamos tabla y cards
+        await listarPagos();
+    } catch (error) {
+        console.error("ERROR AL REGISTRAR PAGO:",error);
+        alert("Ocurrió un error al registrar el pago.");
+    } finally {
+        boton.disabled = false;
+        boton.textContent = textoOriginal;
+    }
+}
+//Cerrar modal registrar pago
+function cerrarPago() {
+    const modal = document.getElementById("modalRegistrarPago");
+    modal.classList.add("hidden");
+    modal.classList.remove("flex");
+    const formulario = document.getElementById("formRegistrarPago");
+    if (formulario) {
+        formulario.reset();
+    }
 }

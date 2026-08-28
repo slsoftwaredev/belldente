@@ -1310,6 +1310,8 @@ function finalizarAtencion() {
         if (data.status) {
             console.log("ATENCIÓN FINALIZADA:",data);
             alert("Atención finalizada correctamente");
+            // Redirigimos al módulo de Historias Clínicas
+        window.location.href = "../views/historias.php";
         } else {
             alert(data.message ||"No se pudo finalizar la atención");
         }

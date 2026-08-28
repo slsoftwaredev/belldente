@@ -59,5 +59,33 @@ if (!function_exists('ejecutarConsulta')) {
 		return htmlspecialchars($str);
 	}
 
+// Funcion para poder ejecutar varios SP al mismo tiempo
+	function ejecutarConsultaSPArray($sql){
+    $Fn = new Cls_DataConection();
+    $Cn = $Fn->Fn_getConnect();
+    $query = $Cn->query($sql);
+    if (!$query) {
+        $error = $Cn->error;
+        $Cn->close();
+        throw new Exception($error);
+    }
+
+    $data = [];
+    while ($row = $query->fetch_assoc()) {
+        $data[] = $row;
+    }
+
+    $query->free();
+    // Limpiar posibles resultados adicionales del SP
+    while ($Cn->more_results()) {
+        $Cn->next_result();
+        if ($resultado = $Cn->store_result()) {
+            $resultado->free();
+        }
+    }
+    $Cn->close();
+    return $data;
+	}
+
 }
 ?>
