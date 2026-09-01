@@ -6,7 +6,7 @@ function pdfText($texto){
     return iconv('UTF-8', 'windows-1252//TRANSLIT', $texto);
 }
 //Datos de la atención que obtendremos
-$id_atencion = isset($_GET["id_atencion"])? intval($_GET["id_atencion"]): 0;
+$id_atencion = isset($_POST["id_atencion"])? intval($_POST["id_atencion"]): 0;
 if ($id_atencion <= 0) {
     die("No se encontró una atención válida para generar el consentimiento.");
 }
@@ -49,18 +49,21 @@ if (!empty($datosConsentimiento["fecha_inicio"])) {
 $tipoAtencion = 'Ambulatoria';
 
 //PROCEDIMIENTO
-
 $procedimiento = $datosConsentimiento["procedimientos"] ?? '';
-$duracion = '';
 
-//INFORMACIÓN ESPECÍFICA DEL CONSENTIMIENTO
-$beneficios = '';
-$riesgosFrecuentes = '';
-$riesgosGraves = '';
-$otrosRiesgos = '';
-$alternativas = '';
-$manejoPosterior = '';
-$consecuencias = '';
+// Datos ingresados desde el modal
+$duracion = trim($_POST["duracion"] ?? '');
+$beneficios = trim($_POST["beneficios"] ?? '');
+$riesgosFrecuentes = trim($_POST["riesgos_frecuentes"] ?? '');
+$riesgosGraves = trim($_POST["riesgos_graves"] ?? '');
+$otrosRiesgos = trim($_POST["otros_riesgos"] ?? '');
+$alternativas = trim($_POST["alternativas"] ?? '');
+$manejoPosterior = trim($_POST["manejo_posterior"] ?? '');
+$consecuencias = trim($_POST["consecuencias"] ?? '');
+// REPRESENTANTE LEGAL
+$representante = trim($_POST["representante"] ?? '');
+$parentesco = trim($_POST["parentesco"] ?? '');
+$cedulaRepresentante = trim($_POST["cedula_representante"] ?? '');
 
 //PROFESIONAL
 $nombreProfesional = trim(($datosConsentimiento["nombre_usuario"] ?? '') . ' ' .($datosConsentimiento["apellido_usuario"] ?? ''));
@@ -270,13 +273,15 @@ $pdf->Cell(80,5,pdfText('Firma y código'),0,1,'C');
 ========================================================= */
 $pdf->Ln(6);
 $pdf->SetFont('Arial', 'B', 9);
-$pdf->Cell(0,6,pdfText(    'Si el paciente no está en capacidad de firmar el consentimiento informado:'),0,1);
+$pdf->Cell(0,6,pdfText('Si el paciente no está en capacidad de firmar el consentimiento informado:'),0,1);
 $pdf->SetFont('Arial', '', 9);
-$pdf->Cell(100,6,pdfText('Nombre representante legal: __________________________'),0,0);
+// Nombre del representante y firma
+$pdf->Cell(100,6,pdfText('Nombre representante legal: ' .($representante !== '' ? $representante : '__________________________')),0,0);
 $pdf->Cell(90,6,pdfText('Firma: __________________________'),0,1);
 
-$pdf->Cell(100,6,pdfText('Parentesco: _________________________________________'),0,0);
-$pdf->Cell(90,6,pdfText('C.I.: ___________________________'),0,1);
+// Parentesco y cédula
+$pdf->Cell(100,6,pdfText('Parentesco: ' .($parentesco !== '' ? $parentesco : '_______________________________________')),0,0);
+$pdf->Cell(90,6,pdfText('C.I.: ' .($cedulaRepresentante !== '' ? $cedulaRepresentante : '___________________________')),0,1);
 
 /* =========================================================
    NEGATIVA
@@ -296,16 +301,28 @@ $pdf->MultiCell(0,5,pdfText($negativa),0,'J');
 /* FIRMAS NEGATIVA */
 $pdf->Ln(8);
 $y = $pdf->GetY();
+//Colocamos el nombre sobre la línea
+$pdf->SetFont('Arial', '', 8);
+$pdf->SetXY(10, $y - 5);
+$pdf->Cell(80,5,pdfText($nombres . ' ' . $apellidosCompletos),0,0,'C');
+$pdf->SetXY(10, $y);
+//Regresamos a la posición original
 $pdf->Line(10,$y,90,$y);
 $pdf->Line(120,$y,200,$y);
 $pdf->Cell(80,5,pdfText('Nombre del paciente'),0,0,'C');
 $pdf->Cell(30,5,'',0);
 $pdf->Cell(80,5,pdfText('Firma del paciente'),0,1,'C');
+
+//Profesional que realiza el procedimiento
 $pdf->Ln(8);
 $y = $pdf->GetY();
+//Colocamos el nombre sobre la línea
+$pdf->SetFont('Arial', '', 8);
+$pdf->SetXY(10, $y - 5);
+$pdf->Cell(80,5,pdfText($nombreProfesional),0,0,'C');
+$pdf->SetXY(10, $y);
 $pdf->Line(10,$y,90,$y);
 $pdf->Line(120,$y,200,$y);
-
 $pdf->Cell(80,5,pdfText('Profesional que realiza el procedimiento'),0,0,'C');
 $pdf->Cell(30,5,'',0);
 $pdf->Cell(80,5,pdfText('Firma y código'),0,1,'C');
@@ -315,11 +332,11 @@ $pdf->Ln(6);
 $pdf->SetFont('Arial', '', 9);
 $pdf->MultiCell(0,6,pdfText(    'Si el paciente no está en capacidad de firmar el consentimiento informado:'),0,'L');
 
-$pdf->Cell(100,6,pdfText('Nombre representante legal: __________________________'),0,0);
+$pdf->Cell(100,6,pdfText('Nombre representante legal: ' . ($representante !== '' ? $representante : '__________________________')),0,0);
 $pdf->Cell(90,6,pdfText('Firma: __________________________'),0,1);
 
-$pdf->Cell(100,6,pdfText('Parentesco: _________________________________________'),0,0);
-$pdf->Cell(90,6,pdfText('C.I.: ___________________________'),0,1);
+$pdf->Cell(100,6,pdfText('Parentesco: ' . ($parentesco !== '' ? $parentesco : '_______________________________________')),0,0);
+$pdf->Cell(90,6,pdfText('C.I.: ' . ($cedulaRepresentante !== '' ? $cedulaRepresentante : '___________________________')),0,1);
 
 /* TESTIGO */
 $pdf->Ln(5);
@@ -328,8 +345,8 @@ $pdf->MultiCell(0,5,pdfText(    'Si el paciente no acepta el procedimiento suger
 
 $pdf->SetFont('Arial', '', 9);
 $pdf->Cell(95,6,pdfText('Firma de testigo: __________________________'),0,0);
-$pdf->Cell(95,6,pdfText('Nombre de testigo: _________________________'),0,1);
-$pdf->Cell(0,6,pdfText('C.I.: ______________________________________'),0,1);
+$pdf->Cell(95,6,pdfText('Nombre de testigo: ' . ($representante !== '' ? $representante : '__________________________')),0,1);
+$pdf->Cell(0,6,pdfText('C.I.: ' . ($cedulaRepresentante !== '' ? $cedulaRepresentante : '___________________________')),0,1);
 
 /* =========================================================
    REVOCATORIA
@@ -350,21 +367,26 @@ $pdf->MultiCell(0,5,pdfText($revocatoria),0,'J');
 /* FIRMA REVOCATORIA */
 $pdf->Ln(8);
 $y = $pdf->GetY();
+//Colocamos el nombre sobre la línea
+$pdf->SetFont('Arial', '', 8);
+$pdf->SetXY(10, $y - 5);
+$pdf->Cell(80,5,pdfText($nombres . ' ' . $apellidosCompletos),0,0,'C');
+$pdf->SetXY(10, $y);
+//Regresamos a la posición original
 $pdf->Line(10,$y,90,$y);
 $pdf->Line(120,$y,200,$y);
-
 $pdf->Cell(80,5,pdfText('Nombre del paciente'),0,0,'C');
 $pdf->Cell(30,5,'',0);
 $pdf->Cell(80,5,pdfText('Firma del paciente'),0,1,'C');
 
 /* REPRESENTANTE REVOCATORIA */
 $pdf->Ln(6);
-$pdf->MultiCell(0,5,pdfText(    'Si el paciente no está en capacidad de firmar el consentimiento informado:'),0,'L');
-$pdf->Cell(100,6,pdfText('Nombre representante legal: __________________________'),0,0);
+$pdf->MultiCell(0,5,pdfText('Si el paciente no está en capacidad de firmar el consentimiento informado:'),0,'L');
+$pdf->Cell(100,6,pdfText('Nombre representante legal: ' . ($representante !== '' ? $representante : '__________________________')),0,0);
 $pdf->Cell(90,6,pdfText('Firma: __________________________'),0,1);
-$pdf->Cell(100,6,pdfText('Parentesco: _________________________________________'),0,0);
+$pdf->Cell(100,6,pdfText('Parentesco: ' . ($parentesco !== '' ? $parentesco : '_______________________________________')),0,0);
 
-$pdf->Cell(90,6,pdfText('C.I.: ___________________________'),0,1);
+$pdf->Cell(90,6,pdfText('C.I.: ' . ($cedulaRepresentante !== '' ? $cedulaRepresentante : '___________________________')),0,1);
 
 /* =========================================================
    SALIDA

@@ -58,26 +58,98 @@ document.getElementById("btnGenerarConsentimiento").addEventListener("click", as
         alert("No existe una atención activa.");
         return;
     }
-
     try {
         const formData = new FormData();
         formData.append("id_atencion", idAtencion);
-        const response = await fetch("../ajax/atencion.php?op=obtener_consentimiento",{method: "POST",body: formData});
+        const response = await fetch("../ajax/atencion.php?op=obtener_consentimiento",{
+                method: "POST",
+                body: formData
+            }
+        );
         const data = await response.json();
         console.log("DATOS CONSENTIMIENTO:", data);
         if (!data.status) {
-            alert(data.message ||"No se pudieron obtener los datos del consentimiento.");
+            alert(data.message || "No se pudieron obtener los datos del consentimiento.");
             return;
         }
-
-        // Si los datos existen, abrimos el consentimiento
-        const url = "../reportes/atencion/consentimiento.php?id_atencion=" + encodeURIComponent(idAtencion);
-        window.open(url, "_blank");
+        // ==========================================
+        // ABRIMOS EL MODAL DEL CONSENTIMIENTO
+        // ==========================================
+        const modal = document.getElementById("modalConsentimiento");
+        modal.classList.remove("hidden");
+        modal.classList.add("flex");
     } catch (error) {
-        console.error("ERROR AL GENERAR CONSENTIMIENTO:", error);
+        console.error("ERROR AL GENERAR CONSENTIMIENTO:",error);
         alert("Ocurrió un error al obtener los datos del consentimiento.");
     }
 });
+// ==========================================
+// CERRAR MODAL CONSENTIMIENTO
+// ==========================================
+document.getElementById("btnCerrarConsentimiento").addEventListener("click", function () {
+        cerrarModalConsentimiento();
+    });
+
+document.getElementById("btnCancelarConsentimiento").addEventListener("click", function () {
+        cerrarModalConsentimiento();
+    });
+
+function cerrarModalConsentimiento() {
+    const modal = document.getElementById("modalConsentimiento");
+    modal.classList.add("hidden");
+    modal.classList.remove("flex");
+}
+
+// ==========================================
+// GENERAR PDF DEL CONSENTIMIENTO
+// ==========================================
+document.getElementById("btnGenerarPdfConsentimiento").addEventListener("click", function () {
+        const idAtencion = Number(idAtencionActual);
+        if (!idAtencion || idAtencion <= 0) {
+            alert("No existe una atención activa.");
+            return;
+        }
+
+        // Recogemos los datos ingresados en el modal
+        const datos = {
+            id_atencion: idAtencion,
+            duracion: document.getElementById("consentimientoDuracion").value.trim(),
+            beneficios: document.getElementById("consentimientoBeneficios").value.trim(),
+            riesgos_frecuentes: document.getElementById("consentimientoRiesgosFrecuentes").value.trim(),
+            riesgos_graves: document.getElementById("consentimientoRiesgosGraves").value.trim(),
+            otros_riesgos: document.getElementById("consentimientoOtrosRiesgos").value.trim(),
+            alternativas: document.getElementById("consentimientoAlternativas").value.trim(),
+            manejo_posterior: document.getElementById("consentimientoManejoPosterior").value.trim(),
+            consecuencias: document.getElementById("consentimientoConsecuencias").value.trim(),
+            representante: document.getElementById("consentimientoRepresentante").value.trim(),
+            parentesco: document.getElementById("consentimientoParentesco").value.trim(),
+            cedula_representante: document.getElementById("consentimientoCedulaRepresentante").value.trim()
+        };
+        console.log("DATOS PARA CONSENTIMIENTO:", datos);
+
+        // Creamos un formulario temporal para enviar por POST
+        const form = document.createElement("form");
+        form.method = "POST";
+        form.action = "../reportes/atencion/consentimiento.php";
+        form.target = "_blank";
+        form.style.display = "none";
+
+        // Convertimos cada dato en un input hidden
+        Object.entries(datos).forEach(([nombre, valor]) => {
+            const input = document.createElement("input");
+            input.type = "hidden";
+            input.name = nombre;
+            input.value = valor;
+            form.appendChild(input);
+        });
+        document.body.appendChild(form);
+        // Abrimos el PDF en otra pestaña
+        form.submit();
+        // Eliminamos el formulario temporal
+        form.remove();
+        // Cerramos el modal
+        cerrarModalConsentimiento();
+    });
 
 // ANTECEDENTES
 // Función para listar los antecedentes
@@ -1337,3 +1409,27 @@ fetch("../ajax/atencion.php?op=obtener_consentimiento", {
 .then(data => {
     console.log("CONSENTIMIENTO:", data);
 });
+
+//CONSENTIMIENTO INFORMADO
+const modalConsentimiento = document.getElementById("modalConsentimiento");
+const btnCerrarConsentimiento = document.getElementById("btnCerrarConsentimiento");
+const btnCancelarConsentimiento = document.getElementById("btnCancelarConsentimiento");
+function abrirModalConsentimiento() {
+    modalConsentimiento.classList.remove("hidden");
+    modalConsentimiento.classList.add("flex");
+}
+
+function cerrarModalConsentimiento() {
+    modalConsentimiento.classList.add("hidden");
+    modalConsentimiento.classList.remove("flex");
+}
+
+btnCerrarConsentimiento.addEventListener(
+    "click",
+    cerrarModalConsentimiento
+);
+
+btnCancelarConsentimiento.addEventListener(
+    "click",
+    cerrarModalConsentimiento
+);

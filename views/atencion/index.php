@@ -691,5 +691,176 @@ $id_cita = isset($_GET["id_cita"]) ? intval($_GET["id_cita"]) : 0;
     </div>
 </div> <!-- FIN Modal resumen -->
 
+<!--
+Modal para datos adicionales de Consentimiento informao
+-->
+<div id="modalConsentimiento" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 p-4">
+    <div class="bg-white w-full max-w-4xl max-h-[90vh] overflow-y-auto rounded-2xl shadow-xl">
+        <!-- HEADER -->
+        <div class="flex items-center justify-between px-6 py-4 border-b bg-blue-600">
+            <div>
+                <h2 class="text-lg font-semibold text-white">
+                    Generar Consentimiento Informado
+                </h2>
+
+                <p class="text-sm text-white mt-1">
+                    Complete la información correspondiente al procedimiento.
+                </p>
+            </div>
+            <button type="button" id="btnCerrarConsentimiento"class="text-gray-400 hover:text-red-600 text-2xl">
+                &times;
+            </button>
+        </div>
+
+        <!-- BODY -->
+        <div class="p-6 space-y-6">
+            <!-- DURACIÓN -->
+            <div>
+                <label for="consentimientoDuracion" class="block text-sm font-medium text-gray-700 mb-2">
+                    Duración del procedimiento
+                </label>
+                <input type="text" id="consentimientoDuracion" class="w-full rounded-xl border border-gray-300 px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ej. 60 minutos">
+            </div>
+
+            <!-- BENEFICIOS -->
+            <div>
+                <label for="consentimientoBeneficios" class="block text-sm font-medium text-gray-700 mb-2">
+                    Beneficios del procedimiento
+                </label>
+
+                <textarea id="consentimientoBeneficios" rows="3" class="w-full rounded-xl border border-gray-300 px-4 py-3
+                           focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Describa los beneficios esperados del procedimiento...">
+                </textarea>
+            </div>
+
+            <!-- RIESGOS -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <div>
+                    <label for="consentimientoRiesgosFrecuentes" class="block text-sm font-medium text-gray-700 mb-2">
+                        Riesgos frecuentes y poco graves
+                    </label>
+
+                    <textarea id="consentimientoRiesgosFrecuentes" rows="4" class="w-full rounded-xl border border-gray-300 px-4 py-3
+                               focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Describa los riesgos frecuentes...">
+                    </textarea>
+                </div>
+
+                <div>
+                    <label for="consentimientoRiesgosGraves" class="block text-sm font-medium text-gray-700 mb-2">
+                        Riesgos poco frecuentes y graves
+                    </label>
+
+                    <textarea id="consentimientoRiesgosGraves" rows="4" class="w-full rounded-xl border border-gray-300 px-4 py-3
+                               focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Describa los riesgos graves...">
+                    </textarea>
+                </div>
+            </div>
+
+            <!-- OTROS RIESGOS -->
+            <div>
+                <label for="consentimientoOtrosRiesgos" class="block text-sm font-medium text-gray-700 mb-2">
+                    Otros riesgos
+                </label>
+
+                <textarea id="consentimientoOtrosRiesgos" rows="3" class="w-full rounded-xl border border-gray-300 px-4 py-3
+                           focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Indique otros riesgos, si existen...">
+                </textarea>
+            </div>
+
+            <!-- ALTERNATIVAS -->
+            <div>
+                <label for="consentimientoAlternativas" class="block text-sm font-medium text-gray-700 mb-2">
+                    Alternativas al procedimiento
+                </label>
+
+                <textarea id="consentimientoAlternativas" rows="3" class="w-full rounded-xl border border-gray-300 px-4 py-3
+                           focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Describa las alternativas disponibles...">
+                </textarea>
+            </div>
+
+            <!-- MANEJO POSTERIOR -->
+            <div>
+                <label for="consentimientoManejoPosterior" class="block text-sm font-medium text-gray-700 mb-2">
+                    Descripción del manejo posterior al procedimiento
+                </label>
+
+                <textarea id="consentimientoManejoPosterior" rows="3" class="w-full rounded-xl border border-gray-300 px-4 py-3
+                           focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Indique los cuidados y manejo posterior...">
+                </textarea>
+            </div>
+
+            <!-- CONSECUENCIAS -->
+            <div>
+                <label for="consentimientoConsecuencias" class="block text-sm font-medium text-gray-700 mb-2">
+                    Consecuencias posibles si no se realiza el procedimiento
+                </label>
+
+                <textarea id="consentimientoConsecuencias" rows="3" class="w-full rounded-xl border border-gray-300 px-4 py-3
+                           focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Describa las posibles consecuencias...">
+                </textarea>
+            </div>
+
+            <!-- =====================================================
+                 REPRESENTANTE LEGAL
+            ====================================================== -->
+            <div class="border-t pt-6">
+                <div class="mb-4">
+                    <h3 class="font-semibold text-gray-800">
+                        Representante legal
+                    </h3>
+
+                    <p class="text-sm text-gray-500">
+                        Complete estos datos únicamente cuando corresponda.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                    <!-- NOMBRE -->
+                    <div>
+                        <label for="consentimientoRepresentante" class="block text-sm font-medium text-gray-700 mb-2">
+                            Nombre completo
+                        </label>
+
+                        <input type="text" id="consentimientoRepresentante" class="w-full rounded-xl border border-gray-300 px-4 py-2.5
+                                   focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Nombre del representante">
+                    </div>
+
+                    <!-- PARENTESCO -->
+                    <div>
+                        <label for="consentimientoParentesco" class="block text-sm font-medium text-gray-700 mb-2">
+                            Parentesco
+                        </label>
+
+                        <input type="text" id="consentimientoParentesco" class="w-full rounded-xl border border-gray-300 px-4 py-2.5
+                                   focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ej. Padre, madre...">
+                    </div>
+
+
+                    <!-- CÉDULA -->
+                    <div>
+                        <label for="consentimientoCedulaRepresentante" class="block text-sm font-medium text-gray-700 mb-2">
+                            C.I.
+                        </label>
+
+                        <input type="text" id="consentimientoCedulaRepresentante" maxlength="10" class="w-full rounded-xl border border-gray-300 px-4 py-2.5
+                                   focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Cédula">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- FOOTER -->
+        <div class="flex justify-end gap-3 px-6 py-4 border-t bg-gray-50 rounded-b-2xl">
+            <button type="button" id="btnCancelarConsentimiento" class="px-5 py-2.5 rounded-xl border border-gray-300 text-gray-700 hover:bg-gray-100">
+                Cancelar
+            </button>
+
+            <button type="button" id="btnGenerarPdfConsentimiento" class="px-5 py-2.5 rounded-xl bg-blue-600 text-white hover:bg-blue-700">
+                Generar Consentimiento
+            </button>
+        </div>
+    </div>
+</div> <!--FIN MODAL  -->
+
 <script src="/public/js/odontograma.js"></script>
 <script src="/public/js/atencion.js"></script>
