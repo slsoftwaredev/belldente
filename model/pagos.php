@@ -42,4 +42,43 @@ class Pago{
         $sql = "CALL sp_pago('listar_abonos','$id_orden_pago',0,0,0,NULL)";
         return ejecutarConsulta($sql);
     }
+
+//Datos para generar comprobante
+    public function comprobante($id_abono){
+
+    global $conexion;
+
+    $id_abono = intval($id_abono);
+
+    $sql = "CALL sp_pago(
+        'comprobante',
+        0,
+        '$id_abono',
+        0,
+        0,
+        NULL
+    )";
+
+    $query = $conexion->query($sql);
+
+    if (!$query) {
+        return false;
+    }
+
+    $row = $query->fetch_assoc();
+
+    $query->free();
+
+    //Limpiamos únicamente los resultados de este CALL
+    while ($conexion->more_results()) {
+
+        $conexion->next_result();
+
+        if ($resultado = $conexion->store_result()) {
+            $resultado->free();
+        }
+    }
+
+    return $row;
+}
 }

@@ -1,4 +1,10 @@
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
+session_start();
+
+date_default_timezone_set('America/Guayaquil');
 date_default_timezone_set('America/Guayaquil');
 require_once __DIR__ . '/../../libs/fpdf.php';
 function pdfText($texto){
@@ -6,37 +12,48 @@ function pdfText($texto){
 }
 
 /* =========================================================
-   DATOS DE PRUEBA
-   Después vendrán de la BDD
+   DATOS DEL COMPROBANTE
 ========================================================= */
-$numeroComprobante = 'PAG-000001';
+require_once __DIR__ . '/../../model/pagos.php';
+$id_abono = isset($_GET['id_abono']) ? intval($_GET['id_abono']) : 0;
+if ($id_abono <= 0) {
+    die('Comprobante no válido.');
+}
 
-$fecha = date('d/m/Y');
-$hora  = date('H:i');
+$pagoModel = new Pago();
+$datos = $pagoModel->comprobante($id_abono);
+if (!$datos) {
+    die('No se encontró información del comprobante.');
+}
 
-$nombrePaciente = 'MARIA FANNY BONILLA LECHÓN';
-$cedulaPaciente = '1714820063';
-$historiaClinica = '1714820063';
+/* ==========================================
+   DATOS GENERALES
+========================================== */
+$numeroComprobante = 'PAG-' . str_pad($datos['id_abono'], 6, '0', STR_PAD_LEFT);
+$timestamp = strtotime($datos['fecha_abono']);
+$fecha = date('d/m/Y', $timestamp);
+$hora  = date('H:i', $timestamp);
+$nombrePaciente = $datos['nombre_paciente'] . ' ' .$datos['apellido_paciente'];
+$cedulaPaciente = $datos['cedula_paciente'];
+$historiaClinica = $datos['cedula_paciente'];
+$totalAtencion = (float)$datos['total'];
+$abonadoAnterior = (float)$datos['abonado_anterior'];
+$pagoRecibido = (float)$datos['valor_abono'];
+$saldoPendiente = (float)$datos['saldo'];
+$formaPago = $datos['nombre_forma_pago'];
+$responsable = isset($_SESSION['nombre_usuario']) ? $_SESSION['nombre_usuario']: 'Responsable del cobro';
 
-$detalles = [
-    [
-        'descripcion' => 'Exodoncia pieza dental #17',
-        'valor' => 40.00
-    ],
-    [
-        'descripcion' => 'Radiografía',
-        'valor' => 10.00
-    ]
-];
-
-$totalAtencion = 50.00;
-$abonadoAnterior = 20.00;
-$pagoRecibido = 30.00;
-$saldoPendiente = 0.00;
-
-$formaPago = 'Efectivo';
-
-$responsable = 'Nombre del responsable';
+/* ==========================================
+   DETALLE DE TRATAMIENTOS
+========================================== */
+$detalles = [];
+$resultadoDetalle = $pagoModel->detalle($datos['orden_pago_id']);
+while ($fila = $resultadoDetalle->fetch_assoc()) {
+    $detalles[] = [
+        'descripcion' => $fila['nombre_procedimiento'],
+        'valor'       => (float)$fila['subtotal']
+    ];
+}
 
 /* =========================================================
    PDF

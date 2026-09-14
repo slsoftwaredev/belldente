@@ -139,10 +139,20 @@ function renderizarHistorias() {
     });
 }
 
-// Función para ver la historia del paciente
-function volverHistorias() {
+// ==========================================
+// VER HISTORIA CLÍNICA
+// ==========================================
+function verHistoria(idPaciente) {
+
+    idPaciente = Number(idPaciente);
+
+    if (!idPaciente || idPaciente <= 0) {
+        alert("Paciente no válido.");
+        return;
+    }
+
     window.location.href =
-        "historias.php";
+        `historias.php?id_paciente=${idPaciente}`;
 }
 
 //Formateamos la fecha, para que nos traiga la que se registró
@@ -277,44 +287,24 @@ async function cargarAtencionesPaciente(idPaciente) {
 // ==========================================
 function mostrarDatosPaciente(paciente) {
 
-    const nombreCompleto =
-        `${paciente.nombre || ""} ${paciente.apellido || ""}`.trim();
+    const nombreCompleto = `${paciente.nombre || ""} ${paciente.apellido || ""}`.trim();
 
-    colocarTexto(
-        "historiaNombrePaciente",
-        nombreCompleto
-    );
-
-    colocarTexto(
-        "historiaCedulaPaciente",
-        paciente.cedula || "-"
-    );
-
-    colocarTexto(
-        "historiaFechaNacimiento",
-        formatearFecha(paciente.fecha_nacimiento)
-    );
-
-    colocarTexto(
-        "historiaSexo",
-        obtenerSexo(paciente.sexo)
-    );
-
+    colocarTexto("historiaNombrePaciente",nombreCompleto);
+    colocarTexto("historiaCedulaPaciente",paciente.cedula || "-");
+    colocarTexto("historiaFechaNacimiento",formatearFecha(paciente.fecha_nacimiento));
+    colocarTexto("historiaSexo",obtenerSexo(paciente.sexo));
     colocarTexto(
         "historiaTelefono",
         paciente.telefono || "-"
     );
-
     colocarTexto(
         "historiaCorreo",
         paciente.correo || "-"
     );
-
     colocarTexto(
         "historiaDireccion",
         paciente.direccion || "-"
     );
-
     colocarTexto(
         "historiaTotalAtenciones",
         `${atencionesPaciente.length} ${

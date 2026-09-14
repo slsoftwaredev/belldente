@@ -343,6 +343,10 @@
                                     <th class="px-4 py-3 text-right">
                                         Valor
                                     </th>
+
+                                    <th class="px-4 py-3 text-right">
+                                        Comprobante
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody id="detalleAbonos">

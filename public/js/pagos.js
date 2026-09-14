@@ -451,6 +451,12 @@ function renderizarDetalleAbonos(abonos) {
                        font-semibold text-green-600">
                 ${formatoMoneda(abono.valor_abono)}
             </td>
+
+            <td class="px-4 py-3 text-center">
+                <button type="button" onclick="abrirComprobante(${abono.id_abono})" class="px-3 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-xs font-medium">
+                    PDF
+                </button>
+            </td>
         `;
         tbody.appendChild(fila);
     });
@@ -613,10 +619,16 @@ async function registrarPago(event) {
             alert(data.message || "No se pudo registrar el pago.");
             return;
         }
+        const idAbono = Number(data.datos?.id_abono || 0);
+        const saldoNuevo = Number(data.datos?.saldo || 0);
         alert("Pago registrado correctamente.");
         cerrarPago();
         //Actualizamos tabla y cards
         await listarPagos();
+        //Abrimos comprobante
+        if (idAbono > 0) {
+            abrirComprobante(idAbono, saldoNuevo);
+        }
     } catch (error) {
         console.error("ERROR AL REGISTRAR PAGO:",error);
         alert("Ocurrió un error al registrar el pago.");
@@ -634,4 +646,25 @@ function cerrarPago() {
     if (formulario) {
         formulario.reset();
     }
+}
+
+/* ==========================================
+   ABRIR COMPROBANTE
+========================================== */
+function abrirComprobante(idAbono, saldo) {
+    idAbono = Number(idAbono);
+    saldo = Number(saldo);
+    if (!idAbono || idAbono <= 0) {
+        alert("No se pudo generar el comprobante.");
+        return;
+    }
+    let url;
+    //Todavía existe saldo pendiente
+    if (saldo > 0) {
+        url = `../reportes/pagos/comprobante_abono.php?id_abono=${idAbono}`;
+    } else {
+        //La deuda quedó completamente pagada
+        url = `../reportes/pagos/comprobante_pago.php?id_abono=${idAbono}`;
+    }
+    window.open(url, "_blank");
 }

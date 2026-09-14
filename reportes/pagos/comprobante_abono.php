@@ -6,25 +6,45 @@ function pdfText($texto){
 }
 
 /* =========================================================
-   DATOS DE PRUEBA
+   DATOS DEL COMPROBANTE
 ========================================================= */
-$numeroComprobante = 'ABO-000001';
-$fecha = date('d/m/Y');
-$hora  = date('H:i');
-$nombrePaciente = 'MARIA FANNY BONILLA LECHÓN';
-$cedulaPaciente = '1714820063';
-$historiaClinica = '1714820063';
-$totalAtencion = 200.00;
-$totalAbonadoAnterior = 50.00;
-$saldoAnterior =
-    $totalAtencion
-    - $totalAbonadoAnterior;
-$abonoRecibido = 50.00;
-$nuevoSaldo =
-    $saldoAnterior
-    - $abonoRecibido;
-$formaPago = 'Transferencia';
-$responsable = 'Nombre del responsable';
+require_once __DIR__ . '/../../model/pagos.php';
+$id_abono = isset($_GET['id_abono']) ? intval($_GET['id_abono']) : 0;
+if ($id_abono <= 0) {
+    die('Comprobante no válido.');
+}
+
+$pagoModel = new Pago();
+$datos = $pagoModel->comprobante($id_abono);
+if (!$datos) {
+    die('No se encontró información del comprobante.');
+}
+
+/* Número de comprobante */
+$numeroComprobante = 'ABO-' . str_pad($datos['id_abono'], 6, '0', STR_PAD_LEFT);
+
+/* Fecha y hora reales del abono */
+$timestamp = strtotime($datos['fecha_abono']);
+$fecha = date('d/m/Y', $timestamp);
+$hora  = date('H:i', $timestamp);
+
+/* Paciente */
+$nombrePaciente = $datos['nombre_paciente'] . ' ' .$datos['apellido_paciente'];
+$cedulaPaciente = $datos['cedula_paciente'];
+
+//Cédula como número de historia clínica
+$historiaClinica = $datos['cedula_paciente'];
+
+/* Valores */
+$totalAtencion = (float)$datos['total'];
+$totalAbonadoAnterior = (float)$datos['abonado_anterior'];
+$saldoAnterior = (float)$datos['saldo_anterior'];
+$abonoRecibido = (float)$datos['valor_abono'];
+$nuevoSaldo = (float)$datos['saldo'];
+$formaPago = $datos['nombre_forma_pago'];
+
+/* Responsable */
+$responsable = isset($_SESSION['nombre_usuario']) ? $_SESSION['nombre_usuario'] : 'Responsable del cobro';
 
 /* =========================================================
    PDF
