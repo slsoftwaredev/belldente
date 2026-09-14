@@ -116,19 +116,45 @@ class Reporte
        PACIENTES
     ========================================== */
     public function pacientes($estado = -1)
-    {
-        $estado = intval($estado);
+{
+    global $conexion;
 
-        $sql = "CALL sp_reporte(
-            'pacientes',
-            NULL,
-            NULL,
-            '$estado',
-            NULL
-        )";
+    $estado = intval($estado);
 
-        return ejecutarConsulta($sql);
+    $sql = "CALL sp_reporte(
+        'pacientes',
+        NULL,
+        NULL,
+        '$estado',
+        NULL
+    )";
+
+    $query = $conexion->query($sql);
+
+    if (!$query) {
+        throw new Exception(
+            "Error al generar reporte de pacientes: " . $conexion->error
+        );
     }
+
+    $datos = [];
+
+    while ($row = $query->fetch_assoc()) {
+        $datos[] = $row;
+    }
+
+    $query->free();
+
+    while ($conexion->more_results()) {
+        $conexion->next_result();
+
+        if ($resultado = $conexion->store_result()) {
+            $resultado->free();
+        }
+    }
+
+    return $datos;
+}
 
 
     /* ==========================================

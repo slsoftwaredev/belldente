@@ -222,9 +222,16 @@ function generarReportePacientes() {
     const estado =
         document.getElementById("reportePacienteEstado").value;
 
-    console.log("Reporte pacientes:", {
-        estado: estado
-    });
+    let estadoEnviar = -1;
+
+    if (estado !== "") {
+        estadoEnviar = Number(estado);
+    }
+
+    const url =
+        `../reportes/pacientes.php?estado=${estadoEnviar}`;
+
+    window.open(url, "_blank");
 }
 
 
