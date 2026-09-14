@@ -23,7 +23,7 @@
                 Pacientes
             </p>
 
-            <h2 class="text-3xl font-bold text-blue-600 mt-2">
+            <h2 id="totalPacientes" class="text-3xl font-bold text-blue-600 mt-2">
                 0
             </h2>
 
@@ -35,7 +35,7 @@
                 Atenciones
             </p>
 
-            <h2 class="text-3xl font-bold text-green-600 mt-2">
+            <h2  id="totalAtenciones" class="text-3xl font-bold text-green-600 mt-2">
                 0
             </h2>
 
@@ -47,7 +47,7 @@
                 Cobrado
             </p>
 
-            <h2 class="text-3xl font-bold text-emerald-600 mt-2">
+            <h2 id="totalCobrado" class="text-3xl font-bold text-emerald-600 mt-2">
                 $0.00
             </h2>
 
@@ -59,22 +59,17 @@
                 Pendiente
             </p>
 
-            <h2 class="text-3xl font-bold text-red-600 mt-2">
+            <h2 id="totalPendiente" class="text-3xl font-bold text-red-600 mt-2">
                 $0.00
             </h2>
-
         </div>
-
     </div>
 
     <!-- Reportes -->
 
-    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
         <!-- Pacientes -->
-
         <div class="bg-white rounded-2xl shadow-sm p-6">
-
             <div class="text-5xl mb-4">
                 👥
             </div>
@@ -87,19 +82,13 @@
                 Genera el listado completo de pacientes registrados.
             </p>
 
-            <button
-                class="w-full mt-6 bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl">
-
+            <button class="w-full mt-6 bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl">
                 Generar Reporte
-
             </button>
-
         </div>
 
         <!-- Citas -->
-
         <div class="bg-white rounded-2xl shadow-sm p-6">
-
             <div class="text-5xl mb-4">
                 📅
             </div>
@@ -112,19 +101,13 @@
                 Consulta las citas registradas por fecha y estado.
             </p>
 
-            <button
-                class="w-full mt-6 bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl">
-
+            <button class="w-full mt-6 bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl">
                 Generar Reporte
-
             </button>
-
         </div>
 
         <!-- Atenciones -->
-
         <div class="bg-white rounded-2xl shadow-sm p-6">
-
             <div class="text-5xl mb-4">
                 🦷
             </div>
@@ -137,19 +120,13 @@
                 Reporte de las atenciones clínicas realizadas.
             </p>
 
-            <button
-                class="w-full mt-6 bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl">
-
+            <button class="w-full mt-6 bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl">
                 Generar Reporte
-
             </button>
-
         </div>
 
         <!-- Pagos -->
-
         <div class="bg-white rounded-2xl shadow-sm p-6">
-
             <div class="text-5xl mb-4">
                 💰
             </div>
@@ -162,65 +139,9 @@
                 Reporte de pagos, abonos y saldos pendientes.
             </p>
 
-            <button
-                class="w-full mt-6 bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl">
-
+            <button class="w-full mt-6 bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl">
                 Generar Reporte
-
             </button>
-
-        </div>
-
-        <!-- Historias -->
-
-        <div class="bg-white rounded-2xl shadow-sm p-6">
-
-            <div class="text-5xl mb-4">
-                📋
-            </div>
-
-            <h3 class="text-xl font-semibold text-slate-800">
-                Historias Clínicas
-            </h3>
-
-            <p class="text-slate-500 mt-2">
-                Consulta e imprime las historias clínicas.
-            </p>
-
-            <button
-                class="w-full mt-6 bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl">
-
-                Generar Reporte
-
-            </button>
-
-        </div>
-
-        <!-- Fotografías -->
-
-        <div class="bg-white rounded-2xl shadow-sm p-6">
-
-            <div class="text-5xl mb-4">
-                📷
-            </div>
-
-            <h3 class="text-xl font-semibold text-slate-800">
-                Fotografías Clínicas
-            </h3>
-
-            <p class="text-slate-500 mt-2">
-                Reporte de fotografías registradas por paciente.
-            </p>
-
-            <button
-                class="w-full mt-6 bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl">
-
-                Generar Reporte
-
-            </button>
-
-        </div>
-
-    </div>
-
-</div>
+        </div> <!-- Fin Pagos -->
+    </div> <!-- Fin Reportes -->
+</div> <!-- Fin Contenido -->
