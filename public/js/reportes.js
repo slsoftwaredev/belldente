@@ -255,25 +255,114 @@ function generarReporteCitas() {
 
 function generarReporteAtenciones() {
 
-    const desde = document.getElementById("reporteAtencionDesde").value;
-    const hasta = document.getElementById("reporteAtencionHasta").value;
-    console.log("Reporte atenciones:", {
-        desde: desde,
-        hasta: hasta
-    });
+    const desde =
+        document.getElementById(
+            "reporteAtencionDesde"
+        ).value;
+
+    const hasta =
+        document.getElementById(
+            "reporteAtencionHasta"
+        ).value;
+
+    /* Validamos el rango solamente si
+       ambas fechas fueron ingresadas */
+    if (
+        desde !== "" &&
+        hasta !== "" &&
+        desde > hasta
+    ) {
+        alert(
+            "La fecha desde no puede ser mayor que la fecha hasta."
+        );
+        return;
+    }
+
+    const parametros =
+        new URLSearchParams();
+
+    if (desde !== "") {
+        parametros.append(
+            "desde",
+            desde
+        );
+    }
+
+    if (hasta !== "") {
+        parametros.append(
+            "hasta",
+            hasta
+        );
+    }
+
+    let url =
+        "../reportes/atenciones.php";
+
+    if (parametros.toString() !== "") {
+        url +=
+            "?" +
+            parametros.toString();
+    }
+
+    window.open(
+        url,
+        "_blank"
+    );
 }
 
 
 function generarReportePagos() {
 
-    const desde = document.getElementById("reportePagoDesde").value;
-    const hasta = document.getElementById("reportePagoHasta").value;
-    const tipo = document.getElementById("reportePagoTipo").value;
-    const formaPago = document.getElementById("reporteFormaPago").value;
-    console.log("Reporte pagos:", {
-        desde: desde,
-        hasta: hasta,
-        tipo: tipo,
-        forma_pago: formaPago
-    });
+    const desde =
+        document.getElementById("reportePagoDesde").value;
+
+    const hasta =
+        document.getElementById("reportePagoHasta").value;
+
+    const tipo =
+        document.getElementById("reportePagoTipo").value;
+
+    const formaPago =
+        document.getElementById("reporteFormaPago").value;
+
+    if (
+        tipo === "movimientos" &&
+        desde !== "" &&
+        hasta !== "" &&
+        desde > hasta
+    ) {
+        alert(
+            "La fecha desde no puede ser mayor que la fecha hasta."
+        );
+        return;
+    }
+
+    const parametros = new URLSearchParams();
+
+    parametros.append("tipo", tipo);
+
+    if (tipo === "movimientos") {
+
+        if (desde !== "") {
+            parametros.append("desde", desde);
+        }
+
+        if (hasta !== "") {
+            parametros.append("hasta", hasta);
+        }
+
+        parametros.append(
+            "forma_pago",
+            formaPago || 0
+        );
+    }
+
+    const url =
+        "../reportes/pagos.php?" +
+        parametros.toString();
+
+    window.open(
+        url,
+        "_blank"
+    );
 }

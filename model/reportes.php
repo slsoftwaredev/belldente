@@ -184,63 +184,154 @@ class Reporte
     /* ==========================================
        ATENCIONES
     ========================================== */
-    public function atenciones($desde, $hasta)
-    {
-        $desde = limpiarCadena($desde);
-        $hasta = limpiarCadena($hasta);
+    public function atenciones($desde = "", $hasta = "")
+{
+    global $conexion;
 
-        $fechaDesde = $desde !== "" ? "'$desde'" : "NULL";
-        $fechaHasta = $hasta !== "" ? "'$hasta'" : "NULL";
+    $desde = trim($desde);
+    $hasta = trim($hasta);
 
-        $sql = "CALL sp_reporte(
-            'atenciones',
-            $fechaDesde,
-            $fechaHasta,
-            NULL,
-            NULL
-        )";
+    $fechaDesde = $desde !== ""
+        ? "'" . $conexion->real_escape_string($desde) . "'"
+        : "NULL";
 
-        return ejecutarConsulta($sql);
+    $fechaHasta = $hasta !== ""
+        ? "'" . $conexion->real_escape_string($hasta) . "'"
+        : "NULL";
+
+    $sql = "CALL sp_reporte(
+        'atenciones',
+        $fechaDesde,
+        $fechaHasta,
+        NULL,
+        NULL
+    )";
+
+    $query = $conexion->query($sql);
+
+    if (!$query) {
+        throw new Exception(
+            "Error al generar reporte de atenciones: " .
+            $conexion->error
+        );
     }
+
+    $datos = [];
+
+    while ($row = $query->fetch_assoc()) {
+        $datos[] = $row;
+    }
+
+    $query->free();
+
+    while ($conexion->more_results()) {
+        $conexion->next_result();
+
+        if ($resultado = $conexion->store_result()) {
+            $resultado->free();
+        }
+    }
+
+    return $datos;
+}
 
 
     /* ==========================================
        MOVIMIENTOS DE PAGO
     ========================================== */
-    public function movimientosPago($desde, $hasta, $formaPago = 0)
-    {
-        $desde = limpiarCadena($desde);
-        $hasta = limpiarCadena($hasta);
-        $formaPago = intval($formaPago);
+    public function movimientosPago($desde = "", $hasta = "", $formaPago = 0)
+{
+    global $conexion;
 
-        $fechaDesde = $desde !== "" ? "'$desde'" : "NULL";
-        $fechaHasta = $hasta !== "" ? "'$hasta'" : "NULL";
+    $desde = trim($desde);
+    $hasta = trim($hasta);
+    $formaPago = intval($formaPago);
 
-        $sql = "CALL sp_reporte(
-            'movimientos_pago',
-            $fechaDesde,
-            $fechaHasta,
-            NULL,
-            '$formaPago'
-        )";
+    $fechaDesde = $desde !== ""
+        ? "'" . $conexion->real_escape_string($desde) . "'"
+        : "NULL";
 
-        return ejecutarConsulta($sql);
+    $fechaHasta = $hasta !== ""
+        ? "'" . $conexion->real_escape_string($hasta) . "'"
+        : "NULL";
+
+    $sql = "CALL sp_reporte(
+        'movimientos_pago',
+        $fechaDesde,
+        $fechaHasta,
+        NULL,
+        '$formaPago'
+    )";
+
+    $query = $conexion->query($sql);
+
+    if (!$query) {
+        throw new Exception(
+            "Error al generar reporte de movimientos: " .
+            $conexion->error
+        );
     }
+
+    $datos = [];
+
+    while ($row = $query->fetch_assoc()) {
+        $datos[] = $row;
+    }
+
+    $query->free();
+
+    while ($conexion->more_results()) {
+        $conexion->next_result();
+
+        if ($resultado = $conexion->store_result()) {
+            $resultado->free();
+        }
+    }
+
+    return $datos;
+}
 
 
     /* ==========================================
        CUENTAS POR COBRAR
     ========================================== */
     public function cuentasCobrar()
-    {
-        $sql = "CALL sp_reporte(
-            'cuentas_cobrar',
-            NULL,
-            NULL,
-            NULL,
-            NULL
-        )";
+{
+    global $conexion;
 
-        return ejecutarConsulta($sql);
+    $sql = "CALL sp_reporte(
+        'cuentas_cobrar',
+        NULL,
+        NULL,
+        NULL,
+        NULL
+    )";
+
+    $query = $conexion->query($sql);
+
+    if (!$query) {
+        throw new Exception(
+            "Error al generar cuentas por cobrar: " .
+            $conexion->error
+        );
     }
+
+    $datos = [];
+
+    while ($row = $query->fetch_assoc()) {
+        $datos[] = $row;
+    }
+
+    $query->free();
+
+    while ($conexion->more_results()) {
+        $conexion->next_result();
+
+        if ($resultado = $conexion->store_result()) {
+            $resultado->free();
+        }
+    }
+
+    return $datos;
+}
 }
