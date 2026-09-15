@@ -970,6 +970,9 @@
   .px-2 {
     padding-inline: calc(var(--spacing) * 2);
   }
+  .px-2\.5 {
+    padding-inline: calc(var(--spacing) * 2.5);
+  }
   .px-3 {
     padding-inline: calc(var(--spacing) * 3);
   }
@@ -1114,9 +1117,6 @@
   .text-blue-700 {
     color: var(--color-blue-700);
   }
-  .text-blue-800 {
-    color: var(--color-blue-800);
-  }
   .text-emerald-600 {
     color: var(--color-emerald-600);
   }
@@ -1253,6 +1253,12 @@
   .select-none {
     -webkit-user-select: none;
     user-select: none;
+  }
+  .last\:border-0 {
+    &:last-child {
+      border-style: var(--tw-border-style);
+      border-width: 0px;
+    }
   }
   .hover\:scale-110 {
     &:hover {

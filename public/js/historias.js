@@ -445,6 +445,12 @@ async function cargarHistoriaCompleta(idAtencion) {
         // Primero mostramos la cabecera
         mostrarCabeceraAtencion(historia.cabecera);
 
+        //Mostramos el detalle de Estomatognatico
+        mostrarEstomatognatico(historia.estomatognatico);
+
+        //Mostramos los Indicadores de Salud Bucal
+        mostrarIndicadores(historia.indicadores);
+
         // Mostramos el contenedor del detalle
         if (detalle) {
             detalle.classList.remove("hidden");
@@ -464,53 +470,85 @@ async function cargarHistoriaCompleta(idAtencion) {
 // MOSTRAR CABECERA DE LA ATENCIÓN
 // ==========================================
 function mostrarCabeceraAtencion(cabecera) {
-
     if (!cabecera) {
         return;
     }
-
-    colocarTexto(
-        "historiaFechaAtencion",
-        formatearFechaHora(cabecera.fecha_fin)
-    );
-
-    const profesional =
-        `${cabecera.nombre_profesional || ""} ${
-            cabecera.apellido_profesional || ""
-        }`.trim();
-
-    colocarTexto(
-        "historiaProfesional",
-        profesional || "-"
-    );
-
-    colocarTexto(
-        "historiaTemperatura",
-        cabecera.temperatura
-            ? `${cabecera.temperatura} °C`
-            : "-"
-    );
-
-    colocarTexto(
-        "historiaPulso",
-        cabecera.pulso
-            ? `${cabecera.pulso} lpm`
-            : "-"
-    );
-
-    colocarTexto(
-        "historiaFrecuenciaRespiratoria",
-        cabecera.frecuencia_respiratoria
-            ? `${cabecera.frecuencia_respiratoria} rpm`
-            : "-"
-    );
-
-    colocarTexto(
-        "historiaPresionArterial",
-        cabecera.presion_arterial || "-"
-    );
+    colocarTexto("historiaFechaAtencion",formatearFechaHora(cabecera.fecha_fin));
+    const profesional =`${cabecera.nombre_profesional || ""} ${cabecera.apellido_profesional || ""}`.trim();
+    colocarTexto("historiaProfesional",profesional || "-");
+    colocarTexto("historiaTemperatura",cabecera.temperatura ? `${cabecera.temperatura} °C` : "-");
+    colocarTexto("historiaPulso",cabecera.pulso ? `${cabecera.pulso} lpm` : "-");
+    colocarTexto("historiaFrecuenciaRespiratoria",cabecera.frecuencia_respiratoria ? `${cabecera.frecuencia_respiratoria} rpm` : "-");
+    colocarTexto("historiaPresionArterial",cabecera.presion_arterial || "-");
 }
+//===========================================
+//MOSTRAR ESTOMATOGNÁTICO
+//===========================================
+function mostrarEstomatognatico(datos) {
 
+    const contenedor = document.getElementById("historiaEstomatognatico");
+
+    if (!contenedor) return;
+
+    if (!datos || datos.length === 0) {
+        contenedor.innerHTML = `
+            <p class="text-sm text-slate-500">
+                No se registró información del examen estomatognático.
+            </p>
+        `;
+        return;
+    }
+
+    contenedor.innerHTML = datos.map(item => `
+        <div class="flex items-center justify-between gap-4
+                    py-2 border-b border-slate-100 last:border-0">
+
+            <span class="text-sm font-medium text-slate-700">
+                ${item.nombre_estructura || "-"}
+            </span>
+
+            <span class="text-sm text-slate-600">
+                ${item.descripcion || "-"}
+            </span>
+
+        </div>
+    `).join("");
+}
+//===========================================
+//MOSTRAR INDICADORES DE SALUD BUCAL
+//===========================================
+function mostrarIndicadores(datos) {
+
+    const contenedor = document.getElementById("historiaIndicadores");
+
+    if (!contenedor) return;
+
+    if (!datos || datos.length === 0) {
+        contenedor.innerHTML = `
+            <p class="text-sm text-slate-500">
+                No se registraron indicadores de salud bucal.
+            </p>
+        `;
+        return;
+    }
+
+    contenedor.innerHTML = datos.map(item => `
+        <div class="flex items-center justify-between gap-4
+                    py-2 border-b border-slate-100 last:border-0">
+
+            <span class="text-sm font-medium text-slate-700">
+                ${item.nombre_tipo_indicador || "-"}
+            </span>
+
+            <span class="px-3 py-1 rounded-full
+                         bg-blue-50 text-blue-700
+                         text-xs font-semibold">
+                ${item.nombre_indicador || "-"}
+            </span>
+
+        </div>
+    `).join("");
+}
 
 // ==========================================
 // COLOCAR TEXTO
