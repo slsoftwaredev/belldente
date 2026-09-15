@@ -15,7 +15,7 @@ $pagina = "historias";
 // Si recibimos un paciente,
 // mostramos su historia clínica
 if ($id_paciente > 0) {
-    $contenido = "historias/historias.php";
+    $contenido = "historias/historia.php";
     $titulo = "Historia Clínica";
 } else {
     $contenido = "historias/index.php";

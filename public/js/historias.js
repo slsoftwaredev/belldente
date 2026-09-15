@@ -1,3 +1,4 @@
+console.log("HISTORIAS.JS CARGADO - NUEVA VERSION");
 document.addEventListener("DOMContentLoaded", function () {
 // Listado de historias - Principal
     if (document.getElementById("tbllistadoHistorias")) {
@@ -212,7 +213,7 @@ async function cargarAtencionesPaciente(idPaciente) {
         formData.append("id_paciente", idPaciente);
 
         const response = await fetch(
-            "../ajax/atencion.php?op=listar_atenciones_paciente",
+            "/ajax/atencion.php?op=listar_atenciones_paciente",
             {
                 method: "POST",
                 body: formData
@@ -320,34 +321,18 @@ function mostrarDatosPaciente(paciente) {
 // RENDERIZAR ATENCIONES
 // ==========================================
 function renderizarAtenciones() {
-
-    const contenedor =
-        document.getElementById("historiaListaAtenciones");
-
+    const contenedor = document.getElementById("historiaListaAtenciones");
     if (!contenedor) {
         return;
     }
-
     contenedor.innerHTML = "";
-
     atencionesPaciente.forEach(function (atencion) {
-
-        const idAtencion =
-            Number(atencion.id_atencion);
-
-        const profesional =
-            `${atencion.nombre_profesional || ""} ${
-                atencion.apellido_profesional || ""
-            }`.trim();
-
-        const boton =
-            document.createElement("button");
-
+        const idAtencion = Number(atencion.id_atencion);
+        const profesional = `${atencion.nombre_profesional || ""} ${
+                atencion.apellido_profesional || "" }`.trim();
+        const boton = document.createElement("button");
         boton.type = "button";
-
-        boton.dataset.idAtencion =
-            idAtencion;
-
+        boton.dataset.idAtencion = idAtencion;
         boton.className =
             "shrink-0 min-w-[210px] text-left px-4 py-3 " +
             "rounded-xl border border-slate-200 bg-white " +
@@ -383,7 +368,6 @@ function renderizarAtenciones() {
     // La consulta ya viene ordenada por fecha_fin DESC,
     // por eso [0] corresponde a la más reciente.
     if (atencionesPaciente.length > 0) {
-
         seleccionarAtencion(
             Number(
                 atencionesPaciente[0].id_atencion
@@ -397,61 +381,134 @@ function renderizarAtenciones() {
 // SELECCIONAR ATENCIÓN
 // ==========================================
 function seleccionarAtencion(idAtencion) {
-
     idAtencionSeleccionada =
         Number(idAtencion);
 
-
-    document
-        .querySelectorAll("[data-id-atencion]")
-        .forEach(function (boton) {
-
-            const seleccionado =
-                Number(boton.dataset.idAtencion) ===
-                idAtencionSeleccionada;
-
-
-            boton.classList.toggle(
-                "border-blue-600",
-                seleccionado
-            );
-
-            boton.classList.toggle(
-                "bg-blue-50",
-                seleccionado
-            );
-
-            boton.classList.toggle(
-                "ring-2",
-                seleccionado
-            );
-
-            boton.classList.toggle(
-                "ring-blue-100",
-                seleccionado
-            );
-
-            boton.classList.toggle(
-                "border-slate-200",
-                !seleccionado
-            );
-
+    document.querySelectorAll("[data-id-atencion]").forEach(function (boton) {
+            const seleccionado = Number(boton.dataset.idAtencion) === idAtencionSeleccionada;
+            boton.classList.toggle("border-blue-600",seleccionado);
+            boton.classList.toggle("bg-blue-50",seleccionado);
+            boton.classList.toggle("ring-2",seleccionado);
+            boton.classList.toggle("ring-blue-100",seleccionado);
+            boton.classList.toggle("border-slate-200",!seleccionado);
         });
 
+    console.log("ATENCIÓN SELECCIONADA:",idAtencionSeleccionada);
+    cargarHistoriaCompleta(idAtencionSeleccionada);
+}
+// ==========================================
+// CARGAR HISTORIA COMPLETA DE UNA ATENCIÓN
+// ==========================================
+async function cargarHistoriaCompleta(idAtencion) {
 
-    console.log(
-        "ATENCIÓN SELECCIONADA:",
-        idAtencionSeleccionada
+    idAtencion = Number(idAtencion);
+
+    if (!idAtencion || idAtencion <= 0) {
+        console.error("ID de atención no válido.");
+        return;
+    }
+
+    const detalle = document.getElementById(
+        "historiaDetalleAtencion"
     );
 
+    try {
 
-    /*
-        AQUÍ conectaremos después:
+        const formData = new FormData();
+        formData.append("id_atencion", idAtencion);
 
-        cargarHistoriaCompleta(
-            idAtencionSeleccionada
+        const response = await fetch(
+            "/ajax/atencion.php?op=obtener_historia_completa",
+            {
+                method: "POST",
+                body: formData
+            }
         );
-    */
+
+        const resultado = await response.json();
+
+        console.log("HISTORIA COMPLETA:");
+        console.log(resultado);
+
+        if (!resultado.status) {
+
+            console.error(
+                resultado.message ||
+                "No se pudo cargar la atención."
+            );
+
+            return;
+        }
+
+        const historia = resultado.data;
+
+        // Primero mostramos la cabecera
+        mostrarCabeceraAtencion(historia.cabecera);
+
+        // Mostramos el contenedor del detalle
+        if (detalle) {
+            detalle.classList.remove("hidden");
+        }
+
+    } catch (error) {
+
+        console.error(
+            "Error al cargar historia completa:",
+            error
+        );
+    }
+}
+
+
+// ==========================================
+// MOSTRAR CABECERA DE LA ATENCIÓN
+// ==========================================
+function mostrarCabeceraAtencion(cabecera) {
+
+    if (!cabecera) {
+        return;
+    }
+
+    colocarTexto(
+        "historiaFechaAtencion",
+        formatearFechaHora(cabecera.fecha_fin)
+    );
+
+    const profesional =
+        `${cabecera.nombre_profesional || ""} ${
+            cabecera.apellido_profesional || ""
+        }`.trim();
+
+    colocarTexto(
+        "historiaProfesional",
+        profesional || "-"
+    );
+
+    colocarTexto(
+        "historiaTemperatura",
+        cabecera.temperatura
+            ? `${cabecera.temperatura} °C`
+            : "-"
+    );
+
+    colocarTexto(
+        "historiaPulso",
+        cabecera.pulso
+            ? `${cabecera.pulso} lpm`
+            : "-"
+    );
+
+    colocarTexto(
+        "historiaFrecuenciaRespiratoria",
+        cabecera.frecuencia_respiratoria
+            ? `${cabecera.frecuencia_respiratoria} rpm`
+            : "-"
+    );
+
+    colocarTexto(
+        "historiaPresionArterial",
+        cabecera.presion_arterial || "-"
+    );
 }
 
 
@@ -459,108 +516,65 @@ function seleccionarAtencion(idAtencion) {
 // COLOCAR TEXTO
 // ==========================================
 function colocarTexto(id, valor) {
-
-    const elemento =
-        document.getElementById(id);
-
+    const elemento = document.getElementById(id);
     if (!elemento) {
         return;
     }
-
-    elemento.textContent =
-        valor === null ||
-        valor === undefined ||
-        valor === ""
-            ? "-"
-            : valor;
+    elemento.textContent = valor === null || valor === undefined || valor === "" ? "-" : valor;
 }
-
 
 // ==========================================
 // OBTENER SEXO
 // ==========================================
 function obtenerSexo(sexo) {
-
     if (!sexo) {
         return "-";
     }
-
     const valor =
         String(sexo).toUpperCase();
-
     if (valor === "M") {
         return "Masculino";
     }
-
     if (valor === "F") {
         return "Femenino";
     }
-
     return sexo;
 }
-
 
 // ==========================================
 // FORMATEAR FECHA Y HORA
 // ==========================================
 function formatearFechaHora(fecha) {
-
     if (!fecha) {
         return "-";
     }
-
-    const partes =
-        String(fecha).split(" ");
-
-    const fechaFormateada =
-        formatearFecha(partes[0]);
-
+    const partes = String(fecha).split(" ");
+    const fechaFormateada = formatearFecha(partes[0]);
     if (!partes[1]) {
         return fechaFormateada;
     }
-
-    const hora =
-        partes[1].substring(0, 5);
-
+    const hora = partes[1].substring(0, 5);
     return `${fechaFormateada} - ${hora}`;
 }
-
 
 // ==========================================
 // ERROR DE HISTORIA
 // ==========================================
 function mostrarErrorHistoria(mensaje) {
-
-    const cargando =
-        document.getElementById("cargandoHistoria");
-
+    const cargando = document.getElementById("cargandoHistoria");
     if (!cargando) {
         return;
     }
-
-    cargando.innerHTML = `
-        <div class="text-red-600 font-medium">
-            ${escaparHTML(mensaje)}
-        </div>
-
-        <button
-            type="button"
-            onclick="volverHistorias()"
-            class="mt-4 px-4 py-2 rounded-xl
-                   bg-slate-100 hover:bg-slate-200
-                   text-slate-700 font-medium"
-        >
+    cargando.innerHTML = `<div class="text-red-600 font-medium"> ${escaparHTML(mensaje)}</div>
+        <button type="button" onclick="volverHistorias()" class="mt-4 px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium">
             Volver a Historias Clínicas
         </button>
     `;
 }
 
-
 // ==========================================
 // VOLVER AL LISTADO
 // ==========================================
 function volverHistorias() {
-
-    window.location.href =
-        "index.php";
+    window.location.href = "/views/historias.php";
 }

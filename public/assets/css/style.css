@@ -1114,6 +1114,9 @@
   .text-blue-700 {
     color: var(--color-blue-700);
   }
+  .text-blue-800 {
+    color: var(--color-blue-800);
+  }
   .text-emerald-600 {
     color: var(--color-emerald-600);
   }
