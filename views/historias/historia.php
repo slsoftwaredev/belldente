@@ -397,57 +397,82 @@
 
 
             <!-- ==========================================
-                 HIGIENE ORAL SIMPLIFICADA
-            =========================================== -->
-            <div class="bg-white rounded-2xl shadow-sm overflow-hidden">
+     HIGIENE ORAL SIMPLIFICADA
+=========================================== -->
+<div class="bg-white rounded-2xl shadow-sm overflow-hidden">
 
-                <div class="p-6">
+    <div class="p-6">
+        <h3 class="text-xl font-bold text-slate-800">
+            Higiene Oral Simplificada
+        </h3>
+    </div>
 
-                    <h3 class="text-xl font-bold text-slate-800">
-                        Higiene Oral Simplificada
-                    </h3>
+    <div class="overflow-x-auto">
 
-                </div>
+        <table class="w-full">
 
-                <div class="overflow-x-auto">
+            <thead class="bg-blue-600 text-white">
 
-                    <table class="w-full">
+                <tr>
+                    <th class="px-6 py-3 text-left">
+                        Pieza
+                    </th>
 
-                        <thead class="bg-blue-600 text-white">
+                    <th class="px-6 py-3 text-center">
+                        Placa
+                    </th>
 
-                            <tr>
+                    <th class="px-6 py-3 text-center">
+                        Cálculo
+                    </th>
 
-                                <th class="px-6 py-3 text-left">
-                                    Pieza
-                                </th>
+                    <th class="px-6 py-3 text-center">
+                        Gingivitis
+                    </th>
+                </tr>
 
-                                <th class="px-6 py-3 text-center">
-                                    Placa
-                                </th>
+            </thead>
 
-                                <th class="px-6 py-3 text-center">
-                                    Cálculo
-                                </th>
+            <tbody
+                id="historiaHigieneOral"
+                class="divide-y divide-slate-100">
+            </tbody>
 
-                                <th class="px-6 py-3 text-center">
-                                    Gingivitis
-                                </th>
+            <tfoot class="bg-slate-50 border-t-2 border-slate-200">
 
-                            </tr>
+                <tr class="font-semibold text-slate-700">
 
-                        </thead>
+                    <td class="px-6 py-3">
+                        Total
+                    </td>
 
-                        <tbody
-                            id="historiaHigieneOral"
-                            class="divide-y divide-slate-100"
-                        >
-                        </tbody>
+                    <td
+                        id="historiaTotalPlaca"
+                        class="px-6 py-3 text-center">
+                        0
+                    </td>
 
-                    </table>
+                    <td
+                        id="historiaTotalCalculo"
+                        class="px-6 py-3 text-center">
+                        0
+                    </td>
 
-                </div>
+                    <td
+                        id="historiaTotalGingivitis"
+                        class="px-6 py-3 text-center">
+                        0
+                    </td>
 
-            </div>
+                </tr>
+
+            </tfoot>
+
+        </table>
+
+    </div>
+
+</div>
 
 
             <!-- ==========================================
@@ -472,6 +497,84 @@
                         Seleccione una atención para visualizar el odontograma registrado.
                     </p>
                 </div>
+                <!-- ÍNDICES CPOD / ceod -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+
+    <!-- CPOD -->
+    <div class="rounded-xl border border-slate-200 p-4">
+
+        <h4 class="text-sm font-bold text-slate-800 mb-3">
+            Índice CPOD
+        </h4>
+
+        <div class="grid grid-cols-4 gap-3 text-center">
+
+            <div>
+                <p class="text-xs text-slate-500">C</p>
+                <p id="historiaCPODC"
+                   class="text-lg font-bold text-slate-800">0</p>
+            </div>
+
+            <div>
+                <p class="text-xs text-slate-500">P</p>
+                <p id="historiaCPODP"
+                   class="text-lg font-bold text-slate-800">0</p>
+            </div>
+
+            <div>
+                <p class="text-xs text-slate-500">O</p>
+                <p id="historiaCPODO"
+                   class="text-lg font-bold text-slate-800">0</p>
+            </div>
+
+            <div>
+                <p class="text-xs text-slate-500">Total</p>
+                <p id="historiaCPODTotal"
+                   class="text-lg font-bold text-blue-600">0</p>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- ceod -->
+    <div class="rounded-xl border border-slate-200 p-4">
+
+        <h4 class="text-sm font-bold text-slate-800 mb-3">
+            Índice ceod
+        </h4>
+
+        <div class="grid grid-cols-4 gap-3 text-center">
+
+            <div>
+                <p class="text-xs text-slate-500">c</p>
+                <p id="historiaCEODC"
+                   class="text-lg font-bold text-slate-800">0</p>
+            </div>
+
+            <div>
+                <p class="text-xs text-slate-500">e</p>
+                <p id="historiaCEODE"
+                   class="text-lg font-bold text-slate-800">0</p>
+            </div>
+
+            <div>
+                <p class="text-xs text-slate-500">o</p>
+                <p id="historiaCEODO"
+                   class="text-lg font-bold text-slate-800">0</p>
+            </div>
+
+            <div>
+                <p class="text-xs text-slate-500">Total</p>
+                <p id="historiaCEODTotal"
+                   class="text-lg font-bold text-blue-600">0</p>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
 
             </div>
 

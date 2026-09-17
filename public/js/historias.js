@@ -601,9 +601,13 @@ async function cargarHistoriaCompleta(idAtencion) {
 
         //Mostrar Higiene Oral
         mostrarHigieneOral(historia.higiene_oral);
+        mostrarTotalesHigieneOral(historia.higiene_oral);
 
         //Mostrar Odontograma
         mostrarOdontogramaHistoria(historia.odontograma);
+
+        //Mostrar Índices de la Historia
+        mostrarIndicesHistoria(historia.odontograma);
 
         //Mostrar Diagnósticos CIE-10
         mostrarDiagnosticos(historia.diagnosticos);
@@ -1588,6 +1592,457 @@ function mostrarDiagnosticos(datos) {
         `;
 
     }).join("");
+}
+
+//===========================================
+// CALCULAR ÍNDICES CPOD / ceod HISTÓRICOS
+// Misma lógica utilizada en Atención
+//===========================================
+function calcularIndicesHistoria(odontograma) {
+
+    const registros = Array.isArray(odontograma?.registros)
+        ? odontograma.registros
+        : [];
+
+    const protesis = Array.isArray(odontograma?.protesis)
+        ? odontograma.protesis
+        : [];
+
+    // ==========================================
+    // AGRUPAR REGISTROS POR PIEZA
+    // ==========================================
+    const piezas = {};
+
+    registros.forEach(registro => {
+
+        const numero = Number(registro.numero_pieza);
+
+        if (!numero) return;
+
+        if (!piezas[numero]) {
+            piezas[numero] = {
+                denticion: Number(registro.tipo_denticion_id),
+                caras: [],
+                simbolos: []
+            };
+        }
+
+        if (registro.nombre_superficie) {
+
+            piezas[numero].caras.push(
+                registro.clave_simbologia
+            );
+
+        } else {
+
+            piezas[numero].simbolos.push(
+                registro.clave_simbologia
+            );
+        }
+    });
+
+    // ==========================================
+    // CPOD - DENTICIÓN PERMANENTE
+    // ==========================================
+    let C = 0;
+    let P = 0;
+    let O = 0;
+
+    Object.entries(piezas).forEach(([numero, estado]) => {
+
+        const pieza = Number(numero);
+
+        // Solo dentición permanente
+        if (estado.denticion !== 1) return;
+
+        const caras = estado.caras;
+        const simbolos = estado.simbolos;
+
+        // ======================================
+        // C = CARIADO
+        // ======================================
+        // Caries o endodoncia por realizar.
+        // Si tiene obturación + caries,
+        // prevalece caries.
+        if (
+            caras.includes("caries") ||
+            simbolos.includes("endodoncia_requerida")
+        ) {
+            C++;
+            return;
+        }
+
+        // ======================================
+        // P = PERDIDO POR CARIES
+        // ======================================
+        if (simbolos.includes("perdida_caries")) {
+            P++;
+            return;
+        }
+
+        // ======================================
+        // O = OBTURADO
+        // ======================================
+        if (
+            caras.includes("obturacion") ||
+            simbolos.includes("endodoncia_realizada") ||
+            simbolos.includes("corona_realizada")
+        ) {
+            O++;
+            return;
+        }
+    });
+
+
+    // ==========================================
+    // PRÓTESIS REMOVIBLE REALIZADA
+    // ==========================================
+    protesis
+        .filter(item =>
+            item.clave_simbologia === "protesis_removible_realizada"
+        )
+        .forEach(item => {
+
+            const rango = obtenerRangoProtesisHistoria(
+                Number(item.pieza_inicio),
+                Number(item.pieza_fin)
+            );
+
+            rango.forEach(pieza => {
+
+                // Igual que Atención:
+                // si ya está marcada pérdida por caries,
+                // no volver a contarla.
+                const estado = piezas[pieza];
+
+                if (
+                    estado &&
+                    estado.simbolos.includes("perdida_caries")
+                ) {
+                    return;
+                }
+
+                P++;
+            });
+        });
+
+
+    // ==========================================
+    // PRÓTESIS TOTAL REALIZADA
+    // ==========================================
+    protesis
+        .filter(item =>
+            item.clave_simbologia === "protesis_total_realizada"
+        )
+        .forEach(item => {
+
+            const rango = obtenerRangoProtesisHistoria(
+                Number(item.pieza_inicio),
+                Number(item.pieza_fin)
+            );
+
+            rango.forEach(pieza => {
+
+                // No se toman en cuenta terceros molares
+                if (
+                    pieza === 18 ||
+                    pieza === 28 ||
+                    pieza === 38 ||
+                    pieza === 48
+                ) {
+                    return;
+                }
+
+                P++;
+            });
+        });
+
+
+    // ==========================================
+    // ceod - DENTICIÓN TEMPORAL
+    // ==========================================
+    let c = 0;
+    let e = 0;
+    let o = 0;
+
+    Object.values(piezas).forEach(estado => {
+
+        // Solo dentición temporal
+        if (estado.denticion !== 2) return;
+
+        const caras = estado.caras;
+        const simbolos = estado.simbolos;
+
+        // e = extracción indicada
+        if (simbolos.includes("extraccion")) {
+            e++;
+            return;
+        }
+
+        // c = caries
+        if (caras.includes("caries")) {
+            c++;
+            return;
+        }
+
+        // o = obturación
+        if (caras.includes("obturacion")) {
+            o++;
+        }
+    });
+
+
+    return {
+
+        cpod: {
+            C: C,
+            P: P,
+            O: O,
+            total: C + P + O
+        },
+
+        ceod: {
+            c: c,
+            e: e,
+            o: o,
+            total: c + e + o
+        }
+    };
+}
+
+function obtenerRangoProtesisHistoria(inicio, fin) {
+
+    const arcadas = [
+
+        // Permanente superior
+        [
+            18,17,16,15,14,13,12,11,
+            21,22,23,24,25,26,27,28
+        ],
+
+        // Permanente inferior
+        [
+            48,47,46,45,44,43,42,41,
+            31,32,33,34,35,36,37,38
+        ],
+
+        // Temporal superior
+        [
+            55,54,53,52,51,
+            61,62,63,64,65
+        ],
+
+        // Temporal inferior
+        [
+            85,84,83,82,81,
+            71,72,73,74,75
+        ]
+    ];
+
+    for (const arcada of arcadas) {
+
+        const posicionInicio =
+            arcada.indexOf(Number(inicio));
+
+        const posicionFin =
+            arcada.indexOf(Number(fin));
+
+        if (
+            posicionInicio !== -1 &&
+            posicionFin !== -1
+        ) {
+
+            const desde =
+                Math.min(posicionInicio, posicionFin);
+
+            const hasta =
+                Math.max(posicionInicio, posicionFin);
+
+            return arcada.slice(
+                desde,
+                hasta + 1
+            );
+        }
+    }
+
+    return [];
+}
+//===========================================
+// MOSTRAR ÍNDICES CPOD / ceod
+//===========================================
+function mostrarIndicesHistoria(odontograma) {
+
+    const indices =
+        calcularIndicesHistoria(odontograma);
+
+    colocarTexto(
+        "historiaCPODC",
+        indices.cpod.C
+    );
+
+    colocarTexto(
+        "historiaCPODP",
+        indices.cpod.P
+    );
+
+    colocarTexto(
+        "historiaCPODO",
+        indices.cpod.O
+    );
+
+    colocarTexto(
+        "historiaCPODTotal",
+        indices.cpod.total
+    );
+
+    colocarTexto(
+        "historiaCEODC",
+        indices.ceod.c
+    );
+
+    colocarTexto(
+        "historiaCEODE",
+        indices.ceod.e
+    );
+
+    colocarTexto(
+        "historiaCEODO",
+        indices.ceod.o
+    );
+
+    colocarTexto(
+        "historiaCEODTotal",
+        indices.ceod.total
+    );
+
+    console.log(
+        "ÍNDICES HISTÓRICOS:",
+        indices
+    );
+}
+
+//===========================================
+// CALCULAR HIGIENE ORAL SIMPLIFICADA
+// FORMULARIO 033 - MSP
+//===========================================
+function calcularHigieneOralHistoria(datos) {
+
+    if (!Array.isArray(datos) || datos.length === 0) {
+
+        return {
+            placa: 0,
+            calculo: 0,
+            gingivitis: 0,
+            piezasExaminadas: 0
+        };
+    }
+
+    let totalPlaca = 0;
+    let totalCalculo = 0;
+    let totalGingivitis = 0;
+
+    let piezasExaminadas = 0;
+
+    datos.forEach(item => {
+
+        // Debe existir una pieza examinada
+        if (!item.pieza_dental) {
+            return;
+        }
+
+        // Conservamos los valores originales para
+        // distinguir "" de un cero válido
+        const placaValor = item.placa_bacteriana;
+        const calculoValor = item.calculo;
+        const gingivitisValor = item.gingivitis;
+
+        // Si la pieza no tiene los tres valores,
+        // no se considera examinada
+        if (
+            placaValor === null ||
+            placaValor === "" ||
+            calculoValor === null ||
+            calculoValor === "" ||
+            gingivitisValor === null ||
+            gingivitisValor === ""
+        ) {
+            return;
+        }
+
+        const placa = Number(placaValor);
+        const calculo = Number(calculoValor);
+        const gingivitis = Number(gingivitisValor);
+
+        // Seguridad ante datos no numéricos
+        if (
+            !Number.isFinite(placa) ||
+            !Number.isFinite(calculo) ||
+            !Number.isFinite(gingivitis)
+        ) {
+            return;
+        }
+
+        totalPlaca += placa;
+        totalCalculo += calculo;
+        totalGingivitis += gingivitis;
+
+        piezasExaminadas++;
+    });
+
+    //===========================================
+    // PROMEDIOS
+    //===========================================
+
+    const promedioPlaca =
+        piezasExaminadas > 0
+            ? totalPlaca / piezasExaminadas
+            : 0;
+
+    const promedioCalculo =
+        piezasExaminadas > 0
+            ? totalCalculo / piezasExaminadas
+            : 0;
+
+    const promedioGingivitis =
+        piezasExaminadas > 0
+            ? totalGingivitis / piezasExaminadas
+            : 0;
+
+    return {
+        placa: promedioPlaca,
+        calculo: promedioCalculo,
+        gingivitis: promedioGingivitis,
+        piezasExaminadas: piezasExaminadas
+    };
+}
+
+
+//===========================================
+// MOSTRAR TOTALES HIGIENE ORAL
+//===========================================
+function mostrarTotalesHigieneOral(datos) {
+    const resultado =
+        calcularHigieneOralHistoria(datos);
+
+    colocarTexto(
+        "historiaTotalPlaca",
+        resultado.placa.toFixed(2)
+    );
+
+    colocarTexto(
+        "historiaTotalCalculo",
+        resultado.calculo.toFixed(2)
+    );
+
+    colocarTexto(
+        "historiaTotalGingivitis",
+        resultado.gingivitis.toFixed(2)
+    );
+
+    console.log(
+        "HIGIENE ORAL SIMPLIFICADA:",
+        resultado
+    );
 }
 
 //===========================================
