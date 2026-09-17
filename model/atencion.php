@@ -195,4 +195,9 @@ public function obtenerHistoriaCompleta($id_atencion){
         "fotografias" => $this->historiaFotografias($id_atencion)
     ];
     }
+
+    public function obtenerAntecedentesPaciente($id_paciente){
+    $sql = "CALL sp_atencion('historia_antecedentes',NULL,'$id_paciente',NULL,NULL,NULL)";
+    return ejecutarConsulta($sql);
+    }
 }

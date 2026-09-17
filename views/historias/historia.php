@@ -176,6 +176,26 @@
 
         </div>
 
+        <!-- ANTECEDENTES DEL PACIENTE -->
+<section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+
+    <div class="mb-5">
+        <h2 class="text-lg font-bold text-slate-800">
+            Antecedentes
+        </h2>
+
+        <p class="text-sm text-slate-500 mt-1">
+            Antecedentes personales y familiares del paciente
+        </p>
+    </div>
+
+    <div id="historiaAntecedentes">
+        <p class="text-sm text-slate-500">
+            Cargando antecedentes...
+        </p>
+    </div>
+
+</section>
 
         <!-- ==========================================
              ATENCIONES REALIZADAS

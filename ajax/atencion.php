@@ -372,4 +372,54 @@ case 'listar_atenciones_paciente':
         ]);
     }
     break;
+
+    case 'historia_antecedentes':
+
+    $id_paciente = isset($_POST["id_paciente"])
+        ? intval($_POST["id_paciente"])
+        : 0;
+
+    if ($id_paciente <= 0) {
+
+        echo json_encode([
+            "status" => false,
+            "message" => "ID de paciente no válido"
+        ]);
+
+        break;
+    }
+
+    try {
+
+        $rspta =
+            $atencion->obtenerAntecedentesPaciente($id_paciente);
+
+        $datos = [];
+
+        while ($reg = $rspta->fetch_assoc()) {
+
+            $datos[] = [
+                "paciente_id" => $reg["paciente_id"],
+                "id_antecedente" => $reg["id_antecedente"],
+                "nombre_antecedente" => $reg["nombre_antecedente"],
+                "id_tipo_antecedente" => $reg["id_tipo_antecedente"],
+                "nombre_tipo_antecedente" => $reg["nombre_tipo_antecedente"],
+                "observacion" => $reg["observacion"]
+            ];
+        }
+
+        echo json_encode([
+            "status" => true,
+            "datos" => $datos
+        ]);
+
+    } catch (Exception $e) {
+
+        echo json_encode([
+            "status" => false,
+            "message" => $e->getMessage()
+        ]);
+    }
+
+    break;
 } 

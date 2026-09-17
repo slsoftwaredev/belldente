@@ -197,10 +197,158 @@ async function iniciarHistoria() {
         mostrarErrorHistoria("Paciente no válido.");
         return;
     }
-
+    cargarAntecedentesPaciente(idPaciente);
     await cargarAtencionesPaciente(idPaciente);
 }
 
+//===========================================
+// CARGAR ANTECEDENTES DEL PACIENTE
+//===========================================
+function cargarAntecedentesPaciente(idPaciente) {
+
+    const formData = new FormData();
+    formData.append("id_paciente", idPaciente);
+
+    fetch("/ajax/atencion.php?op=historia_antecedentes", {
+        method: "POST",
+        body: formData
+    })
+    .then(response => response.json())
+    .then(resultado => {
+
+        console.log("ANTECEDENTES DEL PACIENTE:", resultado);
+
+        if (!resultado.status) {
+            mostrarAntecedentes([]);
+            return;
+        }
+
+        mostrarAntecedentes(resultado.datos || []);
+    })
+    .catch(error => {
+
+        console.error("Error al cargar antecedentes:", error);
+
+        mostrarAntecedentes([]);
+    });
+}
+//===========================================
+// MOSTRAR ANTECEDENTES
+//===========================================
+function mostrarAntecedentes(datos) {
+
+    const contenedor =
+        document.getElementById("historiaAntecedentes");
+
+    if (!contenedor) return;
+
+    if (!Array.isArray(datos) || datos.length === 0) {
+
+        contenedor.innerHTML = `
+            <p class="text-sm text-slate-500">
+                El paciente no registra antecedentes.
+            </p>
+        `;
+
+        return;
+    }
+
+    const personales = datos.filter(
+        item => Number(item.id_tipo_antecedente) === 1
+    );
+
+    const familiares = datos.filter(
+        item => Number(item.id_tipo_antecedente) === 2
+    );
+
+    contenedor.innerHTML = `
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+            ${crearGrupoAntecedentes(
+                "Antecedentes personales",
+                personales
+            )}
+
+            ${crearGrupoAntecedentes(
+                "Antecedentes familiares",
+                familiares
+            )}
+
+        </div>
+    `;
+}
+function crearGrupoAntecedentes(titulo, datos) {
+
+    if (!datos || datos.length === 0) {
+
+        return `
+            <div class="rounded-xl border border-slate-200 p-4">
+
+                <h3 class="font-semibold text-slate-800 mb-3">
+                    ${titulo}
+                </h3>
+
+                <p class="text-sm text-slate-500">
+                    Sin antecedentes registrados.
+                </p>
+
+            </div>
+        `;
+    }
+
+    // La observación es general para este grupo
+    const observacion =
+        datos.find(item => item.observacion)?.observacion || "";
+
+    return `
+        <div class="rounded-xl border border-slate-200 p-4">
+
+            <h3 class="font-semibold text-slate-800 mb-3">
+                ${titulo}
+            </h3>
+
+            <div class="space-y-2">
+
+                ${datos.map(item => `
+                    <div class="flex items-center gap-2">
+
+                        <span class="w-2 h-2 rounded-full
+                                     bg-blue-600 shrink-0">
+                        </span>
+
+                        <span class="text-sm text-slate-700">
+                            ${escaparHTML(
+                                item.nombre_antecedente || "-"
+                            )}
+                        </span>
+
+                    </div>
+                `).join("")}
+
+            </div>
+
+            ${
+                observacion
+                    ? `
+                        <div class="mt-4 pt-3 border-t border-slate-100">
+
+                            <p class="text-xs font-medium text-slate-500">
+                                Observación
+                            </p>
+
+                            <p class="mt-1 text-sm text-slate-700">
+                                ${escaparHTML(observacion)}
+                            </p>
+
+                        </div>
+                    `
+                    : ""
+            }
+
+        </div>
+    `;
+}
 
 // ==========================================
 // CARGAR ATENCIONES DEL PACIENTE
@@ -456,6 +604,27 @@ async function cargarHistoriaCompleta(idAtencion) {
 
         //Mostrar Odontograma
         mostrarOdontogramaHistoria(historia.odontograma);
+
+        //Mostrar Diagnósticos CIE-10
+        mostrarDiagnosticos(historia.diagnosticos);
+
+        //Mostrar Tratamientos
+        mostrarTratamientos(historia.tratamientos);
+
+        //Mostrar Exámenes Complementarios
+        mostrarExamenesComplementarios(historia.examenes_complementarios);
+
+        //Mostrar Informes de Exámenes
+        mostrarInformesExamenes(historia.informes_examenes);
+
+        //Mostrar Complicaciones
+        mostrarComplicaciones(historia.complicaciones);
+
+        //Mostrar Prescripción Médica
+        mostrarPrescripcion(historia.prescripcion);
+
+        //Mostrar Fotografías
+        mostrarFotografias(historia.fotografias);
 
         // Mostramos el contenedor del detalle
         if (detalle) {
@@ -1357,6 +1526,440 @@ function crearProtesisTotalHistoria(color) {
     `;
 }
 
+//===========================================
+// MOSTRAR DIAGNÓSTICOS CIE-10
+//===========================================
+function mostrarDiagnosticos(datos) {
+
+    const contenedor =
+        document.getElementById("historiaDiagnosticos");
+
+    if (!contenedor) return;
+
+    if (!Array.isArray(datos) || datos.length === 0) {
+
+        contenedor.innerHTML = `
+            <p class="text-sm text-slate-500">
+                No se registraron diagnósticos en esta atención.
+            </p>
+        `;
+
+        return;
+    }
+
+    contenedor.innerHTML = datos.map(item => {
+
+        const tipo =
+            item.tipo_diagnostico === "DEF"
+                ? "Definitivo"
+                : item.tipo_diagnostico === "PRE"
+                    ? "Presuntivo"
+                    : item.tipo_diagnostico || "-";
+
+        const claseTipo =
+            item.tipo_diagnostico === "DEF"
+                ? "bg-green-50 text-green-700"
+                : "bg-amber-50 text-amber-700";
+
+        return `
+            <div class="py-3 border-b border-slate-100 last:border-0">
+
+                <div class="flex flex-wrap items-center gap-2">
+
+                    <span class="px-2.5 py-1 rounded-lg
+                                 bg-blue-50 text-blue-700
+                                 text-xs font-bold">
+                        ${escaparHTML(item.codigo_cie10 || "-")}
+                    </span>
+
+                    <span class="px-2.5 py-1 rounded-full
+                                 ${claseTipo}
+                                 text-xs font-semibold">
+                        ${escaparHTML(tipo)}
+                    </span>
+
+                </div>
+
+                <p class="mt-2 text-sm font-medium text-slate-700">
+                    ${escaparHTML(item.descripcion_cie10 || "-")}
+                </p>
+
+            </div>
+        `;
+
+    }).join("");
+}
+
+//===========================================
+// MOSTRAR TRATAMIENTOS REALIZADOS
+//===========================================
+function mostrarTratamientos(datos) {
+
+    const contenedor =
+        document.getElementById("historiaTratamientos");
+
+    if (!contenedor) return;
+
+    if (!Array.isArray(datos) || datos.length === 0) {
+
+        contenedor.innerHTML = `
+            <p class="text-sm text-slate-500">
+                No se registraron tratamientos en esta atención.
+            </p>
+        `;
+
+        return;
+    }
+
+    contenedor.innerHTML = datos.map(item => `
+
+        <div class="flex items-center justify-between gap-4
+                    py-3 border-b border-slate-100 last:border-0">
+
+            <div class="flex items-center gap-3">
+
+                <div class="w-2 h-2 rounded-full bg-blue-600"></div>
+
+                <span class="text-sm font-medium text-slate-700">
+                    ${escaparHTML(
+                        item.nombre_procedimiento || "-"
+                    )}
+                </span>
+
+            </div>
+
+            ${
+                Number(item.cantidad) > 1
+                    ? `
+                        <span class="px-2.5 py-1 rounded-full
+                                     bg-slate-100 text-slate-600
+                                     text-xs font-semibold">
+                            Cantidad: ${escaparHTML(item.cantidad)}
+                        </span>
+                    `
+                    : ""
+            }
+
+        </div>
+
+    `).join("");
+}
+
+//===========================================
+// MOSTRAR EXÁMENES COMPLEMENTARIOS
+//===========================================
+function mostrarExamenesComplementarios(datos) {
+
+    const contenedor =
+        document.getElementById("historiaExamenes");
+
+    if (!contenedor) return;
+
+    if (!Array.isArray(datos) || datos.length === 0) {
+
+        contenedor.innerHTML = `
+            <p class="text-sm text-slate-500">
+                No se registraron exámenes complementarios.
+            </p>
+        `;
+
+        return;
+    }
+
+    contenedor.innerHTML = datos.map(item => `
+
+        <div class="flex items-center gap-3
+                    py-3 border-b border-slate-100 last:border-0">
+
+            <div class="w-2 h-2 rounded-full bg-blue-600"></div>
+
+            <span class="text-sm font-medium text-slate-700">
+                ${escaparHTML(item.nombre_examen || "-")}
+            </span>
+
+        </div>
+
+    `).join("");
+}
+
+//===========================================
+// MOSTRAR INFORMES DE EXÁMENES
+//===========================================
+function mostrarInformesExamenes(datos) {
+
+    const contenedor =
+        document.getElementById("historiaInformes");
+
+    if (!contenedor) return;
+
+    if (!Array.isArray(datos) || datos.length === 0) {
+
+        contenedor.innerHTML = `
+            <p class="text-sm text-slate-500">
+                No se registraron informes de exámenes.
+            </p>
+        `;
+
+        return;
+    }
+
+    contenedor.innerHTML = datos.map(item => `
+
+        <div class="py-3 border-b border-slate-100 last:border-0">
+
+            <p class="text-sm text-slate-700 whitespace-pre-line">
+                ${escaparHTML(item.descripcion || "-")}
+            </p>
+
+        </div>
+
+    `).join("");
+}
+
+//===========================================
+// MOSTRAR COMPLICACIONES
+//===========================================
+function mostrarComplicaciones(datos) {
+
+    const contenedor =
+        document.getElementById("historiaComplicaciones");
+
+    if (!contenedor) return;
+
+    if (!Array.isArray(datos) || datos.length === 0) {
+
+        contenedor.innerHTML = `
+            <p class="text-sm text-slate-500">
+                No se registraron complicaciones.
+            </p>
+        `;
+
+        return;
+    }
+
+    contenedor.innerHTML = datos.map(item => `
+
+        <div class="flex items-start gap-3
+                    py-3 border-b border-slate-100 last:border-0">
+
+            <div class="w-2 h-2 mt-1.5 rounded-full
+                        bg-orange-500 shrink-0">
+            </div>
+
+            <p class="text-sm text-slate-700">
+                ${escaparHTML(item.descripcion || "-")}
+            </p>
+
+        </div>
+
+    `).join("");
+}
+
+//===========================================
+// MOSTRAR PRESCRIPCIÓN MÉDICA
+//===========================================
+function mostrarPrescripcion(datos) {
+
+    const contenedor =
+        document.getElementById("historiaPrescripcion");
+
+    if (!contenedor) return;
+
+    if (!Array.isArray(datos) || datos.length === 0) {
+
+        contenedor.innerHTML = `
+            <p class="text-sm text-slate-500">
+                No se registró prescripción médica.
+            </p>
+        `;
+
+        return;
+    }
+
+    contenedor.innerHTML = datos.map(item => `
+
+        <div class="py-4 border-b border-slate-100 last:border-0">
+
+            <div class="flex items-center gap-2 mb-3">
+
+                <span class="w-2 h-2 rounded-full bg-blue-600"></span>
+
+                <h4 class="font-semibold text-slate-800">
+                    ${escaparHTML(item.medicamento || "-")}
+                </h4>
+
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+
+                <div>
+                    <p class="text-xs text-slate-500">
+                        Dosis
+                    </p>
+                    <p class="text-sm font-medium text-slate-700 mt-1">
+                        ${escaparHTML(item.dosis || "-")}
+                    </p>
+                </div>
+
+                <div>
+                    <p class="text-xs text-slate-500">
+                        Frecuencia
+                    </p>
+                    <p class="text-sm font-medium text-slate-700 mt-1">
+                        ${escaparHTML(item.frecuencia || "-")}
+                    </p>
+                </div>
+
+                <div>
+                    <p class="text-xs text-slate-500">
+                        Duración
+                    </p>
+                    <p class="text-sm font-medium text-slate-700 mt-1">
+                        ${escaparHTML(item.duracion || "-")}
+                    </p>
+                </div>
+
+            </div>
+
+            ${
+                item.indicaciones
+                    ? `
+                        <div class="mt-3 pt-3 border-t border-slate-100">
+
+                            <p class="text-xs text-slate-500">
+                                Indicaciones
+                            </p>
+
+                            <p class="text-sm text-slate-700 mt-1">
+                                ${escaparHTML(item.indicaciones)}
+                            </p>
+
+                        </div>
+                    `
+                    : ""
+            }
+
+        </div>
+
+    `).join("");
+}
+
+//===========================================
+// MOSTRAR FOTOGRAFÍAS CLÍNICAS
+//===========================================
+function mostrarFotografias(datos) {
+
+    const contenedor =
+        document.getElementById("historiaFotografias");
+
+    if (!contenedor) return;
+
+    if (!Array.isArray(datos) || datos.length === 0) {
+
+        contenedor.innerHTML = `
+            <p class="text-sm text-slate-500">
+                No se registraron fotografías en esta atención.
+            </p>
+        `;
+
+        return;
+    }
+
+    contenedor.innerHTML = `
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+
+            ${datos.map(item => {
+
+                const ruta = "/" + String(
+                    item.ruta_archivo || ""
+                ).replace(/^\/+/, "");
+
+                return `
+                    <div class="border border-slate-200
+                                rounded-xl overflow-hidden bg-white">
+
+                        <button type="button"
+                                class="block w-full"
+                                onclick="abrirFotografiaHistoria(
+                                    '${escaparHTML(ruta)}'
+                                )">
+
+                            <img
+                                src="${escaparHTML(ruta)}"
+                                alt="${escaparHTML(
+                                    item.observacion ||
+                                    item.nombre_archivo ||
+                                    "Fotografía clínica"
+                                )}"
+                                class="w-full aspect-square object-cover
+                                       hover:opacity-90 transition"
+                            >
+
+                        </button>
+
+                        ${
+                            item.observacion
+                                ? `
+                                    <div class="p-3">
+                                        <p class="text-sm text-slate-600">
+                                            ${escaparHTML(item.observacion)}
+                                        </p>
+                                    </div>
+                                `
+                                : ""
+                        }
+
+                    </div>
+                `;
+
+            }).join("")}
+
+        </div>
+    `;
+}
+//AMPLIAR FOTOGRAFIA AL HACER CLICK
+function abrirFotografiaHistoria(ruta) {
+
+    if (!ruta) return;
+
+    const modal = document.createElement("div");
+
+    modal.className =
+        "fixed inset-0 z-[100] bg-black/80 " +
+        "flex items-center justify-center p-4";
+
+    modal.innerHTML = `
+        <div class="relative max-w-5xl w-full">
+
+            <button type="button"
+                    class="absolute -top-10 right-0
+                           text-white text-sm font-semibold">
+                Cerrar ✕
+            </button>
+
+            <img
+                src="${escaparHTML(ruta)}"
+                alt="Fotografía clínica"
+                class="max-h-[85vh] max-w-full mx-auto
+                       object-contain rounded-xl bg-white"
+            >
+
+        </div>
+    `;
+
+    modal.addEventListener("click", function (event) {
+
+        if (
+            event.target === modal ||
+            event.target.closest("button")
+        ) {
+            modal.remove();
+        }
+
+    });
+
+    document.body.appendChild(modal);
+}
 
 // ==========================================
 // COLOCAR TEXTO
