@@ -623,8 +623,9 @@ function mostrarOdontogramaHistoria(odontograma) {
     if (!contenedor) return;
 
     const registros = odontograma?.registros || [];
+    const protesis = odontograma?.protesis || [];
 
-    if (registros.length === 0) {
+    if (registros.length === 0 && protesis.length === 0) {
         contenedor.innerHTML = `
             <p class="text-sm text-slate-500">
                 No se registraron datos en el odontograma.
@@ -647,13 +648,13 @@ function mostrarOdontogramaHistoria(odontograma) {
 
             ${
                 permanentes.length > 0
-                    ? crearOdontogramaPermanenteHistoria(permanentes)
+                    ? crearOdontogramaPermanenteHistoria(permanentes,protesis)
                     : ""
             }
 
             ${
                 temporales.length > 0
-                    ? crearOdontogramaTemporalHistoria(temporales)
+                    ? crearOdontogramaTemporalHistoria(temporales,protesis)
                     : ""
             }
 
@@ -661,7 +662,7 @@ function mostrarOdontogramaHistoria(odontograma) {
     `;
 }
 //ODONTOGRAMA PERMANENTE
-function crearOdontogramaPermanenteHistoria(registros) {
+function crearOdontogramaPermanenteHistoria(registros,protesis) {
 
     const superiorDerecho = [18,17,16,15,14,13,12,11];
     const superiorIzquierdo = [21,22,23,24,25,26,27,28];
@@ -692,14 +693,14 @@ function crearOdontogramaPermanenteHistoria(registros) {
 
                         ${crearFilaHistoria(
                             superiorDerecho,
-                            registros
+                            registros,protesis
                         )}
 
                         <div class="w-12"></div>
 
                         ${crearFilaHistoria(
                             superiorIzquierdo,
-                            registros
+                            registros, protesis
                         )}
 
                     </div>
@@ -708,14 +709,14 @@ function crearOdontogramaPermanenteHistoria(registros) {
 
                         ${crearFilaHistoria(
                             inferiorDerecho,
-                            registros
+                            registros,protesis
                         )}
 
                         <div class="w-12"></div>
 
                         ${crearFilaHistoria(
                             inferiorIzquierdo,
-                            registros
+                            registros,protesis
                         )}
 
                     </div>
@@ -728,7 +729,7 @@ function crearOdontogramaPermanenteHistoria(registros) {
     `;
 }
 //ODONTOGRAMA TEMPORAL
-function crearOdontogramaTemporalHistoria(registros) {
+function crearOdontogramaTemporalHistoria(registros,protesis) {
 
     const superiorDerecho = [55,54,53,52,51];
     const superiorIzquierdo = [61,62,63,64,65];
@@ -761,14 +762,14 @@ function crearOdontogramaTemporalHistoria(registros) {
 
                         ${crearFilaHistoria(
                             superiorDerecho,
-                            registros
+                            registros,protesis
                         )}
 
                         <div class="w-12"></div>
 
                         ${crearFilaHistoria(
                             superiorIzquierdo,
-                            registros
+                            registros,protesis
                         )}
 
                     </div>
@@ -777,14 +778,14 @@ function crearOdontogramaTemporalHistoria(registros) {
 
                         ${crearFilaHistoria(
                             inferiorDerecho,
-                            registros
+                            registros,protesis
                         )}
 
                         <div class="w-12"></div>
 
                         ${crearFilaHistoria(
                             inferiorIzquierdo,
-                            registros
+                            registros,protesis
                         )}
 
                     </div>
@@ -797,20 +798,20 @@ function crearOdontogramaTemporalHistoria(registros) {
     `;
 }
 //CREAR FILA DE ODONTOGRAMA PARA HISTORIA
-function crearFilaHistoria(piezas, registros) {
+function crearFilaHistoria(piezas, registros,protesis) {
 
     return `
         <div class="flex gap-3">
 
             ${piezas.map(numero =>
-                crearDienteHistoria(numero, registros)
+                crearDienteHistoria(numero, registros,protesis)
             ).join("")}
 
         </div>
     `;
 }
 //CREAR DIENTE PARA HISTORIA
-function crearDienteHistoria(numero, registros) {
+function crearDienteHistoria(numero, registros,protesis) {
 
     const datosPieza = registros.filter(
         item => Number(item.numero_pieza) === Number(numero)
@@ -858,6 +859,7 @@ function crearDienteHistoria(numero, registros) {
                     w-6 h-3 border border-slate-500 rounded-b">
                 </div>
                 ${crearSimbolosDienteHistoria(datosPieza)}
+                ${crearProtesisDienteHistoria(numero,protesis)}
 
             </div>
 
@@ -1143,6 +1145,213 @@ function crearSellanteHistoria(color) {
                          text-2xl font-bold leading-none">
                 *
             </span>
+
+        </div>
+    `;
+}
+//CREAMOS LAS PROTESIS
+function crearProtesisDienteHistoria(numero, protesis) {
+
+    if (!Array.isArray(protesis) || protesis.length === 0) {
+        return "";
+    }
+
+    let html = "";
+
+    protesis.forEach(item => {
+
+        const inicio = Number(item.pieza_inicio);
+        const fin = Number(item.pieza_fin);
+
+        if (!inicio || !fin) {
+            return;
+        }
+
+        const rango =
+            obtenerRangoProtesisHistoria(inicio, fin);
+
+        if (!rango.includes(Number(numero))) {
+            return;
+        }
+
+        const esInicio = Number(numero) === inicio;
+        const esFin = Number(numero) === fin;
+
+        switch (item.clave_simbologia) {
+
+            case "protesis_fija_indicada":
+                html += crearProtesisFijaHistoria(
+                    esInicio,
+                    esFin,
+                    "red"
+                );
+                break;
+
+            case "protesis_fija_realizada":
+                html += crearProtesisFijaHistoria(
+                    esInicio,
+                    esFin,
+                    "blue"
+                );
+                break;
+
+            case "protesis_removible_indicada":
+                html += crearProtesisRemovibleHistoria(
+                    esInicio,
+                    esFin,
+                    "red"
+                );
+                break;
+
+            case "protesis_removible_realizada":
+                html += crearProtesisRemovibleHistoria(
+                    esInicio,
+                    esFin,
+                    "blue"
+                );
+                break;
+
+            case "protesis_total_indicada":
+                html += crearProtesisTotalHistoria("red");
+                break;
+
+            case "protesis_total_realizada":
+                html += crearProtesisTotalHistoria("blue");
+                break;
+        }
+    });
+
+    return html;
+}
+//OBTENEMOS EL RANGO DE PIEZAS PARA LA PROTESIS
+function obtenerRangoProtesisHistoria(inicio, fin) {
+
+    inicio = Number(inicio);
+    fin = Number(fin);
+
+    const arcadas = [
+        [18,17,16,15,14,13,12,11,21,22,23,24,25,26,27,28],
+        [48,47,46,45,44,43,42,41,31,32,33,34,35,36,37,38],
+        [55,54,53,52,51,61,62,63,64,65],
+        [85,84,83,82,81,71,72,73,74,75]
+    ];
+
+    for (const arcada of arcadas) {
+
+        const iInicio = arcada.indexOf(inicio);
+        const iFin = arcada.indexOf(fin);
+
+        if (iInicio === -1 || iFin === -1) {
+            continue;
+        }
+
+        const desde = Math.min(iInicio, iFin);
+        const hasta = Math.max(iInicio, iFin);
+
+        return arcada.slice(desde, hasta + 1);
+    }
+
+    return [];
+}
+//DIBUJAMOS LA PROTESIS
+function crearProtesisFijaHistoria(esInicio, esFin, color) {
+
+    const fondo =
+        color === "red"
+            ? "bg-red-600"
+            : "bg-blue-600";
+
+    return `
+        <div class="absolute -left-1.5 -right-1.5 top-1/2
+                    -translate-y-1/2 z-30
+                    pointer-events-none">
+
+            <div class="absolute left-0 right-0
+                        top-1/2 -translate-y-1/2
+                        h-[3px] ${fondo}">
+            </div>
+
+            ${esInicio ? `
+                <div class="absolute left-0 top-1/2
+                            -translate-y-1/2
+                            w-3 h-3 ${fondo}">
+                </div>
+            ` : ""}
+
+            ${esFin ? `
+                <div class="absolute right-0 top-1/2
+                            -translate-y-1/2
+                            w-3 h-3 ${fondo}">
+                </div>
+            ` : ""}
+
+        </div>
+    `;
+}
+
+
+function crearProtesisRemovibleHistoria(esInicio, esFin, color) {
+
+    const fondo =
+        color === "red"
+            ? "bg-red-600"
+            : "bg-blue-600";
+
+    const texto =
+        color === "red"
+            ? "text-red-600"
+            : "text-blue-600";
+
+    return `
+        <div class="absolute -left-1.5 -right-1.5 top-1/2
+                    -translate-y-1/2 z-30
+                    pointer-events-none">
+
+            <div class="absolute left-0 right-0
+                        top-1/2 -translate-y-1/2
+                        h-[3px] ${fondo}">
+            </div>
+
+            ${esInicio ? `
+                <span class="absolute -left-1 top-1/2
+                             -translate-y-1/2
+                             text-2xl font-bold ${texto}">
+                    (
+                </span>
+            ` : ""}
+
+            ${esFin ? `
+                <span class="absolute -right-1 top-1/2
+                             -translate-y-1/2
+                             text-2xl font-bold ${texto}">
+                    )
+                </span>
+            ` : ""}
+
+        </div>
+    `;
+}
+
+
+function crearProtesisTotalHistoria(color) {
+
+    const fondo =
+        color === "red"
+            ? "bg-red-600"
+            : "bg-blue-600";
+
+    return `
+        <div class="absolute -left-1.5 -right-1.5 top-1/2
+                    -translate-y-1/2 z-30
+                    pointer-events-none">
+
+            <div class="absolute left-0 right-0 -top-1
+                        h-[2px] ${fondo}">
+            </div>
+
+            <div class="absolute left-0 right-0 top-1
+                        h-[2px] ${fondo}">
+            </div>
 
         </div>
     `;
