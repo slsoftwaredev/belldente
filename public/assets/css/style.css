@@ -511,6 +511,12 @@
   .min-w-\[210px\] {
     min-width: 210px;
   }
+  .min-w-\[720px\] {
+    min-width: 720px;
+  }
+  .min-w-\[1050px\] {
+    min-width: 1050px;
+  }
   .min-w-max {
     min-width: max-content;
   }
@@ -969,9 +975,6 @@
   }
   .px-2 {
     padding-inline: calc(var(--spacing) * 2);
-  }
-  .px-2\.5 {
-    padding-inline: calc(var(--spacing) * 2.5);
   }
   .px-3 {
     padding-inline: calc(var(--spacing) * 3);

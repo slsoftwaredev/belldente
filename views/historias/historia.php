@@ -447,10 +447,10 @@
 
                 </div>
 
-                <div
-                    id="historiaOdontograma"
-                    class="overflow-x-auto"
-                >
+                <div id="historiaOdontograma" class="space-y-6">
+                    <p class="text-sm text-slate-500">
+                        Seleccione una atención para visualizar el odontograma registrado.
+                    </p>
                 </div>
 
             </div>

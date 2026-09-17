@@ -451,6 +451,12 @@ async function cargarHistoriaCompleta(idAtencion) {
         //Mostramos los Indicadores de Salud Bucal
         mostrarIndicadores(historia.indicadores);
 
+        //Mostrar Higiene Oral
+        mostrarHigieneOral(historia.higiene_oral);
+
+        //Mostrar Odontograma
+        mostrarOdontogramaHistoria(historia.odontograma);
+
         // Mostramos el contenedor del detalle
         if (detalle) {
             detalle.classList.remove("hidden");
@@ -549,6 +555,599 @@ function mostrarIndicadores(datos) {
         </div>
     `).join("");
 }
+//===========================================
+//MOSTRAR HIGIENE ORAL
+//===========================================
+function mostrarHigieneOral(datos) {
+
+    const contenedor = document.getElementById("historiaHigieneOral");
+
+    if (!contenedor) return;
+
+    if (!datos || datos.length === 0) {
+        contenedor.innerHTML = `
+            <p class="text-sm text-slate-500">
+                No se registraron datos de higiene oral.
+            </p>
+        `;
+        return;
+    }
+
+    contenedor.innerHTML = `
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+                <thead>
+                    <tr class="border-b border-slate-200 text-slate-600">
+                        <th class="text-left py-2 px-3">Pieza</th>
+                        <th class="text-center py-2 px-3">Placa</th>
+                        <th class="text-center py-2 px-3">Cálculo</th>
+                        <th class="text-center py-2 px-3">Gingivitis</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    ${datos.map(item => `
+                        <tr class="border-b border-slate-100 last:border-0">
+
+                            <td class="py-2 px-3 font-semibold text-slate-700">
+                                ${item.pieza_dental || "-"}
+                            </td>
+
+                            <td class="py-2 px-3 text-center text-slate-600">
+                                ${item.placa_bacteriana ?? "-"}
+                            </td>
+
+                            <td class="py-2 px-3 text-center text-slate-600">
+                                ${item.calculo ?? "-"}
+                            </td>
+
+                            <td class="py-2 px-3 text-center text-slate-600">
+                                ${item.gingivitis ?? "-"}
+                            </td>
+
+                        </tr>
+                    `).join("")}
+                </tbody>
+            </table>
+        </div>
+    `;
+}
+
+//===========================================
+//MOSTRAR ODONTOGRAMA DE LA HISTORIA
+//===========================================
+function mostrarOdontogramaHistoria(odontograma) {
+
+    const contenedor = document.getElementById("historiaOdontograma");
+
+    if (!contenedor) return;
+
+    const registros = odontograma?.registros || [];
+
+    if (registros.length === 0) {
+        contenedor.innerHTML = `
+            <p class="text-sm text-slate-500">
+                No se registraron datos en el odontograma.
+            </p>
+        `;
+        return;
+    }
+
+    // Separamos los registros según dentición
+    const permanentes = registros.filter(
+        item => Number(item.tipo_denticion_id) === 1
+    );
+
+    const temporales = registros.filter(
+        item => Number(item.tipo_denticion_id) === 2
+    );
+
+    contenedor.innerHTML = `
+        <div class="space-y-8">
+
+            ${
+                permanentes.length > 0
+                    ? crearOdontogramaPermanenteHistoria(permanentes)
+                    : ""
+            }
+
+            ${
+                temporales.length > 0
+                    ? crearOdontogramaTemporalHistoria(temporales)
+                    : ""
+            }
+
+        </div>
+    `;
+}
+//ODONTOGRAMA PERMANENTE
+function crearOdontogramaPermanenteHistoria(registros) {
+
+    const superiorDerecho = [18,17,16,15,14,13,12,11];
+    const superiorIzquierdo = [21,22,23,24,25,26,27,28];
+
+    const inferiorDerecho = [48,47,46,45,44,43,42,41];
+    const inferiorIzquierdo = [31,32,33,34,35,36,37,38];
+
+    return `
+        <div class="border border-slate-200 rounded-xl p-5">
+
+            <div class="flex items-center justify-between mb-6">
+                <h4 class="font-semibold text-slate-800">
+                    Dentición Permanente
+                </h4>
+
+                <span class="text-xs font-medium
+                             bg-slate-100 text-slate-600
+                             px-3 py-1 rounded-full">
+                    Solo lectura
+                </span>
+            </div>
+
+            <div class="overflow-x-auto">
+
+                <div class="min-w-[1050px] space-y-8">
+
+                    <div class="flex justify-center gap-4">
+
+                        ${crearFilaHistoria(
+                            superiorDerecho,
+                            registros
+                        )}
+
+                        <div class="w-12"></div>
+
+                        ${crearFilaHistoria(
+                            superiorIzquierdo,
+                            registros
+                        )}
+
+                    </div>
+
+                    <div class="flex justify-center gap-4">
+
+                        ${crearFilaHistoria(
+                            inferiorDerecho,
+                            registros
+                        )}
+
+                        <div class="w-12"></div>
+
+                        ${crearFilaHistoria(
+                            inferiorIzquierdo,
+                            registros
+                        )}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+    `;
+}
+//ODONTOGRAMA TEMPORAL
+function crearOdontogramaTemporalHistoria(registros) {
+
+    const superiorDerecho = [55,54,53,52,51];
+    const superiorIzquierdo = [61,62,63,64,65];
+
+    const inferiorDerecho = [85,84,83,82,81];
+    const inferiorIzquierdo = [71,72,73,74,75];
+
+    return `
+        <div class="border border-slate-200 rounded-xl p-5">
+
+            <div class="flex items-center justify-between mb-6">
+
+                <h4 class="font-semibold text-slate-800">
+                    Dentición Temporal
+                </h4>
+
+                <span class="text-xs font-medium
+                             bg-slate-100 text-slate-600
+                             px-3 py-1 rounded-full">
+                    Solo lectura
+                </span>
+
+            </div>
+
+            <div class="overflow-x-auto">
+
+                <div class="min-w-[720px] space-y-8">
+
+                    <div class="flex justify-center gap-4">
+
+                        ${crearFilaHistoria(
+                            superiorDerecho,
+                            registros
+                        )}
+
+                        <div class="w-12"></div>
+
+                        ${crearFilaHistoria(
+                            superiorIzquierdo,
+                            registros
+                        )}
+
+                    </div>
+
+                    <div class="flex justify-center gap-4">
+
+                        ${crearFilaHistoria(
+                            inferiorDerecho,
+                            registros
+                        )}
+
+                        <div class="w-12"></div>
+
+                        ${crearFilaHistoria(
+                            inferiorIzquierdo,
+                            registros
+                        )}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+    `;
+}
+//CREAR FILA DE ODONTOGRAMA PARA HISTORIA
+function crearFilaHistoria(piezas, registros) {
+
+    return `
+        <div class="flex gap-3">
+
+            ${piezas.map(numero =>
+                crearDienteHistoria(numero, registros)
+            ).join("")}
+
+        </div>
+    `;
+}
+//CREAR DIENTE PARA HISTORIA
+function crearDienteHistoria(numero, registros) {
+
+    const datosPieza = registros.filter(
+        item => Number(item.numero_pieza) === Number(numero)
+    );
+
+    return `
+        <div class="flex flex-col items-center select-none">
+
+            <span class="text-xs font-semibold text-slate-700 mb-1">
+                ${numero}
+            </span>
+
+            <div class="relative w-12 h-12">
+
+                <div
+                    class="${claseSuperficieHistoria(numero,"superior",datosPieza)}
+                    absolute top-0 left-1/2 -translate-x-1/2
+                    w-6 h-3 border border-slate-500 rounded-t">
+                </div>
+
+                <div
+                    class="${claseSuperficieHistoria(numero,"izquierda",datosPieza)}
+                    absolute top-3 left-0
+                    w-3 h-6 border border-slate-500 rounded-l">
+                </div>
+
+                <div
+                    class="${claseSuperficieHistoria(numero,"oclusal",datosPieza)}
+                    absolute top-3 left-3
+                    w-6 h-6 border border-slate-500">
+                </div>
+
+                <div
+                    class="${claseSuperficieHistoria(numero,"derecha",datosPieza)}
+                    absolute top-3 right-0
+                    w-3 h-6 border border-slate-500 rounded-r">
+                </div>
+
+                <div
+                    class="${claseSuperficieHistoria(numero,
+                        "inferior",
+                        datosPieza
+                    )}
+                    absolute bottom-0 left-1/2 -translate-x-1/2
+                    w-6 h-3 border border-slate-500 rounded-b">
+                </div>
+                ${crearSimbolosDienteHistoria(datosPieza)}
+
+            </div>
+
+        </div>
+    `;
+}
+//CONVERTIR SUPERFICIE EN CLASE PARA HISTORIA
+function obtenerSuperficieHistoria(numeroPieza, cara) {
+    const pieza = Number(numeroPieza);
+    if (cara === "oclusal") {
+        return "Oclusal/Incisal";
+    }
+
+    const cuadrante = Math.floor(pieza / 10);
+    const esSuperior = [1,2,5,6].includes(cuadrante);
+    if (cara === "superior") {
+        return esSuperior ? "Vestibular" : "Lingual/Palatina";
+    }
+
+    if (cara === "inferior") {
+        return esSuperior ? "Lingual/Palatina" : "Vestibular";
+    }
+
+    const ladoDerechoPaciente = [1,4,5,8].includes(cuadrante);
+    if (cara === "izquierda") {
+        return ladoDerechoPaciente ? "Distal" : "Mesial";
+    }
+
+    if (cara === "derecha") {
+        return ladoDerechoPaciente ? "Mesial" : "Distal";
+    }
+    return null;
+}
+//CONVERTIR SUPERFICIE EN CLASE PARA HISTORIA
+function claseSuperficieHistoria(numero, cara, registros) {
+    const superficie = obtenerSuperficieHistoria(numero, cara);
+    const registro = registros.find(item => item.nombre_superficie === superficie);
+    if (!registro) {
+        return "bg-white";
+    }
+
+    switch (registro.clave_simbologia) {
+        case "caries":
+            return "bg-red-500";
+
+        case "obturacion":
+            return "bg-blue-500";
+
+        default:
+            return "bg-white";
+    }
+}
+//CREAR SÍMBOLOS DE DIENTE PARA HISTORIA
+function crearSimbolosDienteHistoria(registros) {
+
+    if (!Array.isArray(registros) || registros.length === 0) {
+        return "";
+    }
+
+    // Solo registros que corresponden a símbolos,
+    // no a superficies dentales.
+    const simbolos = registros
+        .filter(item => !item.id_superficie)
+        .map(item => item.clave_simbologia)
+        .filter(Boolean);
+
+    let html = "";
+
+    simbolos.forEach(simbolo => {
+
+        switch (simbolo) {
+
+            // ==========================================
+            // AUSENTE
+            // ==========================================
+            case "ausente":
+                html += `
+                    <div class="absolute inset-0
+                                flex items-center justify-center
+                                pointer-events-none">
+
+                        <span class="text-xl font-bold text-slate-700">
+                            A
+                        </span>
+
+                    </div>
+                `;
+                break;
+
+
+            // ==========================================
+            // CORONA INDICADA
+            // ==========================================
+            case "corona_indicada":
+                html += crearCoronaHistoria("red");
+                break;
+
+
+            // ==========================================
+            // CORONA REALIZADA
+            // ==========================================
+            case "corona_realizada":
+                html += crearCoronaHistoria("blue");
+                break;
+
+
+            // ==========================================
+            // ENDODONCIA POR REALIZAR
+            // ==========================================
+            case "endodoncia_requerida":
+                html += crearEndodonciaHistoria("red");
+                break;
+
+
+            // ==========================================
+            // ENDODONCIA REALIZADA
+            // ==========================================
+            case "endodoncia_realizada":
+                html += crearEndodonciaHistoria("blue");
+                break;
+
+
+            // ==========================================
+            // EXTRACCIÓN INDICADA
+            // ==========================================
+            case "extraccion":
+                html += crearXHistoria("red");
+                break;
+
+
+            // ==========================================
+            // PÉRDIDA POR CARIES
+            // ==========================================
+            case "perdida_caries":
+                html += crearXHistoria("blue");
+                break;
+
+
+            // ==========================================
+            // PÉRDIDA POR OTRA CAUSA
+            // ==========================================
+            case "perdida_otra":
+                html += crearPerdidaOtraHistoria();
+                break;
+
+
+            // ==========================================
+            // SELLANTE NECESARIO
+            // ==========================================
+            case "sellante_necesario":
+                html += crearSellanteHistoria("red");
+                break;
+
+
+            // ==========================================
+            // SELLANTE REALIZADO
+            // ==========================================
+            case "sellante_realizado":
+                html += crearSellanteHistoria("blue");
+                break;
+        }
+
+    });
+
+    return html;
+}
+//CREAR CORONA PARA HISTORIA
+function crearCoronaHistoria(color) {
+
+    const borde = color === "red"
+        ? "border-red-600"
+        : "border-blue-700";
+
+    const fondo = color === "red"
+        ? "bg-red-600"
+        : "bg-blue-700";
+
+    return `
+        <div class="absolute inset-0
+                    flex items-center justify-center
+                    pointer-events-none">
+
+            <div class="w-11 h-11 border-[3px] ${borde}
+                        flex items-center justify-center">
+
+                <div class="w-8 h-8 border-[3px] ${borde}
+                            flex items-center justify-center">
+
+                    <div class="w-5 h-5 border-[3px] ${borde}
+                                flex items-center justify-center">
+
+                        <div class="w-2 h-2 ${fondo}"></div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+    `;
+}
+//CREAR ENDODONCIA PARA HISTORIA
+function crearEndodonciaHistoria(color) {
+
+    const borde = color === "red"
+        ? "border-b-red-600"
+        : "border-b-blue-600";
+
+    return `
+        <div class="absolute inset-0
+                    flex items-center justify-center
+                    pointer-events-none">
+
+            <div class="w-0 h-0
+                        border-l-[8px] border-l-transparent
+                        border-r-[8px] border-r-transparent
+                        border-b-[14px] ${borde}">
+            </div>
+
+        </div>
+    `;
+}
+//CREAR X PARA HISTORIA
+function crearXHistoria(color) {
+
+    const fondo = color === "red"
+        ? "bg-red-600"
+        : "bg-blue-600";
+
+    return `
+        <div class="absolute inset-0 pointer-events-none">
+
+            <div class="absolute top-1/2 left-0
+                        w-full h-0.5 ${fondo}
+                        rotate-45 origin-center">
+            </div>
+
+            <div class="absolute top-1/2 left-0
+                        w-full h-0.5 ${fondo}
+                        -rotate-45 origin-center">
+            </div>
+
+        </div>
+    `;
+}
+//CREAR PÉRDIDA POR OTRA CAUSA PARA HISTORIA
+function crearPerdidaOtraHistoria() {
+
+    return `
+        <div class="absolute inset-0 pointer-events-none">
+
+            <div class="absolute inset-0
+                        border-2 border-black rounded-full">
+            </div>
+
+            <div class="absolute top-1/2 left-0
+                        w-full h-0.5 bg-black
+                        rotate-45 origin-center">
+            </div>
+
+            <div class="absolute top-1/2 left-0
+                        w-full h-0.5 bg-black
+                        -rotate-45 origin-center">
+            </div>
+
+        </div>
+    `;
+}
+//CREAR SELLANTE PARA HISTORIA
+function crearSellanteHistoria(color) {
+
+    const texto = color === "red"
+        ? "text-red-600"
+        : "text-blue-600";
+
+    return `
+        <div class="absolute inset-0
+                    flex items-center justify-center
+                    pointer-events-none">
+
+            <span class="${texto}
+                         text-2xl font-bold leading-none">
+                *
+            </span>
+
+        </div>
+    `;
+}
+
 
 // ==========================================
 // COLOCAR TEXTO
