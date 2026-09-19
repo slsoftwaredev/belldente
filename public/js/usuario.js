@@ -1,6 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
     listarUsuarios();
     cargarRoles();
+    cargarModulos();
 
     // Modal
     const modal = document.getElementById("modalUsuario");
@@ -9,14 +10,16 @@ document.addEventListener("DOMContentLoaded", () => {
     const btnCancelar = document.getElementById("btnCancelar");
 
     btnNuevoUsuario.addEventListener("click", () => {
-        formUsuario.reset();
-        document.getElementById("id_usuario").value = 0;
-        document.getElementById("tituloModal").innerText = "Nuevo Usuario";
-
-        modal.classList.remove("hidden");
-        modal.classList.add("flex");
-
-    });
+    formUsuario.reset();
+    document.getElementById("id_usuario").value = 0;
+    // Desmarcamos todos los permisos
+    document.querySelectorAll(".permisoModulo").forEach(permiso => {permiso.checked = false;});
+    // Restauramos el texto del botón
+    document.getElementById("btnSeleccionarTodos").innerText = "Seleccionar todos";
+    document.getElementById("tituloModal").innerText = "Nuevo Usuario";
+    modal.classList.remove("hidden");
+    modal.classList.add("flex");
+});
 
     btnCerrarModal.addEventListener("click", () => {
 
@@ -30,6 +33,27 @@ document.addEventListener("DOMContentLoaded", () => {
         modal.classList.add("hidden");
         });
 
+    const btnSeleccionarTodos =
+    document.getElementById("btnSeleccionarTodos");
+
+btnSeleccionarTodos.addEventListener("click", () => {
+
+    const permisos =
+        document.querySelectorAll(".permisoModulo");
+
+    const todosMarcados =
+        [...permisos].every(permiso => permiso.checked);
+
+    permisos.forEach(permiso => {
+        permiso.checked = !todosMarcados;
+    });
+
+    btnSeleccionarTodos.innerText =
+        todosMarcados
+            ? "Seleccionar todos"
+            : "Quitar todos";
+
+});
     // Formulario
     const formUsuario = document.getElementById("formUsuario");
 
@@ -242,6 +266,9 @@ function editarUsuario(id_usuario){
         document.getElementById("rol").value =
         data[8];
 
+        // Cargamos los permisos que tiene asignados
+        cargarModulos().then(() => {cargarPermisosUsuario(id_usuario);});
+
         document.getElementById("tituloModal").innerText =
         "Editar Usuario";
 
@@ -338,6 +365,103 @@ function buscarUsuarios(){
         texto.includes(filtro)
         ? ""
         : "none";
+
+    });
+
+}
+// Función para cargar los módulos disponibles
+function cargarModulos(){
+    return fetch("../ajax/usuario.php?op=modulos")
+        .then(response => response.json())
+        .then(data => {
+
+            let html = "";
+
+            data.forEach(modulo => {
+
+                html += `
+                    <label
+                        class="flex items-center gap-3 border border-slate-200
+                               rounded-xl px-4 py-3 cursor-pointer
+                               hover:bg-blue-50 transition">
+
+                        <input
+                            type="checkbox"
+                            name="permisos[]"
+                            value="${modulo.id_modulo}"
+                            class="permisoModulo w-4 h-4 accent-blue-600">
+
+                        <div>
+                            <p class="text-sm font-medium text-slate-700">
+                                ${modulo.nombre_modulo}
+                            </p>
+
+                            <p class="text-xs text-slate-400">
+                                ${modulo.clave_modulo}
+                            </p>
+                        </div>
+
+                    </label>
+                `;
+
+            });
+
+            document.getElementById("contenedorPermisos").innerHTML = html;
+
+        })
+        .catch(error => {
+
+            console.error("Error al cargar módulos:", error);
+
+        });
+
+}
+
+// Función para cargar los permisos asignados a un usuario
+function cargarPermisosUsuario(id_usuario){
+
+    // Primero desmarcamos todos
+    document.querySelectorAll(".permisoModulo")
+        .forEach(permiso => {
+            permiso.checked = false;
+        });
+
+    const formData = new FormData();
+
+    formData.append(
+        "id_usuario",
+        id_usuario
+    );
+
+    fetch("../ajax/usuario.php?op=permisos", {
+        method: "POST",
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+
+        data.forEach(permiso => {
+
+            const checkbox = document.querySelector(
+                `.permisoModulo[value="${permiso.id_modulo}"]`
+            );
+
+            if(checkbox){
+                checkbox.checked = true;
+            }
+
+        });
+
+        document.getElementById("btnSeleccionarTodos").innerText =
+            "Seleccionar todos";
+
+    })
+    .catch(error => {
+
+        console.error(
+            "Error al cargar permisos del usuario:",
+            error
+        );
 
     });
 

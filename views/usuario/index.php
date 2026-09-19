@@ -282,6 +282,39 @@
                 </select>
 
             </div>
+            <!-- Permisos del usuario -->
+<div>
+
+    <div class="flex items-center justify-between mb-3">
+
+        <div>
+            <label class="block text-sm font-medium">
+                Permisos del usuario
+            </label>
+
+            <p class="text-xs text-slate-500 mt-1">
+                Seleccione los módulos a los que tendrá acceso
+            </p>
+        </div>
+
+        <button
+            type="button"
+            id="btnSeleccionarTodos"
+            class="text-sm text-blue-600 hover:text-blue-800 font-medium">
+            Seleccionar todos
+        </button>
+
+    </div>
+
+    <div
+        id="contenedorPermisos"
+        class="grid grid-cols-1 md:grid-cols-2 gap-3">
+
+        <!-- Los módulos se cargarán mediante JavaScript -->
+
+    </div>
+
+</div>
 
         </form>
 

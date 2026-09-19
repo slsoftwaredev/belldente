@@ -71,19 +71,7 @@ switch ($_GET["op"]) {
         $_POST["password"],
         PASSWORD_BCRYPT
     );
-
-    $rspta = $usuario->guardar(
-        $nombre,
-        $apellido,
-        $correo,
-        $cedula,
-        $usuarioLogin,
-        $password,
-        $domicilio,
-        $telefono,
-        $rol
-    );
-
+    $rspta = $usuario->guardar($nombre,$apellido,$correo,$cedula,$usuarioLogin,$password,$domicilio,$telefono,$rol);
     echo json_encode([
         "status" => $rspta ? true : false
     ]);
@@ -105,13 +93,21 @@ switch ($_GET["op"]) {
     echo json_encode($data);
 
     break;
+
+    // Listamos los módulos disponibles
+case 'modulos':
+    $rspta = $usuario->listarModulos();
+    $data = array();
+    while($reg = $rspta->fetch_object()){
+        $data[] = $reg;
+    }
+    echo json_encode($data);
+
+break;
 // Obtenemos los datos de un usuario para mostrarlos en el formulario y editarlos
     case 'obtener':
-
     $rspta = $usuario->obtener($_POST["id_usuario"]);
-
     echo json_encode($rspta);
-
     break;
 // Metodo para editar usuario
     case 'editar':
@@ -127,6 +123,23 @@ switch ($_GET["op"]) {
     $rol = limpiarCadena($_POST["rol"]);
 
     $rspta = $usuario->editar($id_usuario,$nombre,$apellido,$correo,$cedula,$usuarioLogin,$domicilio,$telefono,$rol);
+if($rspta){
+
+    $usuario->eliminarPermisos($id_usuario);
+
+    $permisos = $_POST["permisos"] ?? [];
+
+    foreach($permisos as $idModulo){
+
+        $idModulo = limpiarCadena($idModulo);
+
+        $usuario->asignarPermiso(
+            $id_usuario,
+            $idModulo
+        );
+    }
+}
+
         echo json_encode([
         "status" => $rspta ? true : false
     ]);
@@ -146,6 +159,23 @@ case 'estado':
     echo json_encode([
         "status" => $rspta ? true : false
     ]);
+
+break;
+case 'permisos':
+
+    $id_usuario = isset($_POST["id_usuario"])
+        ? limpiarCadena($_POST["id_usuario"])
+        : 0;
+
+    $rspta = $usuario->listarPermisos($id_usuario);
+
+    $data = array();
+
+    while($reg = $rspta->fetch_object()){
+        $data[] = $reg;
+    }
+
+    echo json_encode($data);
 
 break;
 }

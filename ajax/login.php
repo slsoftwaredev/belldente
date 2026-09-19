@@ -46,6 +46,15 @@ if($datos->estado_usuario == 0){
 
         $_SESSION["id_rol"] = $datos->id_rol;
 
+        // Obtenemos los módulos permitidos para el usuario
+        $resultPermisos = $usuarioModel->listarPermisos($datos->id_usuario);
+        $permisos = [];
+        while($permiso = $resultPermisos->fetch_object()){
+            $permisos[] = $permiso->clave_modulo;
+        }
+        // Guardamos los permisos del usuario en la sesión
+        $_SESSION["permisos"] = $permisos;
+
         echo json_encode([
             "status" => true,
             "message" => "Login correcto"

@@ -1272,6 +1272,9 @@
   .underline {
     text-decoration-line: underline;
   }
+  .accent-blue-600 {
+    accent-color: var(--color-blue-600);
+  }
   .opacity-90 {
     opacity: 90%;
   }
