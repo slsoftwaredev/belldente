@@ -46,24 +46,55 @@ document.addEventListener("DOMContentLoaded", () => {
         .then(response => response.json())
         .then(data => {
 
-            if (data.status) {
+    if (data.status) {
 
-                alert(accion == "guardar" ? "Paciente registrado correctamente" : "Paciente actualizado correctamente");
+        formPaciente.reset();
 
-                formPaciente.reset();
+        modal.classList.add("hidden");
+        modal.classList.remove("flex");
 
-                modal.classList.add("hidden");
-                modal.classList.remove("flex");
+        listarPacientes();
 
-                listarPacientes();
+        mostrarModalSistema({
 
-            } else {
+            titulo:
+                accion === "guardar"
+                    ? "Paciente registrado"
+                    : "Paciente actualizado",
 
-                alert(accion == "guardar" ? "Error al registrar paciente" : "Error al actualizar paciente");
+            mensaje:
+                accion === "guardar"
+                    ? "El paciente fue registrado correctamente."
+                    : "La información del paciente fue actualizada correctamente.",
 
-            }
+            tipo: "success"
 
-        })
+        });
+
+    } else {
+
+        mostrarModalSistema({
+
+            titulo:
+                accion === "guardar"
+                    ? "No se pudo registrar"
+                    : "No se pudo actualizar",
+
+            mensaje:
+                data.mensaje ||
+                (
+                    accion === "guardar"
+                        ? "Ocurrió un error al registrar el paciente."
+                        : "Ocurrió un error al actualizar el paciente."
+                ),
+
+            tipo: "error"
+
+        });
+
+    }
+
+})
         .catch(error => {
 
             console.error(error);
@@ -73,6 +104,103 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
 });
+
+// ========================================
+// MODAL GENERAL DEL SISTEMA
+// ========================================
+
+let accionConfirmadaModal = null;
+
+function mostrarModalSistema({
+    titulo = "Información",
+    mensaje = "",
+    tipo = "info",
+    confirmar = false,
+    textoAceptar = "Aceptar",
+    textoCancelar = "Volver",
+    onAceptar = null
+}) {
+
+    const modal = document.getElementById("modalSistema");
+    const header = document.getElementById("modalSistemaHeader");
+    const tituloModal = document.getElementById("modalSistemaTitulo");
+    const mensajeModal = document.getElementById("modalSistemaMensaje");
+    const btnAceptar = document.getElementById("btnModalSistemaAceptar");
+    const btnCancelar = document.getElementById("btnModalSistemaCancelar");
+
+    tituloModal.textContent = titulo;
+    mensajeModal.textContent = mensaje;
+
+    btnAceptar.textContent = textoAceptar;
+    btnCancelar.textContent = textoCancelar;
+
+    header.className =
+        "px-6 py-5 flex items-center gap-4 " +
+        (
+            tipo === "error"
+                ? "bg-red-600"
+                : tipo === "warning"
+                ? "bg-amber-500"
+                : tipo === "success"
+                ? "bg-green-600"
+                : "bg-blue-600"
+        );
+
+    btnAceptar.className =
+        "text-white px-5 py-3 rounded-xl transition " +
+        (
+            tipo === "error"
+                ? "bg-red-600 hover:bg-red-700"
+                : tipo === "warning"
+                ? "bg-amber-500 hover:bg-amber-600"
+                : tipo === "success"
+                ? "bg-green-600 hover:bg-green-700"
+                : "bg-blue-600 hover:bg-blue-700"
+        );
+
+    if (confirmar) {
+        btnCancelar.classList.remove("hidden");
+    } else {
+        btnCancelar.classList.add("hidden");
+    }
+
+    accionConfirmadaModal = onAceptar;
+
+    modal.classList.remove("hidden");
+    modal.classList.add("flex");
+}
+
+
+function cerrarModalSistema() {
+
+    const modal = document.getElementById("modalSistema");
+
+    modal.classList.add("hidden");
+    modal.classList.remove("flex");
+
+    accionConfirmadaModal = null;
+}
+
+
+document
+    .getElementById("btnModalSistemaAceptar")
+    .addEventListener("click", () => {
+
+        const accion = accionConfirmadaModal;
+
+        cerrarModalSistema();
+
+        if (typeof accion === "function") {
+            accion();
+        }
+
+    });
+
+
+document
+    .getElementById("btnModalSistemaCancelar")
+    .addEventListener("click", cerrarModalSistema);
+
 // Función para listar los pacientes
 function listarPacientes() {
 
@@ -230,50 +358,114 @@ function editarPaciente(id_paciente){
 
 }
 //Función para cambiar el estado del paciente
-function cambiarEstado(id_paciente, estado){
+function cambiarEstado(id_paciente, estado) {
 
-    const mensaje =
-        estado == 1
-        ? "¿Desea activar este paciente?"
-        : "¿Desea inactivar este paciente?";
+    const activar = estado == 1;
 
-    if(!confirm(mensaje)){
-        return;
-    }
+    mostrarModalSistema({
 
-    const formData = new FormData();
+        titulo:
+            activar
+                ? "Activar paciente"
+                : "Inactivar paciente",
 
-    formData.append(
-        "id_paciente",
-        id_paciente
-    );
+        mensaje:
+            activar
+                ? "¿Está seguro de activar este paciente?"
+                : "¿Está seguro de inactivar este paciente?",
 
-    formData.append(
-        "estado",
-        estado
-    );
+        tipo:
+            activar
+                ? "info"
+                : "error",
 
-    fetch("../ajax/paciente.php?op=estado",{
-        method:"POST",
-        body:formData
-    })
-    .then(response => response.json())
-    .then(data => {
+        confirmar: true,
 
-        if(data.status){
+        textoAceptar:
+            activar
+                ? "Sí, activar"
+                : "Sí, inactivar",
 
-            listarPacientes();
+        textoCancelar: "Volver",
 
-        }else{
+        onAceptar: () => {
 
-            alert("No se pudo actualizar el estado");
+            const formData = new FormData();
+
+            formData.append(
+                "id_paciente",
+                id_paciente
+            );
+
+            formData.append(
+                "estado",
+                estado
+            );
+
+            fetch("../ajax/paciente.php?op=estado", {
+
+                method: "POST",
+                body: formData
+
+            })
+            .then(response => response.json())
+            .then(data => {
+
+                if (data.status) {
+
+                    listarPacientes();
+
+                    mostrarModalSistema({
+
+                        titulo:
+                            activar
+                                ? "Paciente activado"
+                                : "Paciente inactivado",
+
+                        mensaje:
+                            activar
+                                ? "El paciente fue activado correctamente."
+                                : "El paciente fue inactivado correctamente.",
+
+                        tipo: "success"
+
+                    });
+
+                } else {
+
+                    mostrarModalSistema({
+
+                        titulo: "No se pudo actualizar",
+
+                        mensaje:
+                            data.mensaje ||
+                            "No se pudo actualizar el estado del paciente.",
+
+                        tipo: "error"
+
+                    });
+
+                }
+
+            })
+            .catch(error => {
+
+                console.error(error);
+
+                mostrarModalSistema({
+
+                    titulo: "Error",
+
+                    mensaje:
+                        "Ocurrió un error de comunicación al actualizar el paciente.",
+
+                    tipo: "error"
+
+                });
+
+            });
 
         }
-
-    })
-    .catch(error => {
-
-        console.error(error);
 
     });
 
