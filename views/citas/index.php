@@ -95,8 +95,21 @@
                         Paciente
                     </th>
 
+
+                    <th class="px-6 py-4 text-left font-semibold">
+                        Dentista
+                    </th>
+
                     <th class="px-6 py-4 text-left font-semibold">
                         Fecha
+                    </th>
+
+                    <th class="px-6 py-4 text-left font-semibold">
+                        Hora
+                    </th>
+
+                    <th class="px-6 py-4 text-left font-semibold">
+                        Motivo
                     </th>
 
                     <th class="px-6 py-4 text-left font-semibold">
@@ -208,17 +221,50 @@
 
         <div>
 
-            <label class="block text-sm mb-2 font-medium">
-                Fecha de la cita
-            </label>
+    <label class="block text-sm mb-2 font-medium">
+        Dentista
+    </label>
 
-            <input
-                type="date"
-                id="fecha_cita"
-                name="fecha_cita"
-                class="w-full border border-slate-300 rounded-xl px-4 py-3">
+    <select
+        id="dentista_id"
+        name="dentista_id"
+        class="w-full border border-slate-300 rounded-xl px-4 py-3">
 
-        </div>
+        <option value="">
+            Seleccione un dentista
+        </option>
+
+    </select>
+
+</div>
+
+<div>
+
+    <label class="block text-sm mb-2 font-medium">
+        Fecha de la cita
+    </label>
+
+    <input
+        type="date"
+        id="fecha_cita"
+        name="fecha_cita"
+        class="w-full border border-slate-300 rounded-xl px-4 py-3">
+
+</div>
+
+<div>
+
+    <label class="block text-sm mb-2 font-medium">
+        Motivo de la cita
+    </label>
+
+    <input
+        id="motivo_cita"
+        name="motivo_cita"
+        class="w-full border border-slate-300 rounded-xl px-4 py-3"
+        placeholder="Ingrese el motivo de la cita">
+
+</div>
 
     </form>
 
@@ -249,6 +295,183 @@
 
 </div>
 </div>
+
+<!-- Modal Confirmar Hora -->
+<div
+    id="modalConfirmarHora"
+    class="fixed inset-0 bg-black/60 hidden items-center justify-center p-4 z-50">
+
+    <div
+        class="bg-white rounded-3xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+
+        <!-- Header -->
+        <div
+            class="px-6 py-5 flex items-center justify-between bg-blue-600">
+
+            <div>
+
+                <h2
+                    class="text-xl font-bold text-white">
+                    Confirmar Hora
+                </h2>
+
+                <p class="text-sm text-white">
+                    Seleccione una hora disponible para la cita
+                </p>
+
+            </div>
+
+            <button
+                type="button"
+                id="btnCerrarModalHora"
+                class="text-3xl text-white hover:text-red-500">
+
+                ×
+
+            </button>
+
+        </div>
+
+        <!-- Contenido -->
+        <div class="p-6 space-y-5">
+
+            <input
+                type="hidden"
+                id="id_cita_hora">
+
+            <div>
+
+                <label
+                    class="block text-sm mb-2 font-medium">
+                    Hora disponible
+                </label>
+
+                <select
+                    id="hora_cita_confirmar"
+                    class="w-full border border-slate-300 rounded-xl px-4 py-3">
+
+                    <option value="">
+                        Seleccione una hora
+                    </option>
+
+                </select>
+
+            </div>
+
+        </div>
+
+        <!-- Footer -->
+        <div
+            class="px-6 py-5 flex flex-col md:flex-row justify-end gap-3">
+
+            <button
+                type="button"
+                id="btnCancelarHora"
+                class="border border-slate-300 px-5 py-3 rounded-xl hover:bg-slate-100">
+
+                Cancelar
+
+            </button>
+
+            <button
+                type="button"
+                id="btnGuardarHora"
+                class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-3 rounded-xl">
+
+                Confirmar Hora
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+<!-- Modal de mensajes y confirmaciones -->
+<div
+    id="modalSistema"
+    class="fixed inset-0 bg-black/60 hidden items-center justify-center p-4 z-[60]">
+
+    <div class="bg-white rounded-3xl shadow-xl w-full max-w-md overflow-hidden">
+
+        <!-- Header -->
+        <div
+            id="modalSistemaHeader"
+            class="px-6 py-5 flex items-center gap-4 bg-blue-600">
+
+            <div
+                id="modalSistemaIcono"
+                class="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center text-white">
+
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="w-7 h-7"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor">
+
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M5 13l4 4L19 7"/>
+                </svg>
+
+            </div>
+
+            <div>
+                <h2
+                    id="modalSistemaTitulo"
+                    class="text-xl font-bold text-white">
+                    Información
+                </h2>
+
+                <p
+                    id="modalSistemaSubtitulo"
+                    class="text-sm text-white/80">
+                    BellDente
+                </p>
+            </div>
+
+        </div>
+
+        <!-- Contenido -->
+        <div class="p-6">
+
+            <p
+                id="modalSistemaMensaje"
+                class="text-slate-600 leading-relaxed">
+            </p>
+
+        </div>
+
+        <!-- Footer -->
+        <div class="px-6 pb-6 flex justify-end gap-3">
+
+            <button
+                type="button"
+                id="btnModalSistemaCancelar"
+                class="hidden border border-slate-300 px-5 py-3 rounded-xl hover:bg-slate-100 transition">
+
+                Volver
+
+            </button>
+
+            <button
+                type="button"
+                id="btnModalSistemaAceptar"
+                class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-3 rounded-xl transition">
+
+                Aceptar
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+<!-- Modal Mensaje -->
 
 <?php if (isset($mensaje) && $mensaje === "seleccione_cita"): ?>
 

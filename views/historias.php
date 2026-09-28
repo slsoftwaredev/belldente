@@ -5,6 +5,9 @@ if (!isset($_SESSION["id_usuario"])) {
     header("Location: login.php");
     exit();
 }
+require_once "../config/permisos.php";
+// Verificamos permiso para Historias Clínicas
+verificarPermiso("historias");
 
 // CONTROL DE VISTA
 $id_paciente = isset($_GET["id_paciente"]) ? intval($_GET["id_paciente"]) : 0;

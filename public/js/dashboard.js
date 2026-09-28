@@ -46,14 +46,16 @@ function cargarCitasHoy() {
 
         .then(response => response.json())
 
-        .then(data => {
+        .then(respuesta => {
+
+            const data = respuesta.data || [];
 
             // =========================
             // CARD CITAS HOY
             // =========================
 
             document.getElementById("totalCitasHoy").textContent =
-                data.total;
+                respuesta.total ?? data.length;
 
 
             let tabla = "";
@@ -64,7 +66,7 @@ function cargarCitasHoy() {
             // SIN CITAS
             // =========================
 
-            if (data.citas.length === 0) {
+            if (data.length === 0) {
 
                 tabla = `
                     <tr>
@@ -91,10 +93,10 @@ function cargarCitasHoy() {
             // CITAS
             // =========================
 
-            data.citas.forEach(cita => {
+            data.forEach(cita => {
 
                 let estadoClase = obtenerClaseEstado(
-                    cita.estado_id
+                    cita.estado_cita
                 );
 
 
@@ -108,7 +110,7 @@ function cargarCitasHoy() {
                         </td>
 
                         <td class="py-3">
-                            ${formatearFecha(cita.fecha)}
+                            ${formatearFecha(cita.fecha_cita)}
                         </td>
 
                         <td class="py-3">
@@ -117,7 +119,7 @@ function cargarCitasHoy() {
                                          px-3 py-1
                                          rounded-full text-xs">
 
-                                ${cita.estado}
+                                ${obtenerNombreEstado(cita.estado_cita)}
 
                             </span>
 
@@ -154,7 +156,7 @@ function cargarCitasHoy() {
                                 </p>
 
                                 <p class="text-sm text-slate-500 mt-1">
-                                    ${formatearFecha(cita.fecha)}
+                                    ${formatearFecha(cita.fecha_cita)}
                                 </p>
 
                             </div>
@@ -164,7 +166,7 @@ function cargarCitasHoy() {
                                          rounded-full text-xs
                                          h-fit">
 
-                                ${cita.estado}
+                                ${obtenerNombreEstado(cita.estado_cita)}
 
                             </span>
 
@@ -233,6 +235,32 @@ function obtenerClaseEstado(estado) {
             return "bg-slate-100 text-slate-600";
     }
 
+}
+function obtenerNombreEstado(estado) {
+
+    switch (parseInt(estado)) {
+
+        case 1:
+            return "Agendada";
+
+        case 2:
+            return "Reagendada";
+
+        case 3:
+            return "En atención";
+
+        case 4:
+            return "Atendida";
+
+        case 5:
+            return "No asistió";
+
+        case 6:
+            return "Cancelada";
+
+        default:
+            return "Desconocido";
+    }
 }
 function formatearFecha(fecha) {
 

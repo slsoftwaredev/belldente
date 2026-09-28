@@ -6,6 +6,12 @@ if (!function_exists('ejecutarConsultaSP')) {
 			$Fn = new Cls_DataConection();
 			$Cn = $Fn -> Fn_getConnect();
 			$query= $Cn -> query($sql);
+			if (!$query) {
+        die(
+            "ERROR MYSQL: " . $Cn->error .
+            "<br><br>SQL EJECUTADO:<br>" . $sql
+        );
+    }
 			$Cn -> close();
 			return $query;
 			

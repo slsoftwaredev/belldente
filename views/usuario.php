@@ -8,6 +8,10 @@ if(!isset($_SESSION["id_usuario"])){
     exit();
 }
 
+require_once "../config/permisos.php";
+// Verificamos permiso para Usuarios
+verificarPermiso("usuarios");
+
 //Controlamos a donde vamos a direccionar la vista y que se marque el menú lateral dependiendo de la página en la que nos encontremos
 $contenido = "usuario/index.php";
 $pagina = "usuarios";

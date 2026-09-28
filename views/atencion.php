@@ -7,6 +7,10 @@ if(!isset($_SESSION["id_usuario"])){
     header("Location: login.php");
     exit();
 }
+require_once "../config/permisos.php";
+// Verificamos permiso para Atención
+verificarPermiso("atencion");
+
 //Obtenemos el id_cita de la URL, si no existe redireccionamos a citas.php
 $id_cita = isset($_GET["id_cita"]) ? intval($_GET["id_cita"]) : 0;
 //Si el id_cita es menor o igual a 0, redireccionamos a citas.php

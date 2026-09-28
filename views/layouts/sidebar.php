@@ -30,6 +30,7 @@
 
         <ul class="space-y-2">
 
+        <?php if(in_array('dashboard', $_SESSION['permisos'] ?? [])): ?>    
             <li>
                 <!-- Hace redireccionamiento a la página de escritorio y que se marque solo donde nos encontramos-->
                 <a href="escritorio.php"
@@ -40,7 +41,9 @@
                         🏠 Dashboard
                 </a>
             </li>
+        <?php endif; ?>
 
+        <?php if(in_array('usuarios', $_SESSION['permisos'] ?? [])): ?>
             <li>
                 <a href="usuario.php"
                     class="flex items-center gap-3 px-4 py-3 rounded-lg
@@ -50,7 +53,9 @@
                         👥 Usuarios
                 </a>
             </li>
+        <?php endif; ?>
 
+        <?php if(in_array('pacientes', $_SESSION['permisos'] ?? [])): ?>
             <li>
                 <a href="paciente.php"
                     class="flex items-center gap-3 px-4 py-3 rounded-lg
@@ -60,7 +65,9 @@
                     👥 Pacientes
                 </a>
             </li>
+        <?php endif; ?>
 
+        <?php if(in_array('citas', $_SESSION['permisos'] ?? [])): ?>
             <li>
                 <a href="citas.php"
                     class="flex items-center gap-3 px-4 py-3 rounded-lg
@@ -70,7 +77,9 @@
                     📅 Citas
                 </a>
             </li>
-
+        <?php endif; ?>
+        
+        <?php if(in_array('atencion', $_SESSION['permisos'] ?? [])): ?>
             <li>
                 <a href="atencion.php"
                     class="flex items-center gap-3 px-4 py-3 rounded-lg
@@ -80,20 +89,21 @@
                     🦷 Atención Clínica
                 </a>
             </li>
+        <?php endif; ?>
 
+        <?php if(in_array('historias', $_SESSION['permisos'] ?? [])): ?>
             <li>
-
                 <a href="historias.php"
                     class="flex items-center gap-3 px-4 py-3 rounded-lg
                     <?= ($pagina == 'historias')
                     ? 'bg-blue-50 text-blue-600 font-medium'
                     : 'hover:bg-slate-100'; ?>">
-
                     📋 Historias Clínicas
-
                 </a>
-
             </li>
+        <?php endif; ?>
+
+        <?php if(in_array('fotografias', $_SESSION['permisos'] ?? [])): ?>
             <li>
                 <a href="fotografias.php"
                     class="flex items-center gap-3 px-4 py-3 rounded-lg
@@ -103,7 +113,9 @@
                     📷 Fotografías Clínicas
                 </a>
             </li>
+        <?php endif; ?>
 
+        <?php if(in_array('cie10', $_SESSION['permisos'] ?? [])): ?>
             <li>
                 <a href="cie10.php"
                     class="flex items-center gap-3 px-4 py-3 rounded-lg
@@ -113,7 +125,9 @@
                     🩺 Catálogo CIE10
                 </a>
             </li>
+        <?php endif; ?>
 
+        <?php if(in_array('tratamientos', $_SESSION['permisos'] ?? [])): ?>
             <li>
                 <a href="tratamientos.php"
                     class="flex items-center gap-3 px-4 py-3 rounded-lg
@@ -122,7 +136,10 @@
                     : 'hover:bg-slate-100'; ?>">
                     🦷 Catálogo Tratamientos
                 </a>
-    
+            </li>
+        <?php endif; ?>
+
+        <?php if(in_array('pagos', $_SESSION['permisos'] ?? [])): ?>
             <li>
                 <a href="pagos.php"
                     class="flex items-center gap-3 px-4 py-3 rounded-lg
@@ -132,7 +149,9 @@
                     💰 Pagos
                 </a>
             </li>
+        <?php endif; ?>
 
+        <?php if(in_array('reportes', $_SESSION['permisos'] ?? [])): ?>
             <li>
                 <a href="reportes.php"
                     class="flex items-center gap-3 px-4 py-3 rounded-lg
@@ -142,7 +161,7 @@
                     📊 Reportes
                 </a>
             </li>
-
+        <?php endif; ?>
         </ul>
         <!-- Cerrar sesión -->
 

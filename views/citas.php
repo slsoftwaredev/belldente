@@ -7,6 +7,9 @@ if(!isset($_SESSION["id_usuario"])){
     header("Location: login.php");
     exit();
 }
+require_once "../config/permisos.php";
+// Verificamos permiso para Citas
+verificarPermiso("citas");
 
 // recibimos el mensaje de la URL, si no existe lo dejamos vacío
 $mensaje = $_GET["mensaje"] ?? "";

@@ -8,6 +8,9 @@ if(!isset($_SESSION["id_usuario"])){
 
     exit();
 }
+require_once "../config/permisos.php";
+// Verificamos permiso para Dashboard
+verificarPermiso("dashboard");
 
  $_SESSION["nombre_usuario"]; ?>
 <?php

@@ -7,6 +7,9 @@ if(!isset($_SESSION["id_usuario"])){
     header("Location: login.php");
     exit();
 }
+require_once "../config/permisos.php";
+// Verificamos permiso para CIE10
+verificarPermiso("cie10");
 
 //Controlamos a donde vamos a direccionar la vista y que se marque el menú lateral dependiendo de la página en la que nos encontremos
 $contenido = "catalogos/cie10.php";
