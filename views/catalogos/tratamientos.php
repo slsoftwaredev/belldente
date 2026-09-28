@@ -181,4 +181,88 @@
     </div>
 </div>
 
+<!-- Modal general del sistema -->
+<div
+    id="modalSistema"
+    class="fixed inset-0 bg-black/60 hidden items-center justify-center p-4 z-[60]">
+
+    <div class="bg-white rounded-3xl shadow-xl w-full max-w-md overflow-hidden">
+
+        <!-- Header -->
+        <div
+            id="modalSistemaHeader"
+            class="px-6 py-5 flex items-center gap-4 bg-blue-600">
+
+            <div class="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center">
+
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="w-7 h-7 text-white"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor">
+
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M5 13l4 4L19 7"/>
+
+                </svg>
+
+            </div>
+
+            <div>
+
+                <h2
+                    id="modalSistemaTitulo"
+                    class="text-xl font-bold text-white">
+                    Información
+                </h2>
+
+                <p class="text-sm text-white/80">
+                    BellDente
+                </p>
+
+            </div>
+
+        </div>
+
+        <!-- Contenido -->
+        <div class="p-6">
+
+            <p
+                id="modalSistemaMensaje"
+                class="text-slate-600 leading-relaxed">
+            </p>
+
+        </div>
+
+        <!-- Footer -->
+        <div class="px-6 pb-6 flex justify-end gap-3">
+
+            <button
+                type="button"
+                id="btnModalSistemaCancelar"
+                class="hidden border border-slate-300 px-5 py-3 rounded-xl hover:bg-slate-100 transition">
+
+                Volver
+
+            </button>
+
+            <button
+                type="button"
+                id="btnModalSistemaAceptar"
+                class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-3 rounded-xl transition">
+
+                Aceptar
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
 <script src="/public/js/tratamientos.js"></script>
