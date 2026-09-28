@@ -246,11 +246,57 @@ function generarReporteCitas() {
     const estado =
         document.getElementById("reporteCitaEstado").value;
 
-    console.log("Reporte citas:", {
-        desde: desde,
-        hasta: hasta,
-        estado: estado
-    });
+
+    // Validar rango
+    if (
+        desde !== "" &&
+        hasta !== "" &&
+        desde > hasta
+    ) {
+
+        alert(
+            "La fecha desde no puede ser mayor que la fecha hasta."
+        );
+
+        return;
+    }
+
+
+    const parametros =
+        new URLSearchParams();
+
+
+    if (desde !== "") {
+        parametros.append(
+            "desde",
+            desde
+        );
+    }
+
+
+    if (hasta !== "") {
+        parametros.append(
+            "hasta",
+            hasta
+        );
+    }
+
+
+    parametros.append(
+        "estado",
+        estado || 0
+    );
+
+
+    const url =
+        "../reportes/citas.php?" +
+        parametros.toString();
+
+
+    window.open(
+        url,
+        "_blank"
+    );
 }
 
 function generarReporteAtenciones() {

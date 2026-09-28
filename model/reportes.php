@@ -160,25 +160,59 @@ class Reporte
     /* ==========================================
        CITAS
     ========================================== */
-    public function citas($desde, $hasta, $estado = 0)
-    {
-        $desde = limpiarCadena($desde);
-        $hasta = limpiarCadena($hasta);
-        $estado = intval($estado);
+    public function citas($desde = "", $hasta = "", $estado = 0)
+{
+    global $conexion;
 
-        $fechaDesde = $desde !== "" ? "'$desde'" : "NULL";
-        $fechaHasta = $hasta !== "" ? "'$hasta'" : "NULL";
+    $desde = trim($desde);
+    $hasta = trim($hasta);
+    $estado = intval($estado);
 
-        $sql = "CALL sp_reporte(
-            'citas',
-            $fechaDesde,
-            $fechaHasta,
-            '$estado',
-            NULL
-        )";
+    $fechaDesde = $desde !== ""
+        ? "'" . $conexion->real_escape_string($desde) . "'"
+        : "NULL";
 
-        return ejecutarConsulta($sql);
+    $fechaHasta = $hasta !== ""
+        ? "'" . $conexion->real_escape_string($hasta) . "'"
+        : "NULL";
+
+    $sql = "CALL sp_reporte(
+        'citas',
+        $fechaDesde,
+        $fechaHasta,
+        '$estado',
+        NULL
+    )";
+
+    $query = $conexion->query($sql);
+
+    if (!$query) {
+        throw new Exception(
+            "Error al generar reporte de citas: " .
+            $conexion->error
+        );
     }
+
+    $datos = [];
+
+    while ($row = $query->fetch_assoc()) {
+        $datos[] = $row;
+    }
+
+    $query->free();
+
+    // Limpiamos resultados pendientes del CALL
+    while ($conexion->more_results()) {
+
+        $conexion->next_result();
+
+        if ($resultado = $conexion->store_result()) {
+            $resultado->free();
+        }
+    }
+
+    return $datos;
+}
 
 
     /* ==========================================
