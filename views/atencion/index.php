@@ -862,5 +862,56 @@ Modal para datos adicionales de Consentimiento informao
     </div>
 </div> <!--FIN MODAL  -->
 
+<!-- ==========================================
+     MODAL SISTEMA - ATENCIÓN
+========================================== -->
+<div
+    id="modalSistema"
+    class="fixed inset-0 z-[100] hidden items-center justify-center bg-black/50 p-4"
+>
+    <div class="w-full max-w-md rounded-2xl bg-white shadow-2xl">
+
+        <!-- HEADER -->
+        <div
+            id="modalSistemaHeader"
+            class="flex items-center justify-between rounded-t-2xl bg-blue-600 px-6 py-4"
+        >
+            <h2
+                id="modalSistemaTitulo"
+                class="text-lg font-semibold text-white"
+            >
+                Información
+            </h2>
+
+            <button
+                type="button"
+                id="btnCerrarModalSistema"
+                class="text-2xl text-white hover:text-slate-200"
+            >
+                &times;
+            </button>
+        </div>
+
+        <!-- BODY -->
+        <div class="p-6">
+
+            <p
+                id="modalSistemaMensaje"
+                class="text-sm leading-relaxed text-slate-600"
+            >
+            </p>
+
+        </div>
+
+        <!-- FOOTER -->
+        <div
+            id="modalSistemaFooter"
+            class="flex justify-end gap-3 border-t px-6 py-4"
+        >
+        </div>
+
+    </div>
+</div>
+
 <script src="/public/js/odontograma.js"></script>
 <script src="/public/js/atencion.js"></script>

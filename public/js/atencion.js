@@ -1,6 +1,107 @@
 let listaCIE10 = [];
 let listaTratamientos = [];
 let idAtencionActual = null;
+
+// ==========================================
+// MODAL DEL SISTEMA
+// ==========================================
+
+function mostrarModalSistema({
+    titulo = "Información",
+    mensaje = "",
+    tipo = "info",
+    confirmar = false,
+    textoConfirmar = "Aceptar",
+    textoCancelar = "Cancelar",
+    onConfirmar = null
+}) {
+
+    const modal = document.getElementById("modalSistema");
+    const header = document.getElementById("modalSistemaHeader");
+    const tituloModal = document.getElementById("modalSistemaTitulo");
+    const mensajeModal = document.getElementById("modalSistemaMensaje");
+    const footer = document.getElementById("modalSistemaFooter");
+
+    tituloModal.textContent = titulo;
+    mensajeModal.textContent = mensaje;
+
+    // Color según tipo
+    header.className =
+        "flex items-center justify-between rounded-t-2xl px-6 py-4";
+
+    if (tipo === "success") {
+        header.classList.add("bg-green-600");
+    } else if (tipo === "error") {
+        header.classList.add("bg-red-600");
+    } else if (tipo === "warning") {
+        header.classList.add("bg-orange-500");
+    } else {
+        header.classList.add("bg-blue-600");
+    }
+
+    footer.innerHTML = "";
+
+    // Si necesita confirmación
+    if (confirmar) {
+
+        const btnCancelar = document.createElement("button");
+
+        btnCancelar.type = "button";
+        btnCancelar.textContent = textoCancelar;
+
+        btnCancelar.className =
+            "px-5 py-2.5 border border-slate-300 rounded-xl " +
+            "text-slate-700 hover:bg-slate-100";
+
+        btnCancelar.onclick = cerrarModalSistema;
+
+        footer.appendChild(btnCancelar);
+    }
+
+    const btnAceptar = document.createElement("button");
+
+    btnAceptar.type = "button";
+    btnAceptar.textContent = textoConfirmar;
+
+    btnAceptar.className =
+        "px-5 py-2.5 rounded-xl text-white " +
+        (tipo === "error"
+            ? "bg-red-600 hover:bg-red-700"
+            : tipo === "warning"
+            ? "bg-orange-500 hover:bg-orange-600"
+            : tipo === "success"
+            ? "bg-green-600 hover:bg-green-700"
+            : "bg-blue-600 hover:bg-blue-700");
+
+    btnAceptar.onclick = () => {
+
+        cerrarModalSistema();
+
+        if (typeof onConfirmar === "function") {
+            onConfirmar();
+        }
+    };
+
+    footer.appendChild(btnAceptar);
+
+    modal.classList.remove("hidden");
+    modal.classList.add("flex");
+}
+
+
+function cerrarModalSistema() {
+
+    const modal = document.getElementById("modalSistema");
+
+    modal.classList.add("hidden");
+    modal.classList.remove("flex");
+}
+
+
+document
+    .getElementById("btnCerrarModalSistema")
+    ?.addEventListener("click", cerrarModalSistema);
+
 document.addEventListener("DOMContentLoaded", () => {
     cargarCita();
     listarAntecedentes();
@@ -45,9 +146,20 @@ async function cargarCita() {
 
 // Funcionalidad de cancelar
 document.getElementById("btnCancelar").addEventListener("click", () => {
-    if (confirm("¿Cancelar la atención? Los cambios no guardados se perderán.")) {
-        location.href = "citas.php";
-    }
+
+    mostrarModalSistema({
+        titulo: "Cancelar atención",
+        mensaje: "¿Desea cancelar la atención? Los cambios no guardados se perderán.",
+        tipo: "warning",
+        confirmar: true,
+        textoConfirmar: "Sí, cancelar",
+        textoCancelar: "Continuar atención",
+
+        onConfirmar: () => {
+            location.href = "citas.php";
+        }
+    });
+
 });
 
 // GENERAR CONSENTIMIENTO INFORMADO
@@ -55,7 +167,11 @@ document.getElementById("btnGenerarConsentimiento").addEventListener("click", as
     const idAtencion = Number(idAtencionActual);
     // Validamos que exista una atención activa
     if (!idAtencion || idAtencion <= 0) {
-        alert("No existe una atención activa.");
+        mostrarModalSistema({
+    titulo: "Atención no disponible",
+    mensaje: "No existe una atención activa.",
+    tipo: "warning"
+});
         return;
     }
     try {
@@ -69,7 +185,13 @@ document.getElementById("btnGenerarConsentimiento").addEventListener("click", as
         const data = await response.json();
         console.log("DATOS CONSENTIMIENTO:", data);
         if (!data.status) {
-            alert(data.message || "No se pudieron obtener los datos del consentimiento.");
+            mostrarModalSistema({
+    titulo: "No se pudo generar el consentimiento",
+    mensaje:
+        data.message ||
+        "No se pudieron obtener los datos del consentimiento.",
+    tipo: "error"
+});
             return;
         }
         // ==========================================
@@ -80,7 +202,12 @@ document.getElementById("btnGenerarConsentimiento").addEventListener("click", as
         modal.classList.add("flex");
     } catch (error) {
         console.error("ERROR AL GENERAR CONSENTIMIENTO:",error);
-        alert("Ocurrió un error al obtener los datos del consentimiento.");
+        mostrarModalSistema({
+    titulo: "Error",
+    mensaje:
+        "Ocurrió un error al obtener los datos del consentimiento.",
+    tipo: "error"
+});
     }
 });
 // ==========================================
@@ -106,7 +233,11 @@ function cerrarModalConsentimiento() {
 document.getElementById("btnGenerarPdfConsentimiento").addEventListener("click", function () {
         const idAtencion = Number(idAtencionActual);
         if (!idAtencion || idAtencion <= 0) {
-            alert("No existe una atención activa.");
+            mostrarModalSistema({
+    titulo: "Atención no disponible",
+    mensaje: "No existe una atención activa.",
+    tipo: "warning"
+});
             return;
         }
 
@@ -920,9 +1051,11 @@ document.addEventListener("click", function(e){
             lista.querySelectorAll(".medicamento").length == 1
         ){
 
-            alert("Debe existir al menos un medicamento.");
-
-            return;
+            mostrarModalSistema({
+        titulo: "Prescripción médica",
+        mensaje: "Debe existir al menos un medicamento.",
+        tipo: "warning"
+    });
 
         }
 
@@ -1343,13 +1476,21 @@ function finalizarAtencion() {
 
     // Validamos que exista una atención
     if (!datos.id_atencion || datos.id_atencion <= 0) {
-        alert("No existe una atención activa.");
+        mostrarModalSistema({
+    titulo: "Atención no disponible",
+    mensaje: "No existe una atención activa.",
+    tipo: "warning"
+});
         return;
     }
 
     // Validamos que exista la cita
     if (!datos.id_cita || datos.id_cita <= 0) {
-        alert("No se encontró la cita asociada.");
+        mostrarModalSistema({
+    titulo: "Cita no encontrada",
+    mensaje: "No se encontró la cita asociada.",
+    tipo: "warning"
+});
         return;
     }
 
@@ -1381,15 +1522,34 @@ function finalizarAtencion() {
     }).then(data => {
         if (data.status) {
             console.log("ATENCIÓN FINALIZADA:",data);
-            alert("Atención finalizada correctamente");
+            mostrarModalSistema({
+    titulo: "Atención finalizada",
+    mensaje: "La atención se finalizó correctamente.",
+    tipo: "success",
+    textoConfirmar: "Aceptar",
+
+    onConfirmar: () => {
+        location.href = "citas.php";
+    }
+});
             // Redirigimos al módulo de Historias Clínicas
         window.location.href = "../views/historias.php";
         } else {
-            alert(data.message ||"No se pudo finalizar la atención");
+            mostrarModalSistema({
+    titulo: "No se pudo finalizar",
+    mensaje:
+        data.message ||
+        "No se pudo finalizar la atención.",
+    tipo: "error"
+});
         }
     }).catch(error => {
         console.error("ERROR AL FINALIZAR ATENCIÓN:",error);
-        alert("Ocurrió un error al guardar la atención.");
+        mostrarModalSistema({
+    titulo: "Error",
+    mensaje: "Ocurrió un error al guardar la atención.",
+    tipo: "error"
+});
     });
 }
 
