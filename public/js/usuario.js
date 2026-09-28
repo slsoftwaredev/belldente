@@ -20,6 +20,104 @@ document.addEventListener("DOMContentLoaded", () => {
     modal.classList.remove("hidden");
     modal.classList.add("flex");
 });
+// ========================================
+// MODAL GENERAL DEL SISTEMA
+// ========================================
+
+let accionConfirmadaModal = null;
+
+function mostrarModalSistema({
+    titulo = "Información",
+    mensaje = "",
+    tipo = "info",
+    confirmar = false,
+    textoAceptar = "Aceptar",
+    textoCancelar = "Volver",
+    onAceptar = null
+}) {
+
+    const modal = document.getElementById("modalSistema");
+    const header = document.getElementById("modalSistemaHeader");
+    const tituloModal = document.getElementById("modalSistemaTitulo");
+    const mensajeModal = document.getElementById("modalSistemaMensaje");
+    const btnAceptar = document.getElementById("btnModalSistemaAceptar");
+    const btnCancelar = document.getElementById("btnModalSistemaCancelar");
+
+    tituloModal.textContent = titulo;
+    mensajeModal.textContent = mensaje;
+
+    btnAceptar.textContent = textoAceptar;
+    btnCancelar.textContent = textoCancelar;
+
+    // Color según el tipo de mensaje
+    header.className =
+        "px-6 py-5 flex items-center gap-4 " +
+        (
+            tipo === "error"
+                ? "bg-red-600"
+                : tipo === "warning"
+                ? "bg-amber-500"
+                : tipo === "success"
+                ? "bg-green-600"
+                : "bg-blue-600"
+        );
+
+    btnAceptar.className =
+        "text-white px-5 py-3 rounded-xl transition " +
+        (
+            tipo === "error"
+                ? "bg-red-600 hover:bg-red-700"
+                : tipo === "warning"
+                ? "bg-amber-500 hover:bg-amber-600"
+                : tipo === "success"
+                ? "bg-green-600 hover:bg-green-700"
+                : "bg-blue-600 hover:bg-blue-700"
+        );
+
+    if (confirmar) {
+        btnCancelar.classList.remove("hidden");
+    } else {
+        btnCancelar.classList.add("hidden");
+    }
+
+    accionConfirmadaModal = onAceptar;
+
+    modal.classList.remove("hidden");
+    modal.classList.add("flex");
+}
+
+
+function cerrarModalSistema() {
+
+    const modal = document.getElementById("modalSistema");
+
+    modal.classList.add("hidden");
+    modal.classList.remove("flex");
+
+    accionConfirmadaModal = null;
+}
+
+
+document
+    .getElementById("btnModalSistemaAceptar")
+    .addEventListener("click", () => {
+
+        const accion = accionConfirmadaModal;
+
+        cerrarModalSistema();
+
+        if (typeof accion === "function") {
+            accion();
+        }
+
+    });
+
+
+document
+    .getElementById("btnModalSistemaCancelar")
+    .addEventListener("click", cerrarModalSistema);
+
+// ========================================
 
     btnCerrarModal.addEventListener("click", () => {
 
@@ -70,24 +168,51 @@ btnSeleccionarTodos.addEventListener("click", () => {
         .then(response => response.json())
         .then(data => {
 
-            if (data.status) {
+    if (data.status) {
 
-                alert(accion == "guardar" ? "Usuario registrado correctamente" : "Usuario actualizado correctamente");
+        formUsuario.reset();
 
-                formUsuario.reset();
+        modal.classList.add("hidden");
+        modal.classList.remove("flex");
 
-                modal.classList.add("hidden");
-                modal.classList.remove("flex");
+        listarUsuarios();
 
-                listarUsuarios();
+        mostrarModalSistema({
+            titulo:
+                accion === "guardar"
+                    ? "Usuario registrado"
+                    : "Usuario actualizado",
 
-            } else {
+            mensaje:
+                accion === "guardar"
+                    ? "El usuario fue registrado correctamente."
+                    : "La información del usuario fue actualizada correctamente.",
 
-                alert(accion == "guardar" ? "Error al registrar usuario" : "Error al actualizar usuario");
+            tipo: "success"
+        });
 
-            }
+    } else {
 
-        })
+        mostrarModalSistema({
+            titulo:
+                accion === "guardar"
+                    ? "No se pudo registrar"
+                    : "No se pudo actualizar",
+
+            mensaje:
+                data.mensaje ||
+                (
+                    accion === "guardar"
+                        ? "Ocurrió un error al registrar el usuario."
+                        : "Ocurrió un error al actualizar el usuario."
+                ),
+
+            tipo: "error"
+        });
+
+    }
+
+})
         .catch(error => {
 
             console.error(error);
@@ -229,6 +354,7 @@ function cargarRoles(){
 function editarUsuario(id_usuario){
     const modal = document.getElementById("modalUsuario");
     modal.classList.remove("hidden");
+    modal.classList.add("flex");
     fetch("../ajax/usuario.php?op=obtener",{
         method:"POST",
         headers:{
@@ -278,50 +404,114 @@ function editarUsuario(id_usuario){
 
 }
 //Función para cambiar el estado del usuario
-function cambiarEstado(id_usuario, estado){
+function cambiarEstado(id_usuario, estado) {
 
-    const mensaje =
-        estado == 1
-        ? "¿Desea activar este usuario?"
-        : "¿Desea inactivar este usuario?";
+    const activar = estado == 1;
 
-    if(!confirm(mensaje)){
-        return;
-    }
+    mostrarModalSistema({
 
-    const formData = new FormData();
+        titulo:
+            activar
+                ? "Activar usuario"
+                : "Inactivar usuario",
 
-    formData.append(
-        "id_usuario",
-        id_usuario
-    );
+        mensaje:
+            activar
+                ? "¿Está seguro de activar este usuario?"
+                : "¿Está seguro de inactivar este usuario?",
 
-    formData.append(
-        "estado",
-        estado
-    );
+        tipo:
+            activar
+                ? "info"
+                : "error",
 
-    fetch("../ajax/usuario.php?op=estado",{
-        method:"POST",
-        body:formData
-    })
-    .then(response => response.json())
-    .then(data => {
+        confirmar: true,
 
-        if(data.status){
+        textoAceptar:
+            activar
+                ? "Sí, activar"
+                : "Sí, inactivar",
 
-            listarUsuarios();
+        textoCancelar: "Volver",
 
-        }else{
+        onAceptar: () => {
 
-            alert("No se pudo actualizar el estado");
+            const formData = new FormData();
+
+            formData.append(
+                "id_usuario",
+                id_usuario
+            );
+
+            formData.append(
+                "estado",
+                estado
+            );
+
+            fetch("../ajax/usuario.php?op=estado", {
+
+                method: "POST",
+                body: formData
+
+            })
+            .then(response => response.json())
+            .then(data => {
+
+                if (data.status) {
+
+                    listarUsuarios();
+
+                    mostrarModalSistema({
+
+                        titulo:
+                            activar
+                                ? "Usuario activado"
+                                : "Usuario inactivado",
+
+                        mensaje:
+                            activar
+                                ? "El usuario fue activado correctamente."
+                                : "El usuario fue inactivado correctamente.",
+
+                        tipo: "success"
+
+                    });
+
+                } else {
+
+                    mostrarModalSistema({
+
+                        titulo: "No se pudo actualizar",
+
+                        mensaje:
+                            data.mensaje ||
+                            "No se pudo actualizar el estado del usuario.",
+
+                        tipo: "error"
+
+                    });
+
+                }
+
+            })
+            .catch(error => {
+
+                console.error(error);
+
+                mostrarModalSistema({
+
+                    titulo: "Error",
+
+                    mensaje:
+                        "Ocurrió un error de comunicación al actualizar el usuario.",
+
+                    tipo: "error"
+
+                });
+
+            });
 
         }
-
-    })
-    .catch(error => {
-
-        console.error(error);
 
     });
 
