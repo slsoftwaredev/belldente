@@ -58,39 +58,59 @@ document.addEventListener("DOMContentLoaded", () => {
 
         .then(data => {
 
-            if (data.status) {
+    if (data.status) {
 
-                alert(
+        formCIE10.reset();
 
-                    accion == "guardar"
+        document.getElementById("id_cie10").value = 0;
 
-                    ? "Diagnóstico registrado correctamente."
+        // En móvil ocultamos el formulario
+        if (window.innerWidth < 1024) {
+            formulario.classList.add("hidden");
+        }
 
-                    : "Diagnóstico actualizado correctamente."
+        listarCIE10();
 
-                );
+        mostrarModalSistema({
 
-                formCIE10.reset();
+            titulo:
+                accion === "guardar"
+                    ? "Diagnóstico registrado"
+                    : "Diagnóstico actualizado",
 
-                formulario.classList.add("hidden");
+            mensaje:
+                accion === "guardar"
+                    ? "El diagnóstico CIE-10 fue registrado correctamente."
+                    : "El diagnóstico CIE-10 fue actualizado correctamente.",
 
-                listarCIE10();
+            tipo: "success"
 
-            } else {
+        });
 
-                alert(
+    } else {
 
-                    accion == "guardar"
+        mostrarModalSistema({
 
-                    ? "Error al registrar."
+            titulo:
+                accion === "guardar"
+                    ? "No se pudo registrar"
+                    : "No se pudo actualizar",
 
-                    : "Error al actualizar."
+            mensaje:
+                data.mensaje ||
+                (
+                    accion === "guardar"
+                        ? "Ocurrió un error al registrar el diagnóstico."
+                        : "Ocurrió un error al actualizar el diagnóstico."
+                ),
 
-                );
+            tipo: "error"
 
-            }
+        });
 
-        })
+    }
+
+})
 
         .catch(error => {
 
@@ -101,6 +121,102 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
 });
+
+// ========================================
+// MODAL GENERAL DEL SISTEMA
+// ========================================
+
+let accionConfirmadaModal = null;
+
+function mostrarModalSistema({
+    titulo = "Información",
+    mensaje = "",
+    tipo = "info",
+    confirmar = false,
+    textoAceptar = "Aceptar",
+    textoCancelar = "Volver",
+    onAceptar = null
+}) {
+
+    const modal = document.getElementById("modalSistema");
+    const header = document.getElementById("modalSistemaHeader");
+    const tituloModal = document.getElementById("modalSistemaTitulo");
+    const mensajeModal = document.getElementById("modalSistemaMensaje");
+    const btnAceptar = document.getElementById("btnModalSistemaAceptar");
+    const btnCancelar = document.getElementById("btnModalSistemaCancelar");
+
+    tituloModal.textContent = titulo;
+    mensajeModal.textContent = mensaje;
+
+    btnAceptar.textContent = textoAceptar;
+    btnCancelar.textContent = textoCancelar;
+
+    header.className =
+        "px-6 py-5 flex items-center gap-4 " +
+        (
+            tipo === "error"
+                ? "bg-red-600"
+                : tipo === "warning"
+                ? "bg-amber-500"
+                : tipo === "success"
+                ? "bg-green-600"
+                : "bg-blue-600"
+        );
+
+    btnAceptar.className =
+        "text-white px-5 py-3 rounded-xl transition " +
+        (
+            tipo === "error"
+                ? "bg-red-600 hover:bg-red-700"
+                : tipo === "warning"
+                ? "bg-amber-500 hover:bg-amber-600"
+                : tipo === "success"
+                ? "bg-green-600 hover:bg-green-700"
+                : "bg-blue-600 hover:bg-blue-700"
+        );
+
+    if (confirmar) {
+        btnCancelar.classList.remove("hidden");
+    } else {
+        btnCancelar.classList.add("hidden");
+    }
+
+    accionConfirmadaModal = onAceptar;
+
+    modal.classList.remove("hidden");
+    modal.classList.add("flex");
+}
+
+
+function cerrarModalSistema() {
+
+    const modal = document.getElementById("modalSistema");
+
+    modal.classList.add("hidden");
+    modal.classList.remove("flex");
+
+    accionConfirmadaModal = null;
+}
+
+
+document
+    .getElementById("btnModalSistemaAceptar")
+    .addEventListener("click", () => {
+
+        const accion = accionConfirmadaModal;
+
+        cerrarModalSistema();
+
+        if (typeof accion === "function") {
+            accion();
+        }
+
+    });
+
+
+document
+    .getElementById("btnModalSistemaCancelar")
+    .addEventListener("click", cerrarModalSistema);
 
 /*=========================================
 LISTAR
@@ -280,56 +396,114 @@ function editarCIE10(id_cie10){
 /*=========================================
 CAMBIAR ESTADO
 =========================================*/
+function cambiarEstado(id_cie10, estado) {
 
-function cambiarEstado(id_cie10, estado){
+    const activar = estado == 1;
 
-    const mensaje =
+    mostrarModalSistema({
 
-        estado == 1
+        titulo:
+            activar
+                ? "Activar diagnóstico"
+                : "Inactivar diagnóstico",
 
-        ? "¿Desea activar este diagnóstico?"
+        mensaje:
+            activar
+                ? "¿Está seguro de activar este diagnóstico CIE-10?"
+                : "¿Está seguro de inactivar este diagnóstico CIE-10?",
 
-        : "¿Desea inactivar este diagnóstico?";
+        tipo:
+            activar
+                ? "info"
+                : "error",
 
-    if(!confirm(mensaje)){
+        confirmar: true,
 
-        return;
+        textoAceptar:
+            activar
+                ? "Sí, activar"
+                : "Sí, inactivar",
 
-    }
+        textoCancelar: "Volver",
 
-    const formData = new FormData();
+        onAceptar: () => {
 
-    formData.append("id_cie10",id_cie10);
+            const formData = new FormData();
 
-    formData.append("estado",estado);
+            formData.append(
+                "id_cie10",
+                id_cie10
+            );
 
-    fetch("../ajax/cie10.php?op=estado",{
+            formData.append(
+                "estado",
+                estado
+            );
 
-        method:"POST",
+            fetch("../ajax/cie10.php?op=estado", {
 
-        body:formData
+                method: "POST",
+                body: formData
 
-    })
+            })
+            .then(response => response.json())
+            .then(data => {
 
-    .then(response => response.json())
+                if (data.status) {
 
-    .then(data => {
+                    listarCIE10();
 
-        if(data.status){
+                    mostrarModalSistema({
 
-            listarCIE10();
+                        titulo:
+                            activar
+                                ? "Diagnóstico activado"
+                                : "Diagnóstico inactivado",
 
-        }else{
+                        mensaje:
+                            activar
+                                ? "El diagnóstico CIE-10 fue activado correctamente."
+                                : "El diagnóstico CIE-10 fue inactivado correctamente.",
 
-            alert("No se pudo actualizar el estado.");
+                        tipo: "success"
+
+                    });
+
+                } else {
+
+                    mostrarModalSistema({
+
+                        titulo: "No se pudo actualizar",
+
+                        mensaje:
+                            data.mensaje ||
+                            "No se pudo actualizar el estado del diagnóstico.",
+
+                        tipo: "error"
+
+                    });
+
+                }
+
+            })
+            .catch(error => {
+
+                console.error(error);
+
+                mostrarModalSistema({
+
+                    titulo: "Error",
+
+                    mensaje:
+                        "Ocurrió un error de comunicación al actualizar el diagnóstico.",
+
+                    tipo: "error"
+
+                });
+
+            });
 
         }
-
-    })
-
-    .catch(error => {
-
-        console.error(error);
 
     });
 
