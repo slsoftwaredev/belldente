@@ -1,5 +1,93 @@
 let pagos = [];
 let filtroEstado = "Todos";
+
+// ======================================================
+// MODAL DE MENSAJES
+// ======================================================
+
+function mostrarMensajePago(
+    titulo,
+    mensaje,
+    tipo = "info",
+    callback = null
+) {
+
+    const modal =
+        document.getElementById("modalMensajePago");
+
+    const header =
+        document.getElementById("modalMensajePagoHeader");
+
+    const tituloElemento =
+        document.getElementById("modalMensajePagoTitulo");
+
+    const mensajeElemento =
+        document.getElementById("modalMensajePagoTexto");
+
+    tituloElemento.textContent = titulo;
+    mensajeElemento.textContent = mensaje;
+
+    // Limpiamos colores anteriores
+    header.classList.remove(
+        "bg-blue-600",
+        "bg-green-600",
+        "bg-red-600",
+        "bg-orange-500"
+    );
+
+    // Color según el tipo de mensaje
+    switch (tipo) {
+
+        case "success":
+            header.classList.add("bg-green-600");
+            break;
+
+        case "error":
+            header.classList.add("bg-red-600");
+            break;
+
+        case "warning":
+            header.classList.add("bg-orange-500");
+            break;
+
+        default:
+            header.classList.add("bg-blue-600");
+            break;
+    }
+
+    // Guardamos acción posterior
+    modal._callback = callback;
+
+    modal.classList.remove("hidden");
+    modal.classList.add("flex");
+}
+
+
+function cerrarMensajePago() {
+
+    const modal =
+        document.getElementById("modalMensajePago");
+
+    modal.classList.add("hidden");
+    modal.classList.remove("flex");
+
+    // Ejecutamos una acción después de cerrar,
+    // si fue definida.
+    if (typeof modal._callback === "function") {
+
+        const callback = modal._callback;
+
+        modal._callback = null;
+
+        callback();
+
+    } else {
+
+        modal._callback = null;
+
+    }
+}
+
 document.addEventListener("DOMContentLoaded", function () {
     listarPagos();
 //Buscador
@@ -335,9 +423,16 @@ async function verDetallePago(idOrdenPago) {
         const detalleData = await responseDetalle.json();
         const abonosData = await responseAbonos.json();
         if (!ordenData.status) {
-            alert(ordenData.message || "No se pudo obtener la orden.");
-            return;
-        }
+
+    mostrarMensajePago(
+        "Error",
+        ordenData.message ||
+        "No se pudo obtener la orden.",
+        "error"
+    );
+
+    return;
+}
 
         //Datos generales
         const orden = ordenData.datos;
@@ -367,7 +462,11 @@ async function verDetallePago(idOrdenPago) {
         modal.classList.add("flex");
     } catch (error) {
         console.error("ERROR AL OBTENER DETALLE:",error);
-        alert("Ocurrió un error al consultar la orden.");
+        mostrarMensajePago(
+    "Error",
+    "Ocurrió un error al consultar la orden.",
+    "error"
+);
     }
 }
 //Formato de la Data
@@ -504,22 +603,43 @@ async function abrirPago(idOrdenPago) {
         const ordenData = await responseOrden.json();
         const formasData = await responseFormas.json();
         if (!ordenData.status) {
-            alert(ordenData.message || "No se pudo obtener la orden.");
-            return;
-        }
+
+    mostrarMensajePago(
+        "Error",
+        ordenData.message ||
+        "No se pudo obtener la orden.",
+        "error"
+    );
+
+    return;
+}
 
         if (!formasData.status) {
-            alert(formasData.message || "No se pudieron cargar las formas de pago.");
-            return;
-        }
+
+    mostrarMensajePago(
+        "Error",
+        formasData.message ||
+        "No se pudieron cargar las formas de pago.",
+        "error"
+    );
+
+    return;
+}
         const orden = ordenData.datos;
 
         //Evitar pagar una orden pagada
         if (Number(orden.saldo) <= 0) {
-            alert("Esta orden ya se encuentra pagada.");
-            listarPagos();
-            return;
-        }
+
+    mostrarMensajePago(
+        "Orden pagada",
+        "Esta orden ya se encuentra pagada.",
+        "warning"
+    );
+
+    listarPagos();
+
+    return;
+}
 
         //Datos de la orden de pago
         document.getElementById("pagoIdOrden").value = orden.id_orden_pago;
@@ -560,7 +680,11 @@ async function abrirPago(idOrdenPago) {
         modal.classList.add("flex");
     } catch (error) {
         console.error("ERROR AL ABRIR PAGO:",error);
-        alert("Ocurrió un error al consultar la orden.");
+       mostrarMensajePago(
+    "Error",
+    "Ocurrió un error al consultar la orden.",
+    "error"
+);
     }
 }
 
@@ -576,26 +700,54 @@ async function registrarPago(event) {
 
     //Validaciones
     if (!idOrdenPago) {
-        alert("Orden de pago no válida.");
-        return;
-    }
+
+    mostrarMensajePago(
+        "Orden no válida",
+        "La orden de pago seleccionada no es válida.",
+        "warning"
+    );
+
+    return;
+}
 
     if (!formaPagoId) {
-        alert("Seleccione una forma de pago.");
-        return;
-    }
+
+    mostrarMensajePago(
+        "Forma de pago",
+        "Seleccione una forma de pago.",
+        "warning"
+    );
+
+    return;
+}
 
     if (!valorAbono || valorAbono <= 0) {
-        alert("Ingrese un valor válido.");
-        inputValor.focus();
-        return;
-    }
+
+    mostrarMensajePago(
+        "Valor no válido",
+        "Ingrese un valor válido.",
+        "warning",
+        () => {
+            inputValor.focus();
+        }
+    );
+
+    return;
+}
 
     if (valorAbono > saldoMaximo) {
-        alert(`El valor no puede superar el saldo de ${formatoMoneda(saldoMaximo)}.`);
-        inputValor.focus();
-        return;
-    }
+
+    mostrarMensajePago(
+        "Valor superior al saldo",
+        `El valor no puede superar el saldo de ${formatoMoneda(saldoMaximo)}.`,
+        "warning",
+        () => {
+            inputValor.focus();
+        }
+    );
+
+    return;
+}
 
     //Datos
     const formData = new FormData();
@@ -616,22 +768,52 @@ async function registrarPago(event) {
 
         const data = await response.json();
         if (!data.status) {
-            alert(data.message || "No se pudo registrar el pago.");
-            return;
-        }
-        const idAbono = Number(data.datos?.id_abono || 0);
-        const saldoNuevo = Number(data.datos?.saldo || 0);
-        alert("Pago registrado correctamente.");
-        cerrarPago();
-        //Actualizamos tabla y cards
-        await listarPagos();
-        //Abrimos comprobante
+
+    mostrarMensajePago(
+        "No se pudo registrar",
+        data.message ||
+        "No se pudo registrar el pago.",
+        "error"
+    );
+
+    return;
+}
+        const idAbono =
+    Number(data.datos?.id_abono || 0);
+
+const saldoNuevo =
+    Number(data.datos?.saldo || 0);
+
+// Cerramos primero el modal de registro
+cerrarPago();
+
+// Actualizamos tabla y tarjetas
+await listarPagos();
+
+// Mostramos mensaje
+mostrarMensajePago(
+    "Pago registrado",
+    "El pago se registró correctamente.",
+    "success",
+    () => {
+
+        // Al aceptar abrimos el comprobante
         if (idAbono > 0) {
-            abrirComprobante(idAbono, saldoNuevo);
+            abrirComprobante(
+                idAbono,
+                saldoNuevo
+            );
         }
+
+    }
+);
     } catch (error) {
         console.error("ERROR AL REGISTRAR PAGO:",error);
-        alert("Ocurrió un error al registrar el pago.");
+        mostrarMensajePago(
+    "Error",
+    "Ocurrió un error al registrar el pago.",
+    "error"
+);
     } finally {
         boton.disabled = false;
         boton.textContent = textoOriginal;
@@ -655,9 +837,15 @@ function abrirComprobante(idAbono, saldo) {
     idAbono = Number(idAbono);
     saldo = Number(saldo);
     if (!idAbono || idAbono <= 0) {
-        alert("No se pudo generar el comprobante.");
-        return;
-    }
+
+    mostrarMensajePago(
+        "Comprobante no disponible",
+        "No se pudo generar el comprobante.",
+        "error"
+    );
+
+    return;
+}
     let url;
     //Todavía existe saldo pendiente
     if (saldo > 0) {

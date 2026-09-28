@@ -489,4 +489,57 @@
         </form>
     </div>
 </div>
+
+<!-- =========================================================
+     MODAL MENSAJES DEL SISTEMA
+========================================================= -->
+<div
+    id="modalMensajePago"
+    class="fixed inset-0 z-[100] hidden items-center justify-center bg-black/50 p-4"
+>
+    <div class="w-full max-w-md rounded-2xl bg-white shadow-xl">
+
+        <!-- ENCABEZADO -->
+        <div
+            id="modalMensajePagoHeader"
+            class="flex items-center justify-between rounded-t-2xl bg-blue-600 px-6 py-4"
+        >
+            <h2
+                id="modalMensajePagoTitulo"
+                class="text-lg font-semibold text-white"
+            >
+                Información
+            </h2>
+
+            <button
+                type="button"
+                onclick="cerrarMensajePago()"
+                class="text-2xl leading-none text-white hover:text-slate-200"
+            >
+                &times;
+            </button>
+        </div>
+
+        <!-- CONTENIDO -->
+        <div class="p-6">
+            <p
+                id="modalMensajePagoTexto"
+                class="text-sm leading-relaxed text-slate-600"
+            >
+            </p>
+        </div>
+
+        <!-- PIE -->
+        <div class="flex justify-end border-t border-slate-200 px-6 py-4">
+            <button
+                type="button"
+                onclick="cerrarMensajePago()"
+                class="rounded-xl bg-blue-600 px-5 py-2.5 font-medium text-white hover:bg-blue-700"
+            >
+                Aceptar
+            </button>
+        </div>
+
+    </div>
+</div>
 <script src="/public/js/pagos.js"></script>
