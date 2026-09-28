@@ -81,4 +81,19 @@ class Pago{
 
     return $row;
 }
+
+//Total cobrado en el día actual
+public function cobradoHoy()
+{
+    $sql = "CALL sp_pago(
+        'cobrado_hoy',
+        0,
+        0,
+        0,
+        0,
+        NULL
+    )";
+
+    return ejecutarConsultaSimpleFilaAssoc($sql);
+}
 }

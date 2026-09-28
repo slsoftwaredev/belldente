@@ -25,12 +25,12 @@
 
         <div class="bg-white rounded-xl shadow-sm p-5 border border-slate-100">
             <p class="text-slate-500 text-sm">Atendidos</p>
-            <h2 class="text-3xl font-bold mt-2">0</h2>
+            <h2 id="totalAtendidos" class="text-3xl font-bold mt-2">0</h2>
         </div>
 
         <div class="bg-white rounded-xl shadow-sm p-5 border border-slate-100">
             <p class="text-slate-500 text-sm">Cobrado Hoy</p>
-            <h2 class="text-3xl font-bold mt-2">$0.00</h2>
+            <h2 id="totalCobradoHoy" class="text-3xl font-bold mt-2">$0.00</h2>
         </div>
     </div>
     <!-- INPUT PARA VALIDAR CEDULA -->

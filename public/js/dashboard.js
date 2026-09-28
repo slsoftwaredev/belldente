@@ -1,6 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
     cargarCitasHoy();
     cargarPendientesHoy();
+    cargarCobradoHoy();
     const btnValidarCedula = document.getElementById("btnValidarCedula");
     const inputCedula = document.getElementById("cedula");
     btnValidarCedula.addEventListener("click", validarCedula);
@@ -286,4 +287,48 @@ function cargarPendientesHoy() {
                 error
             );
         });
+}
+function cargarCobradoHoy() {
+
+    fetch("../ajax/pagos.php?op=cobrado_hoy")
+
+        .then(response => response.json())
+
+        .then(data => {
+
+            if (!data.status) {
+
+                console.error(
+                    data.message ||
+                    "No se pudo obtener el total cobrado hoy."
+                );
+
+                return;
+            }
+
+            const total =
+                Number(data.total || 0);
+
+            document.getElementById(
+                "totalCobradoHoy"
+            ).textContent =
+                new Intl.NumberFormat(
+                    "en-US",
+                    {
+                        style: "currency",
+                        currency: "USD"
+                    }
+                ).format(total);
+
+        })
+
+        .catch(error => {
+
+            console.error(
+                "Error al cargar lo cobrado hoy:",
+                error
+            );
+
+        });
+
 }

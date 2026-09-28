@@ -201,4 +201,37 @@ switch ($op) {
             "message" => "Operación no válida"
         ]);
     break;
+
+    //Total cobrado en el día actual
+case "cobrado_hoy":
+
+    try {
+
+        $rspta = $pago->cobradoHoy();
+
+        $total = 0;
+
+        if ($rspta) {
+
+            $total = floatval(
+                $rspta["total_cobrado_hoy"] ?? 0
+            );
+
+        }
+
+        echo json_encode([
+            "status" => true,
+            "total" => $total
+        ]);
+
+    } catch (Throwable $e) {
+
+        echo json_encode([
+            "status" => false,
+            "message" => $e->getMessage()
+        ]);
+
+    }
+
+break;
 }

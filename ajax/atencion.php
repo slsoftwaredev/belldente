@@ -422,4 +422,360 @@ case 'listar_atenciones_paciente':
     }
 
     break;
+
+    // ==========================================
+// FOTOGRAFÍAS - LISTAR ATENCIONES
+// ==========================================
+case "listar_fotografias":
+
+    if (!isset($_SESSION["id_usuario"])) {
+
+        echo json_encode([
+            "status" => false,
+            "message" => "Sesión no válida"
+        ]);
+
+        exit;
+    }
+
+    try {
+
+        $rspta = $atencion->listarFotografias();
+
+        $data = [];
+
+        while ($reg = $rspta->fetch_object()) {
+
+            $data[] = [
+                "id_atencion" => $reg->id_atencion,
+
+                "id_paciente" => $reg->id_paciente,
+                "cedula" => $reg->cedula_paciente,
+                "nombre" => $reg->nombre_paciente,
+                "apellido" => $reg->apellido_paciente,
+
+                "fecha_atencion" => $reg->fecha_atencion,
+
+                "total_fotografias" =>
+                    intval($reg->total_fotografias)
+            ];
+        }
+
+        echo json_encode([
+            "status" => true,
+            "data" => $data
+        ]);
+
+    } catch (Throwable $e) {
+
+        echo json_encode([
+            "status" => false,
+            "message" => $e->getMessage()
+        ]);
+    }
+
+break;
+// ==========================================
+// FOTOGRAFÍAS - LISTAR POR ATENCIÓN
+// ==========================================
+case "listar_fotografias_atencion":
+
+    if (!isset($_SESSION["id_usuario"])) {
+
+        echo json_encode([
+            "status" => false,
+            "message" => "Sesión no válida"
+        ]);
+
+        exit;
+    }
+
+    $id_atencion =
+        isset($_POST["id_atencion"])
+        ? intval($_POST["id_atencion"])
+        : 0;
+
+    if ($id_atencion <= 0) {
+
+        echo json_encode([
+            "status" => false,
+            "message" => "Atención no válida"
+        ]);
+
+        exit;
+    }
+
+    try {
+
+        $rspta =
+            $atencion->listarFotografiasAtencion(
+                $id_atencion
+            );
+
+        $data = [];
+
+        while ($reg = $rspta->fetch_object()) {
+
+            $data[] = [
+                "id_fotografia" => $reg->id_fotografia,
+                "atencion_id" => $reg->atencion_id,
+                "nombre_archivo" => $reg->nombre_archivo,
+                "ruta_archivo" => $reg->ruta_archivo,
+                "observacion" => $reg->observacion,
+                "fecha_registro" => $reg->fecha_registro
+            ];
+        }
+
+        echo json_encode([
+            "status" => true,
+            "data" => $data
+        ]);
+
+    } catch (Throwable $e) {
+
+        echo json_encode([
+            "status" => false,
+            "message" => $e->getMessage()
+        ]);
+    }
+
+break;
+// ==========================================
+// FOTOGRAFÍAS - AGREGAR NUEVAS
+// ==========================================
+case "agregar_fotografias":
+
+    if (!isset($_SESSION["id_usuario"])) {
+
+        echo json_encode([
+            "status" => false,
+            "message" => "Sesión no válida"
+        ]);
+
+        exit;
+    }
+
+    $id_atencion =
+        isset($_POST["id_atencion"])
+        ? intval($_POST["id_atencion"])
+        : 0;
+
+    $observacion =
+        isset($_POST["observacion"])
+        ? trim($_POST["observacion"])
+        : "";
+
+    if ($id_atencion <= 0) {
+
+        echo json_encode([
+            "status" => false,
+            "message" => "Atención no válida"
+        ]);
+
+        exit;
+    }
+
+
+    // Validamos que existan archivos
+    if (
+        !isset($_FILES["fotografias"]) ||
+        !isset($_FILES["fotografias"]["name"]) ||
+        !is_array($_FILES["fotografias"]["name"]) ||
+        count($_FILES["fotografias"]["name"]) === 0
+    ) {
+
+        echo json_encode([
+            "status" => false,
+            "message" => "Seleccione al menos una fotografía"
+        ]);
+
+        exit;
+    }
+
+
+    // Carpeta donde ya guardamos las fotografías
+    $directorio = "../uploads/fotografias/";
+
+    if (!is_dir($directorio)) {
+
+        if (!mkdir($directorio, 0775, true)) {
+
+            echo json_encode([
+                "status" => false,
+                "message" =>
+                    "No se pudo crear la carpeta de fotografías"
+            ]);
+
+            exit;
+        }
+    }
+
+
+    $extensionesPermitidas = [
+        "jpg",
+        "jpeg",
+        "png",
+        "webp"
+    ];
+
+    $fotografiasGuardadas = [];
+
+    $totalArchivos =
+        count($_FILES["fotografias"]["name"]);
+
+
+    try {
+
+        for ($i = 0; $i < $totalArchivos; $i++) {
+
+            $nombreOriginal =
+                $_FILES["fotografias"]["name"][$i];
+
+            $tmp =
+                $_FILES["fotografias"]["tmp_name"][$i];
+
+            $error =
+                $_FILES["fotografias"]["error"][$i];
+
+
+            // Si hubo error con este archivo
+            if ($error !== UPLOAD_ERR_OK) {
+                continue;
+            }
+
+
+            $extension =
+                strtolower(
+                    pathinfo(
+                        $nombreOriginal,
+                        PATHINFO_EXTENSION
+                    )
+                );
+
+
+            // Validamos extensión
+            if (
+                !in_array(
+                    $extension,
+                    $extensionesPermitidas,
+                    true
+                )
+            ) {
+                continue;
+            }
+
+
+            // Generamos nombre único
+            $nombreNuevo =
+                "atencion_" .
+                $id_atencion .
+                "_" .
+                uniqid() .
+                "." .
+                $extension;
+
+
+            $rutaFisica =
+                $directorio .
+                $nombreNuevo;
+
+
+            $rutaBDD =
+                "uploads/fotografias/" .
+                $nombreNuevo;
+
+
+            // Movemos físicamente el archivo
+            if (
+                move_uploaded_file(
+                    $tmp,
+                    $rutaFisica
+                )
+            ) {
+
+                try {
+
+                    $resultado =
+                        $atencion->agregarFotografia(
+                            $id_atencion,
+                            $nombreOriginal,
+                            $rutaBDD,
+                            $observacion
+                        );
+
+
+                    if ($resultado) {
+
+                        $fotografiasGuardadas[] = [
+                            "id_fotografia" =>
+                                $resultado["id_fotografia"] ?? null,
+
+                            "nombre_archivo" =>
+                                $nombreOriginal,
+
+                            "ruta_archivo" =>
+                                $rutaBDD,
+
+                            "observacion" =>
+                                $observacion
+                        ];
+
+                    } else {
+
+                        // Si falló la BD, eliminamos el archivo físico
+                        if (file_exists($rutaFisica)) {
+                            unlink($rutaFisica);
+                        }
+                    }
+
+                } catch (Throwable $e) {
+
+                    // Evitamos dejar un archivo huérfano
+                    if (file_exists($rutaFisica)) {
+                        unlink($rutaFisica);
+                    }
+
+                    throw $e;
+                }
+            }
+        }
+
+
+        if (count($fotografiasGuardadas) === 0) {
+
+            echo json_encode([
+                "status" => false,
+                "message" =>
+                    "No se pudo guardar ninguna fotografía"
+            ]);
+
+            break;
+        }
+
+
+        echo json_encode([
+            "status" => true,
+
+            "message" =>
+                count($fotografiasGuardadas) === 1
+                ? "Fotografía agregada correctamente"
+                : "Fotografías agregadas correctamente",
+
+            "total_guardadas" =>
+                count($fotografiasGuardadas),
+
+            "data" =>
+                $fotografiasGuardadas
+        ]);
+
+
+    } catch (Throwable $e) {
+
+        echo json_encode([
+            "status" => false,
+            "message" => $e->getMessage()
+        ]);
+    }
+
+break;
 } 

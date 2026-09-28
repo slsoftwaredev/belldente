@@ -200,4 +200,74 @@ public function obtenerHistoriaCompleta($id_atencion){
     $sql = "CALL sp_atencion('historia_antecedentes',NULL,'$id_paciente',NULL,NULL,NULL)";
     return ejecutarConsulta($sql);
     }
+
+    // Listar atenciones para el módulo de fotografías
+public function listarFotografias()
+{
+    $sql = "CALL sp_atencion(
+        'listar_fotografias',
+        0,
+        0,
+        0,
+        0,
+        NULL
+    )";
+
+    return ejecutarConsultaSP($sql);
+}
+
+
+// Listar fotografías de una atención
+public function listarFotografiasAtencion($id_atencion)
+{
+    $id_atencion = intval($id_atencion);
+
+    $sql = "CALL sp_atencion(
+        'listar_fotografias_atencion',
+        '$id_atencion',
+        0,
+        0,
+        0,
+        NULL
+    )";
+
+    return ejecutarConsultaSP($sql);
+}
+
+
+// Registrar una nueva fotografía
+public function agregarFotografia(
+    $id_atencion,
+    $nombre_archivo,
+    $ruta_archivo,
+    $observacion
+) {
+
+    global $conexion;
+
+    $id_atencion = intval($id_atencion);
+
+    $datos = json_encode([
+        "nombre_archivo" => $nombre_archivo,
+        "ruta_archivo"   => $ruta_archivo,
+        "observacion"    => $observacion
+    ], JSON_UNESCAPED_UNICODE);
+
+    $datos =
+        mysqli_real_escape_string(
+            $conexion,
+            $datos
+        );
+
+    $sql = "CALL sp_atencion(
+        'agregar_fotografia',
+        '$id_atencion',
+        0,
+        0,
+        0,
+        '$datos'
+    )";
+
+    return ejecutarConsultaSimpleFilaAssoc($sql);
+}
 }

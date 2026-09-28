@@ -28,7 +28,13 @@
             <!-- LOGO -->
             <div class="flex justify-center mb-6">
 
-                <div class="w-36 h-24 border border-gray-200 rounded-md"></div>
+                <div class="w-36 h-24 rounded-md">
+                    <img
+        src="/public/assets/img/logo-sistema.png"
+        alt="BellDente"
+        class="w-28 h-28 object-contain"
+    >
+                </div>
 
             </div>
 
